@@ -3,10 +3,10 @@
     <header class="app__header" v-show="$route.meta.header">
       <headerBar />
     </header>
-    <main class="app__main" :class="mainClass">
+    <main class="app__main" ref="main" :class="mainClass">
       <router-view />
     </main>
-    <footer class="app__footer">
+    <footer class="app__footer" v-show="$route.meta.footer">
       <footerTab />
     </footer>
   </div>
@@ -21,12 +21,38 @@ export default {
       mainClass: {
         "app__main--header": this.$route.meta.header,
         "app__main--footer": this.$route.meta.footer
-      }
+      },
+      bs: {}
     };
   },
   components: {
     footerTab,
     headerBar
+  },
+  mounted() {
+    this.$nextTick(() => {
+      const BScroll = this.$BScroll;
+      this.bs = new BScroll(this.$refs.main, {
+        scrollY: true,
+        click: true,
+        probeType: 3 // listening scroll hook
+      });
+    });
+  },
+  beforeDestroy() {
+    this.bs.destroy();
+  },
+  watch: {
+    $route() {
+      this.mainClass = {
+        "app__main--header": this.$route.meta.header,
+        "app__main--footer": this.$route.meta.footer
+      };
+      this.$nextTick(() => {
+        this.bs.refresh();
+        this.bs.scrollTo(0, 0, 0);
+      });
+    }
   }
 };
 </script>
@@ -53,11 +79,12 @@ html, body
 .app__main
   box-sizing border-box
   width 375px
-  height 100vh
+  overflow hidden
 
   &.app__main--header
-    padding-top 46px
+    height calc( 100vh - 46px )
+    margin-top 46px
 
   &.app__main--footer
-    padding-bottom 50px
+    height calc( 100vh - 50px )
 </style>

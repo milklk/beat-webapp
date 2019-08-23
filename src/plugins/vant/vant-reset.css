@@ -1,0 +1,12 @@
+.van-cell__value {
+  flex: 3;
+}
+.approves .van-tabs__line {
+  background-color: #09f;
+}
+.van-step .van-cell__value {
+  flex: 1;
+}
+.van-cell--checkbox .van-cell__value {
+  flex: 1;
+}

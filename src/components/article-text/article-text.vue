@@ -1,0 +1,63 @@
+<template>
+  <section class="article">
+    <h2 class="article__h">国务院“互联网+督查”平台日前开通</h2>
+    <aside class="article__aside">
+      <p class="aside__source">来源：桂林市公安局</p>
+      <p class="aside__time">日期：2019-7-2 10:18</p>
+    </aside>
+    <article class="article__content">
+      <p>
+        根据前期需求调研和平台设备后期调试，目前社会服务平台系统后台运行良好，为了使桂林公安社会服务平台于10月20日面向社会试运行顺利发布，市局于10月9日上午9时30分在市局
+        四楼政治部会议室准时召开此次联席会，相关支队、机关科室绩效分管领导及平台联络员共计50余人参加会议。会议由市局党委办公室副主任兼市局绩效办副主任张俊慧主持。
+      </p>
+      <p>
+        首先由市局党委委员、政治部主任李道军作了会前动员及强调。李主任分享了先进地市率先成功推出社会服务平台的创新举措，并强调
+        应服务型政府这一时代潮流，桂林公安社会服务平台实现上线是大势所趋，可实现“让数据多跑路，让群众少跑腿”。要求各单位统一思想，提升数据信息
+        理念，加强操作水平，为进一步提高和谐警民关系打下坚实基础。李道军主任对下步工作提出以下几点要求：第一，要树立信息化服务理念。第二，各单位需统一思想，提升服务质量。第三，抓硬软件建设，促基础完善。第四，抓开通筹备，促平台应用。
+      </p>
+      <p>
+        随后，市局政治部绩效考评科彭平安副科长，对社会服务平台各项制度征求的意见与会进行逐条讨论研究，并对前期去到各单
+        位调研情况及遇到的问题进行通报和现场讨论。
+        联席会议讨论热烈，取得了应有的效果，统一了思想，解答了疑惑，为平台试运行发
+        布奠定了基础。
+      </p>
+    </article>
+  </section>
+</template>
+
+<script>
+export default {
+  name: "article-text",
+  props: {},
+  data() {
+    return {};
+  },
+  components: {},
+  computed: {},
+  created() {},
+  methods: {}
+};
+</script>
+
+<style lang="stylus" scoped>
+.article__h
+  font-size 20px
+  color #152952
+  text-align center
+  padding-top 10px
+
+.article__aside
+  display flex
+  justify-content space-around
+  color #737397
+  line-height 22px
+  margin 10px 0
+
+.article__content
+  font-size 15px
+  color #737397
+  line-height 22px
+
+  p
+    text-indent 35px
+</style>

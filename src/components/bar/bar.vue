@@ -8,12 +8,21 @@ export default {
   props: {},
   data() {
     return {
-      title: "首页"
+      title: ""
     };
   },
   components: {},
   computed: {},
-  created() {},
+  watch: {
+    $route() {
+      const header = this.$route.meta.header;
+      this.title = header ? header : "";
+    }
+  },
+  created() {
+    const header = this.$route.meta.header;
+    this.title = header ? header : "";
+  },
   methods: {
     onClickLeft() {
       this.$router.go(-1);

@@ -3,8 +3,11 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
-import "./plugins/vant/index";
+import "./plugins/echarts";
+import "./plugins/vant";
+import "./plugins/vant/vant-reset.css";
 import "./plugins/reset/reset.css";
+import "./plugins/better-scroll";
 
 Vue.config.productionTip = false;
 
