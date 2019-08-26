@@ -1,8 +1,9 @@
 <template>
+  <!-- app-tabs -->
   <van-tabbar v-model="active">
     <van-tabbar-item to="/home" icon="wap-home">首页</van-tabbar-item>
     <!-- eslint-disable-next-line -->
-    <van-tabbar-item to="/message" icon="comment-o" info="5">消息</van-tabbar-item>
+    <van-tabbar-item to="/messages" icon="comment-o" info="5">消息</van-tabbar-item>
     <van-tabbar-item to="/contacts" icon="phone-o">通讯录</van-tabbar-item>
     <van-tabbar-item to="/publicity" icon="volume-o">宣传</van-tabbar-item>
     <van-tabbar-item to="/mine" icon="friends-o">我的</van-tabbar-item>
@@ -16,22 +17,26 @@ export default {
   data() {
     return {
       active: 0,
-      paths: ["/home", "/message", "/contacts", "/publicity", "/mine"]
+      paths: ["/home", "/messages", "/contacts", "/publicity", "/mine"]
     };
   },
   watch: {
     $route() {
-      const path = this.$route.path;
-      this.active = this.paths.findIndex(d => path.indexOf(d) === 0);
+      this.$_setActive();
     }
   },
   components: {},
   computed: {},
   created() {
-    const path = this.$route.path;
-    this.active = this.paths.findIndex(d => path.indexOf(d) === 0);
+    this.$_setActive();
   },
-  methods: {}
+  methods: {
+    // 设置tab栏高亮tab
+    $_setActive() {
+      const path = this.$route.path;
+      this.active = this.paths.findIndex(d => path.indexOf(d) === 0);
+    }
+  }
 };
 </script>
 

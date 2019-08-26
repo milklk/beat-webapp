@@ -11,14 +11,14 @@
     <!-- eslint-disable-next-line -->
     <van-action-sheet v-model="sheetShow" :actions="actions" cancel-text="取消" @select="select" />
     <!-- 列表 -->
-    <article class="list__content" ref="list">
+    <article class="list__content" :class="{'list__content--main': $route.meta.footer}" ref="list">
       <!-- eslint-disable-next-line -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
         <!-- eslint-disable-next-line -->
         <router-link
           v-for="(item, i) in list"
           :key="i"
-          :to="{ name: 'home-notice', params: { id: 1 } }"
+          :to="{ name: children , params: { id: 1 } }"
           class="content__item"
         >
           <van-image
@@ -41,7 +41,9 @@
 import { setTimeout } from "timers";
 export default {
   name: "list",
-  props: {},
+  props: {
+    children: String
+  },
   data() {
     return {
       sheetShow: false,
@@ -118,24 +120,34 @@ export default {
   computed: {},
   created() {},
   mounted() {
+    //创建bscroll实例，并绑定上拉加载事件
     this.$nextTick(() => {
       const BScroll = this.$BScroll;
       this.bs = new BScroll(this.$refs.list, {
         scrollY: true,
         probeType: 3,
+        click: true,
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
     });
   },
+  beforeDestroy() {
+    this.bs.destroy();
+  },
   methods: {
+    //弹出层显示
     operation() {
       this.sheetShow = true;
     },
+    //全部已读提交
     select() {
       this.sheetShow = false;
+      const list = this.list.filter(d => !d.status);
+      list.forEach(d => (d.status = 1));
       this.$toast({ type: "success", message: "全部已读", duration: 500 });
     },
+    //上拉加载事件
     async pullingUpHandler() {
       if (this.list.length >= 20) {
         this.finished = true;
@@ -213,4 +225,7 @@ export default {
         overflow hidden
         text-overflow ellipsis
         white-space nowrap
+
+.list__content--main
+  height calc( 100vh - 130px )
 </style>

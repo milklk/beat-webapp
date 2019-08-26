@@ -1,3 +1,5 @@
+//vant-ui引入以及按需加载
+//官方网址：https://youzan.github.io/vant/#/zh-CN/intro
 import Vue from "vue";
 
 import { Button } from "vant";

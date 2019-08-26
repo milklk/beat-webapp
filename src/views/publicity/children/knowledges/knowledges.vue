@@ -1,6 +1,6 @@
 <template>
-  <section class="home-notices">
-    <List v-show="$route.path === '/home/notices'" children="home-notice" />
+  <section class="messages">
+    <List v-show="$route.path === '/publicity/knowledges'" children="publicity-knowledge" />
     <router-view />
   </section>
 </template>
@@ -8,7 +8,7 @@
 <script>
 import List from "../../../../components/list/list";
 export default {
-  name: "home-notices",
+  name: "publicity-knowledges",
   props: {},
   data() {
     return {};

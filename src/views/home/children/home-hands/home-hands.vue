@@ -36,11 +36,10 @@
                     <!-- eslint-disable-next-line -->
                     <van-tag class="van-tag" v-if="item.risk === 30" type="danger">高风险</van-tag>
                     <!-- eslint-disable-next-line -->
-                    <van-tag
-                      class="van-tag"
-                      v-else-if="item.risk === 20"
-                      color="rgb(255, 153, 0)"
-                    >中风险</van-tag>
+                    <van-tag class="van-tag" v-else-if="item.risk === 20" color="rgb(255, 153, 0)">
+                      <!-- eslint-disable-next-line -->
+                      中风险
+                    </van-tag>
                     <!-- eslint-disable-next-line -->
                     <van-tag class="van-tag" v-else type="success">低风险</van-tag>
                     <!-- eslint-disable-next-line -->
@@ -52,7 +51,7 @@
           </van-checkbox-group>
         </van-list>
       </article>
-      <van-button class="van-button" type="info">申请移交</van-button>
+      <van-button :to="{name: 'home-hand',params: {id: result} }" class="van-button" type="info">申请移交</van-button>
     </div>
     <router-view></router-view>
   </section>

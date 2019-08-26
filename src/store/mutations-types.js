@@ -1,2 +1,2 @@
-export const USER_NAME = 'USER_NAME'
-
+//统一设置mutations-type
+export const USER_NAME = "USER_NAME";

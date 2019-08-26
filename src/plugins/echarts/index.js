@@ -1,3 +1,5 @@
+//Echarts引入以及按需加载相关组件
+//官方网址：https://echarts.baidu.com/
 import Vue from "vue";
 import echarts from "echarts/lib/echarts";
 

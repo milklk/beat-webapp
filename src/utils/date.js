@@ -1,3 +1,4 @@
+// 时间展示样式格式化方法
 export const format = (d, type) => {
   const date = new Date(d);
   const yyyy = date.getFullYear();

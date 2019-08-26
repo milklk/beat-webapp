@@ -4,7 +4,9 @@
       <headerBar />
     </header>
     <main class="app__main" ref="main" :class="mainClass">
-      <router-view />
+      <div>
+        <router-view />
+      </div>
     </main>
     <footer class="app__footer" v-show="$route.meta.footer">
       <footerTab />
@@ -49,8 +51,15 @@ export default {
         "app__main--footer": this.$route.meta.footer
       };
       this.$nextTick(() => {
-        this.bs.refresh();
         this.bs.scrollTo(0, 0, 0);
+        this.bs.refresh();
+
+        const BScroll = this.$BScroll;
+        this.bs = new BScroll(this.$refs.main, {
+          scrollY: true,
+          click: true,
+          probeType: 3 // listening scroll hook
+        });
       });
     }
   }
@@ -87,4 +96,7 @@ html, body
 
   &.app__main--footer
     height calc( 100vh - 50px )
+
+  &.app__main--header.app__main--footer
+    height calc( 100vh - 96px )
 </style>

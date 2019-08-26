@@ -1,20 +1,19 @@
 <template>
-  <section class="home-notices">
-    <List v-show="$route.path === '/home/notices'" children="home-notice" />
-    <router-view />
+  <section>
+    <ArticleText />
   </section>
 </template>
 
 <script>
-import List from "../../../../components/list/list";
+import ArticleText from "../../components/article-text/article-text";
 export default {
-  name: "home-notices",
+  name: "message",
   props: {},
   data() {
     return {};
   },
   components: {
-    List
+    ArticleText
   },
   computed: {},
   created() {},

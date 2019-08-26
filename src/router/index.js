@@ -9,5 +9,10 @@ export default new Router({
   routes
 });
 
+//跳转报错解决
+const routerPush = Router.prototype.push;
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error => error);
+};
 //路由守卫
 // router.beforeEach((to, from, next) => {});

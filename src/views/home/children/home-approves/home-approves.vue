@@ -1,7 +1,12 @@
 <template>
   <section class="approves">
     <!-- eslint-disable-next-line -->
-    <van-tabs v-show="$route.path === '/home/approves'" v-model="active" line-width="50%" title-active-color="#09f" animated>
+    <van-tabs
+      v-show="$route.path === '/home/approves'"
+      v-model="active"
+      line-width="50%"
+      title-active-color="#09f"
+    >
       <!-- eslint-disable-next-line -->
       <van-tab v-for="(tab, i) in tabs" :key="i" :title="tab.title" :name="tab.status">
         <van-search
@@ -106,9 +111,72 @@ export default {
           time: "2019-10-01",
           risk: 20,
           status: false
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: false
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: false
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: false
         }
       ],
       approval: [
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: true,
+          cased: "cancel"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: true,
+          cased: "success"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          type: "病假",
+          startTime: "2019-10-01 11:00",
+          endTime: "2019-10-02 11:00",
+          time: "2019-10-01",
+          risk: 20,
+          status: true,
+          cased: "danger"
+        },
         {
           name: "张怀志",
           area: "临桂区",
@@ -146,6 +214,10 @@ export default {
       search: {
         dandelion: "",
         approval: ""
+      },
+      bs: {
+        dandelion: null,
+        approval: null
       }
     };
   },
@@ -157,23 +229,76 @@ export default {
           title: "待我审批的",
           status: "dandelion",
           data: this.dandelion,
-          loading: false,
-          finished: true
+          loading: true,
+          finished: false
         },
         {
           title: "我已审批的",
           status: "approval",
           data: this.approval,
-          loading: false,
-          finished: true
+          loading: true,
+          finished: false
         }
       ];
     }
   },
   created() {},
+  mounted() {
+    this.$nextTick(d => {
+      const BScroll = this.$BScroll;
+      this.bs.dandelion = new BScroll(this.$refs.content[0], {
+        scrollY: true,
+        probeType: 3,
+        pullUpLoad: true
+      });
+      this.bs.dandelion.on("pullingUp", this.pullingUpHandler);
+    });
+  },
+  updated() {
+    this.$nextTick(d => {
+      const BScroll = this.$BScroll;
+      if (!this.bs.approval && this.$refs.content.length === 2) {
+        this.bs.approval = new BScroll(this.$refs.content[1], {
+          scrollY: true,
+          probeType: 3,
+          pullUpLoad: true
+        });
+        this.bs.approval.on("pullingUp", this.pullingUpHandler);
+      }
+      this.bs[this.active].finishPullUp();
+      this.bs[this.active].refresh();
+    });
+  },
   methods: {
     submit(status) {
       console.log(status);
+    },
+    pullingUpHandler() {
+      const status = this.active;
+      switch (status) {
+        case "dandelion":
+          const dandlion = [...this.dandelion];
+          setTimeout(() => {
+            if (!this.tabs[0].finished) {
+              this.dandelion = this.dandelion.concat(dandlion);
+              this.tabs[0].loading = false;
+              this.tabs[0].finished = true;
+            }
+          }, 2000);
+          break;
+        case "approval":
+          const approval = [...this.approval];
+          setTimeout(() => {
+            if (!this.tabs[1].finished) {
+              this.approval = this.approval.concat(approval);
+              this.tabs[1].loading = false;
+              this.tabs[1].finished = true;
+            }
+          }, 2000);
+          break;
+        default:
+          break;
+      }
     }
   }
 };

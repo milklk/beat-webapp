@@ -1,15 +1,20 @@
 <template>
-  <section></section>
+  <section>
+    <article-text />
+  </section>
 </template>
 
 <script>
+import ArticleText from "../../../../components/article-text/article-text";
 export default {
-  name: "message",
+  name: "publicity-law",
   props: {},
   data() {
     return {};
   },
-  components: {},
+  components: {
+    ArticleText
+  },
   computed: {},
   created() {},
   methods: {}

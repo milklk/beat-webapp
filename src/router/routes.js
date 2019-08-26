@@ -1,5 +1,5 @@
 import Home from "../views/home/home.vue";
-import Message from "../views/message/message.vue";
+import Messages from "../views/messages/messages.vue";
 import Contacts from "../views/contacts/contacts.vue";
 import Publicity from "../views/publicity/publicity.vue";
 import Mine from "../views/mine/mine.vue";
@@ -13,7 +13,15 @@ import HomeJoins from "../views/home/children/home-joins/home-joins.vue";
 import HomeJoin from "../views/home/children/home-joins/home-join.vue";
 import HomeNotices from "../views/home/children/home-notices/home-notices.vue";
 import HomeNotice from "../views/home/children/home-notices/home-notice.vue";
+import Message from "../views/messages/message.vue";
+import PublicityLaws from "../views/publicity/children/laws/laws.vue";
+import PublicityLaw from "../views/publicity/children/laws/law.vue";
+import PublicityKnowledges from "../views/publicity/children/knowledges/knowledges.vue";
+import PublicityKnowledge from "../views/publicity/children/knowledges/knowledge.vue";
+import PublicitySkills from "../views/publicity/children/skills/skills.vue";
+import PublicitySkill from "../views/publicity/children/skills/skill.vue";
 
+//设置router路由
 export default [
   {
     path: "/home",
@@ -60,7 +68,7 @@ export default [
         meta: { header: "移交中心" },
         children: [
           {
-            path: "/home/hands/:id",
+            path: "/home/hands/hand",
             name: "home-hand",
             component: HomeHand,
             meta: { header: "接收人" }
@@ -83,25 +91,94 @@ export default [
     ]
   },
   {
-    path: "/message",
-    component: Message,
+    path: "/messages",
+    component: Messages,
     meta: {
-      footer: true
-    }
+      footer: true,
+      header: "消息中心"
+    },
+    children: [
+      {
+        path: "/messages/:id",
+        name: "message",
+        component: Message,
+        meta: {
+          header: "消息详情"
+        }
+      }
+    ]
   },
   {
     path: "/contacts",
     component: Contacts,
     meta: {
-      footer: true
+      footer: true,
+      header: "通讯录"
     }
   },
   {
     path: "/publicity",
     component: Publicity,
     meta: {
-      footer: true
-    }
+      footer: true,
+      header: "宣传中心"
+    },
+    children: [
+      {
+        path: "/publicity/laws",
+        component: PublicityLaws,
+        meta: {
+          footer: true,
+          header: "法律法规"
+        },
+        children: [
+          {
+            path: "/publicity/laws/:id",
+            component: PublicityLaw,
+            name: "publicity-law",
+            meta: {
+              header: "法律法规"
+            }
+          }
+        ]
+      },
+      {
+        path: "/publicity/Knowledges",
+        component: PublicityKnowledges,
+        meta: {
+          footer: true,
+          header: "禁毒知识"
+        },
+        children: [
+          {
+            path: "/publicity/Knowledges/:id",
+            name: "publicity-knowledge",
+            component: PublicityKnowledge,
+            meta: {
+              header: "禁毒知识"
+            }
+          }
+        ]
+      },
+      {
+        path: "/publicity/skills",
+        component: PublicitySkills,
+        meta: {
+          footer: true,
+          header: "工作技巧"
+        },
+        children: [
+          {
+            path: "/publicity/skills/:id",
+            component: PublicitySkill,
+            name: "publicity-skill",
+            meta: {
+              header: "工作技巧"
+            }
+          }
+        ]
+      }
+    ]
   },
   {
     path: "/mine",

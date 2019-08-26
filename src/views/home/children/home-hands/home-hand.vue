@@ -16,14 +16,15 @@
       >
         <van-checkbox-group v-model="result">
           <van-cell
-            v-for="(item,i) in list"
+            v-for="(item, i) in list"
             :key="i"
             :value="item.phone"
             class="van-cell--checkbox"
           >
             <template #title>
               <van-checkbox v-model="checked" :name="i">
-                <div class="van-checkbox__label">{{item.name}}({{item.area}})</div>
+                <!-- eslint-disable-next-line -->
+                <div class="van-checkbox__label">{{ item.name }}({{ item.area }})</div>
               </van-checkbox>
             </template>
           </van-cell>
@@ -44,6 +45,7 @@ export default {
       finished: true,
       result: [],
       search: "",
+      checked:[],
       list: [
         {
           name: "张怀志",
@@ -80,7 +82,12 @@ export default {
   },
   components: {},
   computed: {},
-  created() {},
+  created() {
+    const params = this.$route.params
+    if (!params.id) {
+      this.$router.go(-1)
+    }
+  },
   methods: {
     submit() {}
   }

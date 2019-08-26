@@ -52,7 +52,7 @@
           <router-link
             v-for="(approve, i) in approves"
             :key="i"
-            :to="{ name: 'home-approves', params: { id: approve.id } }"
+            :to="{ name: 'home-approve', params: { status:'dandelion',id: approve.id } }"
           >
             <!-- eslint-disable-next-line -->
             <van-notice-bar background="#fff" :scrollable="false" :text="approve.text">
