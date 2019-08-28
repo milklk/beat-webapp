@@ -54,12 +54,12 @@ export default {
         this.bs.scrollTo(0, 0, 0);
         this.bs.refresh();
 
-        const BScroll = this.$BScroll;
-        this.bs = new BScroll(this.$refs.main, {
-          scrollY: true,
-          click: true,
-          probeType: 3 // listening scroll hook
-        });
+        // const BScroll = this.$BScroll;
+        // this.bs = new BScroll(this.$refs.main, {
+        //   scrollY: true,
+        //   click: true,
+        //   probeType: 3 // listening scroll hook
+        // });
       });
     }
   }

@@ -29,7 +29,9 @@ export default {
     },
     // 更新头部标题
     $_setTitle() {
-      const header = this.$route.meta.header;
+      const header = this.$route.params.header
+        ? this.$route.params.header
+        : this.$route.meta.header;
       this.title = header ? header : "";
     }
   }

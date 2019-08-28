@@ -20,6 +20,19 @@ import PublicityKnowledges from "../views/publicity/children/knowledges/knowledg
 import PublicityKnowledge from "../views/publicity/children/knowledges/knowledge.vue";
 import PublicitySkills from "../views/publicity/children/skills/skills.vue";
 import PublicitySkill from "../views/publicity/children/skills/skill.vue";
+import Contact from "../views/contacts/contact.vue";
+import ContactRecord from "../views/contacts/children/contact-record.vue";
+import ContactSignIn from "../views/contacts/children/contact-sign-in.vue";
+import ContactUrinalysis from "../views/contacts/children/contact-urinalysis.vue";
+import ContactTalk from "../views/contacts/children/contact-talk.vue";
+import ContactVisit from "../views/contacts/children/contact-visit.vue";
+import ContactLeave from "../views/contacts/children/contact-leave.vue";
+import ContactAssess from "../views/contacts/children/contact-assess.vue";
+import ContactHelping from "../views/contacts/children/contact-helping.vue";
+import ContactAgreement from "../views/contacts/children/contact-agreement.vue";
+import ContactFind from "../views/contacts/children/contact-find.vue";
+import ContactParty from "../views/contacts/children/contact-party.vue";
+import ContactDrugs from "../views/contacts/children/contact-drugs.vue";
 
 //设置router路由
 export default [
@@ -114,7 +127,87 @@ export default [
     meta: {
       footer: true,
       header: "通讯录"
-    }
+    },
+    children: [
+      {
+        path: "/contacts/contact/:id",
+        name: "contact",
+        component: Contact,
+        meta: { header: "人员详情" }
+      },
+      {
+        path: "/contacts/record/:id/:header",
+        name: "contact-record",
+        component: ContactRecord,
+        meta: { header: true }
+      },
+      {
+        path: "/contacts/sign-in/:id",
+        name: "contact-sign-in",
+        component: ContactSignIn,
+        meta: { header: `签到` }
+      },
+      {
+        path: "/contacts/urinalysis/:id",
+        name: "contact-urinalysis",
+        component: ContactUrinalysis,
+        meta: { header: `尿检` }
+      },
+      {
+        path: "/contacts/talk/:id",
+        name: "contact-talk",
+        component: ContactTalk,
+        meta: { header: `谈话` }
+      },
+      {
+        path: "/contacts/visit/:id",
+        name: "contact-visit",
+        component: ContactVisit,
+        meta: { header: `拜访` }
+      },
+      {
+        path: "/contacts/leave/:id",
+        name: "contact-leave",
+        component: ContactLeave,
+        meta: { header: `请假` }
+      },
+      {
+        path: "/contacts/assess/:id",
+        name: "contact-assess",
+        component: ContactAssess,
+        meta: { header: `评估` }
+      },
+      {
+        path: "/contacts/helping/:id",
+        name: "contact-helping",
+        component: ContactHelping,
+        meta: { header: `帮扶救助` }
+      },
+      {
+        path: "/contacts/agreement/:id",
+        name: "contact-agreement",
+        component: ContactAgreement,
+        meta: { header: `违反协议` }
+      },
+      {
+        path: "/contacts/find/:id",
+        name: "contact-find",
+        component: ContactFind,
+        meta: { header: `查找脱失` }
+      },
+      {
+        path: "/contacts/drugs/:id",
+        name: "contact-drugs",
+        component: ContactDrugs,
+        meta: { header: `药物维持` }
+      },
+      {
+        path: "/contacts/party/:id",
+        name: "contact-party",
+        component: ContactParty,
+        meta: { header: `工作小组` }
+      }
+    ]
   },
   {
     path: "/publicity",

@@ -13,3 +13,23 @@
 .van-cell--checkbox .van-cell__value {
   flex: 1;
 }
+.record .van-step__line {
+  background-color: #07c160;
+}
+.record .van-step__circle {
+  background-color: #07c160;
+}
+.contacts .van-uploader *:not(i) {
+  width: 100% !important;
+  height: 100% !important;
+  text-align: center;
+}
+.contacts .van-uploader .van-uploader__upload-text {
+  height: auto !important;
+}
+.contacts .van-image__img {
+  object-fit: contain !important;
+}
+.contacts .van-cell--required::before {
+  top: 15px;
+}

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="contacts">
     <div v-show="$route.path === '/contacts'">
       <van-search
         placeholder="请输入搜索关键词"
@@ -8,7 +8,7 @@
         background="#f2f2f2"
         @search="submit"
       />
-      <article class="hands__list">
+      <article class="contacts__list">
         <van-list
           v-model="loading"
           :finished="finished"
@@ -16,7 +16,14 @@
           :immediate-check="false"
         >
           <!-- eslint-disable-next-line -->
-          <router-link v-for="(item,i) in list" :key="i" :name="i" class="list__item" to="/home">
+          <router-link
+            v-for="(item, i) in list"
+            :key="i"
+            :name="i"
+            class="list__item"
+            :to="{ name: 'contact', params: { id: 1 } }"
+          >
+            <!-- eslint-disable-next-line -->
             <van-image class="item__avatar" :src="require('../../assets/img/people-head.png')" />
             <ul class="item__content">
               <li class="content__li">
@@ -47,6 +54,25 @@
         </van-list>
       </article>
     </div>
+    <header v-show="$route.path !== '/contacts'" class="contact__header">
+      <h3 class="header__h">
+        <article>
+          <strong class="h__name">{{ addict.name }}</strong>
+          <span class="h__area">（{{ addict.area }}）</span>
+        </article>
+        <!-- eslint-disable-next-line -->
+        <van-tag class="van-tag" v-if="addict.risk === 30" type="danger">高风险</van-tag>
+        <!-- eslint-disable-next-line -->
+        <van-tag class="van-tag" v-else-if="addict.risk === 20" color="rgb(255, 153, 0)">中风险</van-tag>
+        <!-- eslint-disable-next-line -->
+        <van-tag class="van-tag" v-else type="success">低风险</van-tag>
+      </h3>
+      <p class="header__p">
+        <!-- eslint-disable-next-line -->
+        {{addict.phone}} {{ addict.type }} {{ addict.startTime }} 至 {{ addict.endTime }}
+      </p>
+      <p class="header__p">{{ addict.site }}</p>
+    </header>
     <router-view></router-view>
   </section>
 </template>
@@ -92,7 +118,17 @@ export default {
           phone: "18907711179",
           risk: 20
         }
-      ]
+      ],
+      addict: {
+        name: "张怀志",
+        area: "临桂区",
+        risk: 20,
+        phone: 18211981789,
+        type: "社区戒毒",
+        startTime: "2017-7-1",
+        endTime: "2020-6-1",
+        site: "广西壮族自治区桂林市临桂区金水路3号"
+      }
     };
   },
   components: {},
@@ -151,4 +187,30 @@ export default {
         .p__span
           line-height 22px
           color #737392
+
+.contact__header
+  border-bottom 10px solid #f2f2f2
+  height 100px
+  padding 10px 20px
+  display flex
+  flex-direction column
+  justify-content space-between
+
+  .header__h
+    display flex
+    justify-content space-between
+    font-weight normal
+
+    .h__name
+      font-size 16px
+      font-weight normal
+      color #152952
+
+    .h_area
+      font-size 12px
+      color #737397
+
+  .header__p
+    font-size 14px
+    color #737397
 </style>

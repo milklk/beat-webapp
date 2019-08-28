@@ -24,7 +24,16 @@ import { Tab, Tabs } from "vant";
 import { Search } from "vant";
 import { Step, Steps } from "vant";
 import { Checkbox, CheckboxGroup } from "vant";
+import { DatetimePicker } from "vant";
+import { Popup } from "vant";
+import { Uploader } from "vant";
+import { RadioGroup, Radio } from "vant";
 
+Vue.use(RadioGroup);
+Vue.use(Radio);
+Vue.use(Uploader);
+Vue.use(Popup);
+Vue.use(DatetimePicker);
 Vue.use(Checkbox).use(CheckboxGroup);
 Vue.use(Step).use(Steps);
 Vue.use(Search);

@@ -5,9 +5,10 @@ import store from "./store";
 
 import "./plugins/echarts";
 import "./plugins/vant";
+import "./plugins/better-scroll";
 import "./plugins/vant/vant-reset.css";
 import "./plugins/reset/reset.css";
-import "./plugins/better-scroll";
+import "./assets/icon/iconfont.css";
 
 Vue.config.productionTip = false;
 
