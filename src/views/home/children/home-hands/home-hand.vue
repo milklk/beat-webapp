@@ -7,7 +7,7 @@
       background="#f2f2f2"
       @search="submit"
     />
-    <article class="hands__list">
+    <article class="hand__list" :class="{'hand__list--ios': $userAgent === 'ios'}" ref="hand">
       <van-list
         v-model="loading"
         :finished="finished"
@@ -31,7 +31,12 @@
         </van-checkbox-group>
       </van-list>
     </article>
-    <van-button class="van-button" type="info">确认移交</van-button>
+    <footer class="hand__footer">
+      <van-button :to="{name: 'home-hand',params: {id: result} }" class="van-button" type="info">
+        <!-- eslint-disable-next-line -->
+        确认移交
+      </van-button>
+    </footer>
   </section>
 </template>
 
@@ -45,7 +50,7 @@ export default {
       finished: true,
       result: [],
       search: "",
-      checked:[],
+      checked: [],
       list: [
         {
           name: "张怀志",
@@ -77,19 +82,50 @@ export default {
           phone: "18907711179",
           risk: 20
         }
-      ]
+      ],
+      total: 20
     };
   },
   components: {},
   computed: {},
   created() {
-    const params = this.$route.params
+    const params = this.$route.params;
     if (!params.id) {
-      this.$router.go(-1)
+      this.$router.go(-1);
     }
   },
+  mounted() {
+    this.$nextTick(() => {
+      const BScroll = this.$BScroll;
+      this.bs = new BScroll(this.$refs.hand, {
+        scrollY: true,
+        probeType: 3,
+        pullUpLoad: true
+      });
+      this.bs.on("pullingUp", this.pullingUpHandler);
+      this.loading = this.bs.hasVerticalScroll ? true : false;
+      this.finished = this.bs.hasVerticalScroll ? false : true;
+    });
+  },
+  updated() {
+    this.$nextTick(() => {
+      this.bs.finishPullUp();
+      this.bs.refresh();
+    });
+  },
   methods: {
-    submit() {}
+    submit() {},
+    async pullingUpHandler() {
+      if (this.list.length >= this.total) {
+        this.finished = true;
+        this.loading = false;
+      } else {
+        const list = this.list.slice(0, 5);
+        await setTimeout(() => {
+          this.list = this.list.concat(list);
+        }, 2000);
+      }
+    }
   }
 };
 </script>
@@ -104,4 +140,17 @@ export default {
 .van-checkbox__label
   color #737392
   line-height 25px
+
+.hand__list
+  height calc( 100vh - 46px - 54px - 50px )
+  overflow hidden
+  border-bottom 10px solid #f2f2f2
+
+  &.hand__list--ios
+    height calc( 100vh - 46px - 54px - 50px - 75px )
+
+.hand__footer
+  height 50px
+  padding 3px
+  background #fff
 </style>

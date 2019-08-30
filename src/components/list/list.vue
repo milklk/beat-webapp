@@ -11,7 +11,11 @@
     <!-- eslint-disable-next-line -->
     <van-action-sheet v-model="sheetShow" :actions="actions" cancel-text="取消" @select="select" />
     <!-- 列表 -->
-    <article class="list__content" :class="{'list__content--main': $route.meta.footer}" ref="list">
+    <article
+      class="list__content"
+      :class="{'list__content--main': $route.meta.footer, 'list__content--ios': $userAgent === 'ios'}"
+      ref="list"
+    >
       <!-- eslint-disable-next-line -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
         <!-- eslint-disable-next-line -->
@@ -185,6 +189,9 @@ export default {
   background #fff
   overflow hidden
 
+  &.list__content--ios
+    height calc( 100vh - 80px - 75px )
+
   .content__item
     display flex
     justify-content space-between
@@ -228,4 +235,7 @@ export default {
 
 .list__content--main
   height calc( 100vh - 130px )
+
+  &.list__content--ios
+    height calc( 100vh - 130px - 75px )
 </style>

@@ -8,7 +8,11 @@
         background="#f2f2f2"
         @search="submit"
       />
-      <article class="contacts__list">
+      <article
+        class="contacts__list"
+        :class="{'contacts__list--ios': $userAgent === 'ios'}"
+        ref="contacts"
+      >
         <van-list
           v-model="loading"
           :finished="finished"
@@ -83,11 +87,71 @@ export default {
   props: {},
   data() {
     return {
-      loading: false,
-      finished: true,
+      loading: true,
+      finished: false,
       result: [],
       search: "",
       list: [
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20,
+          status: "脱失"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20,
+          status: "脱失"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20,
+          status: "脱失"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20,
+          status: "脱失"
+        },
+        {
+          name: "张怀志",
+          area: "临桂区",
+          card: "45505319******1100",
+          phone: "18907711179",
+          risk: 20
+        },
         {
           name: "张怀志",
           area: "临桂区",
@@ -128,14 +192,46 @@ export default {
         startTime: "2017-7-1",
         endTime: "2020-6-1",
         site: "广西壮族自治区桂林市临桂区金水路3号"
-      }
+      },
+      total: 30,
+      bs: {}
     };
   },
   components: {},
   computed: {},
   created() {},
+  mounted() {
+    this.$nextTick(() => {
+      const BScroll = this.$BScroll;
+      this.bs = new BScroll(this.$refs.contacts, {
+        scrollY: true,
+        probeType: 3,
+        pullUpLoad: true
+      });
+      this.bs.on("pullingUp", this.pullingUpHandler);
+      this.loading = this.bs.hasVerticalScroll ? true : false;
+      this.finished = this.bs.hasVerticalScroll ? false : true;
+    });
+  },
+  updated() {
+    this.$nextTick(() => {
+      this.bs.finishPullUp();
+      this.bs.refresh();
+    });
+  },
   methods: {
-    submit() {}
+    submit() {},
+    async pullingUpHandler() {
+      if (this.list.length >= this.total) {
+        this.finished = true;
+        this.loading = false;
+      } else {
+        const list = this.list.slice(0, 5);
+        await setTimeout(() => {
+          this.list = this.list.concat(list);
+        }, 2000);
+      }
+    }
   }
 };
 </script>
@@ -150,6 +246,13 @@ export default {
   width 260px
   text-align center
   margin auto
+
+.contacts__list
+  height calc( 100vh - 46px - 54px - 50px )
+  overflow hidden
+
+  &.contacts__list--ios
+    height calc( 100vh - 46px - 54px - 50px - 75px )
 
 .list__item
   display flex

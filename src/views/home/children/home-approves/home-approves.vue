@@ -16,11 +16,15 @@
           background="#f2f2f2"
           @search="submit(tab.status)"
         />
-        <article class="approves__list" ref="content">
+        <article
+          class="approves__list"
+          :class="{ 'approves__list--ios': $userAgent === 'ios' }"
+          ref="content"
+        >
           <!-- eslint-disable-next-line -->
           <van-list
-            v-model="tab.loading"
-            :finished="tab.finished"
+            v-model="loading[tab.status]"
+            :finished="finished[tab.status]"
             finished-text="没有更多了"
             :immediate-check="false"
           >
@@ -218,6 +222,18 @@ export default {
       bs: {
         dandelion: null,
         approval: null
+      },
+      loading: {
+        dandelion: true,
+        approval: true
+      },
+      finished: {
+        dandelion: false,
+        approval: false
+      },
+      total: {
+        dandelion: 20,
+        approval: 20
       }
     };
   },
@@ -228,23 +244,19 @@ export default {
         {
           title: "待我审批的",
           status: "dandelion",
-          data: this.dandelion,
-          loading: true,
-          finished: false
+          data: this.dandelion
         },
         {
           title: "我已审批的",
           status: "approval",
-          data: this.approval,
-          loading: true,
-          finished: false
+          data: this.approval
         }
       ];
     }
   },
   created() {},
   mounted() {
-    this.$nextTick(d => {
+    this.$nextTick(() => {
       const BScroll = this.$BScroll;
       this.bs.dandelion = new BScroll(this.$refs.content[0], {
         scrollY: true,
@@ -252,10 +264,16 @@ export default {
         pullUpLoad: true
       });
       this.bs.dandelion.on("pullingUp", this.pullingUpHandler);
+      this.loading.dandelion = this.bs.dandelion.hasVerticalScroll
+        ? true
+        : false;
+      this.finished.dandelion = this.bs.dandelion.hasVerticalScroll
+        ? false
+        : true;
     });
   },
   updated() {
-    this.$nextTick(d => {
+    this.$nextTick(() => {
       const BScroll = this.$BScroll;
       if (!this.bs.approval && this.$refs.content.length === 2) {
         this.bs.approval = new BScroll(this.$refs.content[1], {
@@ -264,6 +282,12 @@ export default {
           pullUpLoad: true
         });
         this.bs.approval.on("pullingUp", this.pullingUpHandler);
+        this.loading.approval = this.bs.approval.hasVerticalScroll
+          ? true
+          : false;
+        this.finished.approval = this.bs.approval.hasVerticalScroll
+          ? false
+          : true;
       }
       this.bs[this.active].finishPullUp();
       this.bs[this.active].refresh();
@@ -277,24 +301,30 @@ export default {
       const status = this.active;
       switch (status) {
         case "dandelion":
-          const dandlion = [...this.dandelion];
-          setTimeout(() => {
-            if (!this.tabs[0].finished) {
-              this.dandelion = this.dandelion.concat(dandlion);
-              this.tabs[0].loading = false;
-              this.tabs[0].finished = true;
+          {
+            const dandelion = [...this.dandelion];
+            if (this.dandelion.length < this.total.dandelion) {
+              setTimeout(() => {
+                this.dandelion = this.dandelion.concat(dandelion);
+              }, 2000);
+            } else {
+              this.loading.dandelion = false;
+              this.finished.dandelion = true;
             }
-          }, 2000);
+          }
           break;
         case "approval":
-          const approval = [...this.approval];
-          setTimeout(() => {
-            if (!this.tabs[1].finished) {
-              this.approval = this.approval.concat(approval);
-              this.tabs[1].loading = false;
-              this.tabs[1].finished = true;
+          {
+            const approval = [...this.approval];
+            if (this.approval.length < this.total.approval) {
+              setTimeout(() => {
+                this.approval = this.approval.concat(approval);
+              }, 2000);
+            } else {
+              this.loading.approval = false;
+              this.finished.approval = true;
             }
-          }, 2000);
+          }
           break;
         default:
           break;
@@ -320,6 +350,9 @@ export default {
 .approves__list
   height calc( 100vh - 145px )
   overflow hidden
+
+  &.approves__list--ios
+    height calc( 100vh - 145px - 75px )
 
   .list__item
     display flex

@@ -4,6 +4,9 @@
 .van-cell__value {
   flex: 3;
 }
+.van-cell--auto .van-cell__value {
+  flex: auto;
+}
 .approves .van-tabs__line {
   background-color: #09f;
 }

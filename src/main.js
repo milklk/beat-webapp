@@ -9,8 +9,7 @@ import "./plugins/better-scroll";
 import "./plugins/vant/vant-reset.css";
 import "./plugins/reset/reset.css";
 import "./assets/icon/iconfont.css";
-
-Vue.config.productionTip = false;
+import "./utils/userAgent";
 
 new Vue({
   router,

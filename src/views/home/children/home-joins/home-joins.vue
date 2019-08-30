@@ -1,7 +1,12 @@
 <template>
   <section class="joins">
     <!-- eslint-disable-next-line -->
-    <article class="joins__list" ref="joins" v-show="$route.path === '/home/joins'">
+    <article
+      class="joins__list"
+      :class="{ 'joins__list--ios': $userAgent === 'ios' }"
+      ref="joins"
+      v-show="$route.path === '/home/joins'"
+    >
       <!-- eslint-disable-next-line -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
         <router-link
@@ -126,7 +131,8 @@ export default {
           agency: "钦州市强戒所",
           risk: 10
         }
-      ]
+      ],
+      total: 20
     };
   },
   components: {},
@@ -141,6 +147,8 @@ export default {
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
+      this.loading = this.bs.hasVerticalScroll ? true : false;
+      this.finished = this.bs.hasVerticalScroll ? false : true;
     });
   },
   updated() {
@@ -153,7 +161,7 @@ export default {
   },
   methods: {
     async pullingUpHandler() {
-      if (this.list.length >= 20) {
+      if (this.list.length >= this.total) {
         this.finished = true;
         this.loading = false;
       } else {
@@ -171,6 +179,9 @@ export default {
 .joins__list
   height calc( 100vh - 46px )
   overflow hidden
+
+  &.joins__list--ios
+    height calc( 100vh - 46px - 75px )
 
   .list__item
     display flex

@@ -5,7 +5,10 @@
         title="签到记录"
         :value="total"
         is-link
-        :to="{ name: 'contact-record', params: { header: '签到记录', id:$route.params.id }}"
+        :to="{
+          name: 'contact-record',
+          params: { header: '签到记录', id: $route.params.id }
+        }"
       />
     </van-cell-group>
     <van-divider class="van-divider">代上传签到信息</van-divider>
@@ -26,6 +29,7 @@
           />
         </template>
       </van-field>
+      <!-- eslint-disable-next-line -->
       <van-field v-model="form.area" label="签到地址" placeholder="请输入签到地址" required />
       <van-field
         v-model="form.content"
@@ -37,6 +41,7 @@
         maxlength
         error-message="提示：代签事由输入字数不多于200字"
       />
+      <!-- eslint-disable-next-line -->
       <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
         <van-datetime-picker
           v-model="time"
@@ -49,8 +54,9 @@
     <van-divider class="van-divider">社工信息</van-divider>
     <van-cell-group class="van-cell-group">
       <van-cell title="社工姓名" :value="worker.name" />
-      <van-cell title="联系对方" :value="worker.phone" />
+      <van-cell title="联系电话" :value="worker.phone" />
       <van-radio-group v-model="radio">
+        <!-- eslint-disable-next-line -->
         <van-cell title="以上签到信息属实，由本人代上传签到信息。" @click="radio=radio === false ? true : false">
           <template #icon>
             <van-radio class="van-radio" :name="true" />
@@ -60,6 +66,7 @@
     </van-cell-group>
     <footer class="sign-in__footer">
       <van-button class="van-button" @click="cancel">取消</van-button>
+      <!-- eslint-disable-next-line -->
       <van-button class="van-button" type="primary" @click="confirm">确认</van-button>
     </footer>
   </section>
@@ -106,14 +113,12 @@ export default {
     },
     beforeRead(file) {
       const i = file.type.indexOf("image");
-      if (i === 0) {
-      } else {
+      if (i !== 0) {
         this.$toast.fail("请上传\n图片类型文件");
       }
       return i === 0;
     },
     cancel() {
-      const id = this.$route.params.id;
       this.$toast.fail({
         message: "已取消代签到",
         duration: 500,

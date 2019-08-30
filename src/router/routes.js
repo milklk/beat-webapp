@@ -3,6 +3,7 @@ import Messages from "../views/messages/messages.vue";
 import Contacts from "../views/contacts/contacts.vue";
 import Publicity from "../views/publicity/publicity.vue";
 import Mine from "../views/mine/mine.vue";
+import Login from "../views/login/login.vue";
 
 import HomeApproves from "../views/home/children/home-approves/home-approves.vue";
 import HomeApprove from "../views/home/children/home-approves/home-approve.vue";
@@ -33,6 +34,10 @@ import ContactAgreement from "../views/contacts/children/contact-agreement.vue";
 import ContactFind from "../views/contacts/children/contact-find.vue";
 import ContactParty from "../views/contacts/children/contact-party.vue";
 import ContactDrugs from "../views/contacts/children/contact-drugs.vue";
+import MineAbout from "../views/mine/children/mine-about.vue";
+import MinePassword from "../views/mine/children/mine-password.vue";
+import MineDatum from "../views/mine/children/mine-datum.vue";
+import MineReport from "../views/mine/children/mine-report.vue";
 
 //设置router路由
 export default [
@@ -277,11 +282,46 @@ export default [
     path: "/mine",
     component: Mine,
     meta: {
-      footer: true
-    }
+      footer: true,
+      header: "个人中心"
+    },
+    children: [
+      {
+        path: "/mine/about",
+        component: MineAbout,
+        meta: {
+          header: "关于"
+        }
+      },
+      {
+        path: "/mine/password",
+        component: MinePassword,
+        meta: {
+          header: "修改密码"
+        }
+      },
+      {
+        path: "/mine/datum",
+        component: MineDatum,
+        meta: {
+          header: "修改资料"
+        }
+      },
+      {
+        path: "/mine/report",
+        component: MineReport,
+        meta: {
+          header: "一键举报"
+        }
+      }
+    ]
+  },
+  {
+    path: "/login",
+    component: Login
   },
   {
     path: "/",
-    redirect: "/home"
+    redirect: "/login"
   }
 ];
