@@ -8,6 +8,7 @@
         background="#f2f2f2"
         @search="submit"
       />
+      <!-- eslint-disable-next-line -->
       <article class="hands__list" :class="{'hands__list--ios': $userAgent === 'ios'}" ref="hands">
         <van-list
           v-model="loading"
@@ -52,6 +53,7 @@
         </van-list>
       </article>
       <footer class="hands__footer">
+        <!-- eslint-disable-next-line -->
         <van-button :to="{name: 'home-hand',params: {id: result} }" class="van-button" type="info">
           <!-- eslint-disable-next-line -->
           申请移交

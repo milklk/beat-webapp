@@ -10,7 +10,7 @@
       />
       <article
         class="contacts__list"
-        :class="{'contacts__list--ios': $userAgent === 'ios'}"
+        :class="{ 'contacts__list--ios': $userAgent === 'ios' }"
         ref="contacts"
       >
         <van-list

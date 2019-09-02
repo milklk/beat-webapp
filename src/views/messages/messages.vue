@@ -1,4 +1,3 @@
-
 <template>
   <section class="messages">
     <List v-show="$route.path === '/messages'" children="message" />

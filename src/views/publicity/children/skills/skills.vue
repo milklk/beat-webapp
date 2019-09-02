@@ -1,5 +1,6 @@
 <template>
   <section class="messages">
+    <!-- eslint-disable-next-line -->
     <List v-show="$route.path === '/publicity/skills'" children="publicity-skill" />
     <router-view />
   </section>

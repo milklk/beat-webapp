@@ -13,7 +13,10 @@
     <!-- 列表 -->
     <article
       class="list__content"
-      :class="{'list__content--main': $route.meta.footer, 'list__content--ios': $userAgent === 'ios'}"
+      :class="{
+        'list__content--main': $route.meta.footer,
+        'list__content--ios': $userAgent === 'ios'
+      }"
       ref="list"
     >
       <!-- eslint-disable-next-line -->
@@ -22,7 +25,7 @@
         <router-link
           v-for="(item, i) in list"
           :key="i"
-          :to="{ name: children , params: { id: 1 } }"
+          :to="{ name: children, params: { id: 1 } }"
           class="content__item"
         >
           <van-image

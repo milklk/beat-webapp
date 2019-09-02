@@ -43,7 +43,7 @@
       <!-- eslint-disable-next-line -->
       <article
         class="report__list"
-        :class="{'report__list--ios': $userAgent === 'ios'}"
+        :class="{ 'report__list--ios': $userAgent === 'ios' }"
         ref="report"
       >
         <van-list

@@ -1,35 +1,19 @@
 <template>
-  <section>
-
-  </section>
+  <section></section>
 </template>
 
 <script>
 export default {
   name: "contact-party",
-  props: {
-
-  },
+  props: {},
   data() {
-    return {
-
-    };
+    return {};
   },
-  components: {
-
-  },
-  computed: {
-
-  },
-  created() {
-
-  },
-  methods: {
-
-  },
+  components: {},
+  computed: {},
+  created() {},
+  methods: {}
 };
 </script>
 
-<style lang="stylus" scoped>
-
-</style>
+<style lang="stylus" scoped></style>

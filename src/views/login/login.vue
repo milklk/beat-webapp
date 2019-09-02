@@ -1,6 +1,7 @@
 <template>
   <section class="login">
     <article class="login__article">
+      <!-- eslint-disable-next-line -->
       <van-field v-model="user" placeholder="请输入用户名" label="用户名" left-icon="contact" />
       <van-field
         v-model="password"
