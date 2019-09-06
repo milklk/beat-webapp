@@ -15,7 +15,6 @@
       class="list__content"
       :class="{
         'list__content--main': $route.meta.footer,
-        'list__content--ios': $userAgent === 'ios'
       }"
       ref="list"
     >
@@ -192,9 +191,6 @@ export default {
   background #fff
   overflow hidden
 
-  &.list__content--ios
-    height calc( 100vh - 80px - 75px )
-
   .content__item
     display flex
     justify-content space-between
@@ -238,7 +234,4 @@ export default {
 
 .list__content--main
   height calc( 100vh - 130px )
-
-  &.list__content--ios
-    height calc( 100vh - 130px - 75px )
 </style>

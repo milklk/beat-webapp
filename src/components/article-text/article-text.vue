@@ -57,11 +57,13 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.article
+  padding 15px
+
 .article__h
   font-size 20px
   color #152952
   text-align center
-  padding-top 10px
 
 .article__aside
   display flex

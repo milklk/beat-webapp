@@ -9,7 +9,7 @@
         @search="submit"
       />
       <!-- eslint-disable-next-line -->
-      <article class="hands__list" :class="{'hands__list--ios': $userAgent === 'ios'}" ref="hands">
+      <article class="hands__list" ref="hands">
         <van-list
           v-model="loading"
           :finished="finished"
@@ -205,8 +205,7 @@ export default {
   overflow hidden
   border-bottom 10px solid #f2f2f2
 
-  &.hands__list--ios
-    height calc( 100vh - 46px - 54px - 50px - 75px )
+
 
 .list__item
   display flex

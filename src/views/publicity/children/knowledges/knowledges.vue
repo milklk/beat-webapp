@@ -1,7 +1,7 @@
 <template>
   <section class="messages">
     <!-- eslint-disable-next-line -->
-    <List v-show="$route.path === '/publicity/knowledges'" children="publicity-knowledge" />
+    <List v-if="$route.path === '/publicity/knowledges'" children="publicity-knowledge" />
     <router-view />
   </section>
 </template>

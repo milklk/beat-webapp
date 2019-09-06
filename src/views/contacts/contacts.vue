@@ -10,7 +10,6 @@
       />
       <article
         class="contacts__list"
-        :class="{ 'contacts__list--ios': $userAgent === 'ios' }"
         ref="contacts"
       >
         <van-list
@@ -250,9 +249,6 @@ export default {
 .contacts__list
   height calc( 100vh - 46px - 54px - 50px )
   overflow hidden
-
-  &.contacts__list--ios
-    height calc( 100vh - 46px - 54px - 50px - 75px )
 
 .list__item
   display flex

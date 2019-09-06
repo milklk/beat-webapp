@@ -4,9 +4,7 @@
       <headerBar />
     </header>
     <main class="app__main" ref="main" :class="mainClass">
-      <div class="scroll">
-        <router-view />
-      </div>
+      <router-view />
     </main>
     <footer class="app__footer" v-show="$route.meta.footer">
       <footerTab />
@@ -22,10 +20,8 @@ export default {
     return {
       mainClass: {
         "app__main--header": this.$route.meta.header,
-        "app__main--footer": this.$route.meta.footer,
-        "app__main--ios": this.$userAgent === "ios"
-      },
-      bs: {}
+        "app__main--footer": this.$route.meta.footer
+      }
     };
   },
   components: {
@@ -33,59 +29,15 @@ export default {
     headerBar
   },
   created() {},
-  mounted() {
-    this.$nextTick(() => {
-      const BScroll = this.$BScroll;
-      this.bs = new BScroll(this.$refs.main, {
-        scrollY: true,
-        click: true,
-        probeType: 3 // listening scroll hook
-      });
-      const bs = this.bs;
-      const input = document.querySelectorAll("input");
-      const textarea = document.querySelectorAll("textarea");
-      const field = [...input, ...textarea];
-      field.forEach(d => {
-        d.onfocus = function() {
-          bs.scrollToElement(this);
-        };
-        d.onblur = function() {
-          bs.scrollTo(0, 0, 0);
-          bs.refresh();
-        };
-      });
-      window.onresize = () => {
-        bs.scrollTo(0, 0, 0);
-        bs.refresh();
-      };
-    });
-  },
-  beforeDestroy() {
-    this.bs.destroy();
-  },
+  mounted() {},
   watch: {
     $route() {
       this.mainClass = {
         "app__main--header": this.$route.meta.header,
-        "app__main--footer": this.$route.meta.footer,
-        "app__main--ios": this.$userAgent === "ios"
+        "app__main--footer": this.$route.meta.footer
       };
       this.$nextTick(() => {
-        this.bs.scrollTo(0, 0, 0);
-        this.bs.refresh();
-        const bs = this.bs;
-        const input = document.querySelectorAll("input");
-        const textarea = document.querySelectorAll("textarea");
-        const field = [...input, ...textarea];
-        field.forEach(d => {
-          d.onfocus = function() {
-            bs.scrollToElement(this);
-          };
-          d.onblur = function() {
-            bs.scrollTo(0, 0, 0);
-            bs.refresh();
-          };
-        });
+        this.$refs.main.scrollTo(0, 0);
       });
     }
   }
@@ -115,25 +67,16 @@ html, body
   position absolute
   top 0
   left 0
-  overflow hidden
+  overflow auto
 
   &.app__main--header
     height calc( 100vh - 46px )
     margin-top 46px
 
-    &.app__main--ios
-      height calc( 100vh - 46px - 75px )
-
   &.app__main--footer
     height calc( 100vh - 50px )
-
-    &.app__main--ios
-      height calc( 100vh - 50px - 75px )
 
   &.app__main--header.app__main--footer
     height calc( 100vh - 96px )
     margin-top 46px
-
-    &.app__main--ios
-      height calc( 100vh - 96px - 75px )
 </style>

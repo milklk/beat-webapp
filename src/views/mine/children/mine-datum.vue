@@ -1,5 +1,5 @@
 <template>
-  <section class="datum" :class="{ 'datum--ios': $userAgent === 'ios' }">
+  <section class="datum" >
     <van-cell-group>
       <!-- eslint-disable-next-line -->
       <van-field v-model="name" label="用户名" placeholder="请输入用户名" />
@@ -65,8 +65,6 @@ export default {
   top 0
   left 0
 
-  &.datum--ios
-    height calc( 100vh - 46px - 75px )
 
 .datum__footer
   display block

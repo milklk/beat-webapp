@@ -1,5 +1,5 @@
 <template>
-  <section class="report" :class="{ 'report--ios': $userAgent === 'ios' }">
+  <section class="report">
     <div v-show="show === 'main'">
       <van-cell-group>
         <van-cell title="被举报人" :value="name" is-link @click="cutShow" />
@@ -41,11 +41,7 @@
         @search="setSearch"
       />
       <!-- eslint-disable-next-line -->
-      <article
-        class="report__list"
-        :class="{ 'report__list--ios': $userAgent === 'ios' }"
-        ref="report"
-      >
+      <article class="report__list" ref="report">
         <van-list
           v-model="loading"
           :finished="finished"
@@ -295,9 +291,6 @@ export default {
   top 0
   left 0
 
-  &.report--ios
-    height calc( 100vh - 46px - 75px )
-
 .report__footer
   display block
   position absolute
@@ -323,9 +316,6 @@ export default {
   height calc( 100vh - 46px - 54px - 50px )
   overflow hidden
   border-bottom 10px solid #f2f2f2
-
-  &.report__list--ios
-    height calc( 100vh - 46px - 54px - 50px - 75px )
 
 .list__item
   display flex

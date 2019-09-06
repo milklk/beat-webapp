@@ -31,7 +31,7 @@
             <van-icon name="apps-o" size="22" color="#1989fa" />
             <h2 class="h_title">常用功能</h2>
           </header>
-          <van-grid>
+          <van-grid :border="false">
             <van-grid-item
               v-for="(action, i) in actions"
               :key="i"
@@ -182,7 +182,7 @@ export default {
           },
           tooltip: {
             trigger: "item",
-            formatter: "{a} <br/>{b}: {c} ({d}%)"
+            formatter: "{b}: {c} ({d}%)"
           },
           legend: {
             orient: "vertical",

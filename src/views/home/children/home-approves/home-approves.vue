@@ -2,7 +2,7 @@
   <section class="approves">
     <!-- eslint-disable-next-line -->
     <van-tabs
-      v-show="$route.path === '/home/approves'"
+      v-if="$route.path === '/home/approves'"
       v-model="active"
       line-width="50%"
       title-active-color="#09f"
@@ -16,11 +16,7 @@
           background="#f2f2f2"
           @search="submit(tab.status)"
         />
-        <article
-          class="approves__list"
-          :class="{ 'approves__list--ios': $userAgent === 'ios' }"
-          ref="content"
-        >
+        <article class="approves__list" ref="content">
           <!-- eslint-disable-next-line -->
           <van-list
             v-model="loading[tab.status]"
@@ -256,42 +252,25 @@ export default {
   },
   created() {},
   mounted() {
-    this.$nextTick(() => {
-      const BScroll = this.$BScroll;
-      this.bs.dandelion = new BScroll(this.$refs.content[0], {
-        scrollY: true,
-        probeType: 3,
-        pullUpLoad: true
+    if (this.$route.path === "/home/approves") {
+      this.$nextTick(() => {
+        this.$_setBScroll("dandelion", 0);
       });
-      this.bs.dandelion.on("pullingUp", this.pullingUpHandler);
-      this.loading.dandelion = this.bs.dandelion.hasVerticalScroll
-        ? true
-        : false;
-      this.finished.dandelion = this.bs.dandelion.hasVerticalScroll
-        ? false
-        : true;
-    });
+    }
   },
   updated() {
-    this.$nextTick(() => {
-      const BScroll = this.$BScroll;
-      if (!this.bs.approval && this.$refs.content.length === 2) {
-        this.bs.approval = new BScroll(this.$refs.content[1], {
-          scrollY: true,
-          probeType: 3,
-          pullUpLoad: true
-        });
-        this.bs.approval.on("pullingUp", this.pullingUpHandler);
-        this.loading.approval = this.bs.approval.hasVerticalScroll
-          ? true
-          : false;
-        this.finished.approval = this.bs.approval.hasVerticalScroll
-          ? false
-          : true;
-      }
-      this.bs[this.active].finishPullUp();
-      this.bs[this.active].refresh();
-    });
+    if (this.$route.path === "/home/approves") {
+      this.$nextTick(() => {
+        if (!this.bs.dandelion && this.$refs.content.length === 1) {
+          this.$_setBScroll("dandelion", 0);
+        }
+        if (!this.bs.approval && this.$refs.content.length === 2) {
+          this.$_setBScroll("approval", 1);
+        }
+        this.bs[this.active].finishPullUp();
+        this.bs[this.active].refresh();
+      });
+    }
   },
   methods: {
     submit(status) {
@@ -329,6 +308,18 @@ export default {
         default:
           break;
       }
+    },
+    $_setBScroll(status, index) {
+      const BScroll = this.$BScroll;
+      this.bs[status] = new BScroll(this.$refs.content[index], {
+        scrollY: true,
+        probeType: 3,
+        click: true,
+        pullUpLoad: true
+      });
+      this.bs[status].on("pullingUp", this.pullingUpHandler);
+      this.loading[status] = this.bs[status].hasVerticalScroll ? true : false;
+      this.finished[status] = this.bs[status].hasVerticalScroll ? false : true;
     }
   }
 };
@@ -350,9 +341,6 @@ export default {
 .approves__list
   height calc( 100vh - 145px )
   overflow hidden
-
-  &.approves__list--ios
-    height calc( 100vh - 145px - 75px )
 
   .list__item
     display flex

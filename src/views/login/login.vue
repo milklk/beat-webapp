@@ -1,5 +1,5 @@
 <template>
-  <section class="login">
+  <section class="login" :style="{height: `${height}px`}">
     <article class="login__article">
       <!-- eslint-disable-next-line -->
       <van-field v-model="user" placeholder="请输入用户名" label="用户名" left-icon="contact" />
@@ -22,12 +22,15 @@ export default {
   data() {
     return {
       user: "",
-      password: ""
+      password: "",
+      height: 0
     };
   },
   components: {},
   computed: {},
-  created() {},
+  created() {
+    this.height = window.innerHeight;
+  },
   methods: {
     login() {
       this.$router.push({ path: "/home" });

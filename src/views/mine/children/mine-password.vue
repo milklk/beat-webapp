@@ -1,5 +1,5 @@
 <template>
-  <section class="password" :class="{ 'password--ios': $userAgent === 'ios' }">
+  <section class="password">
     <van-cell-group>
       <!-- eslint-disable-next-line -->
       <van-field
@@ -65,9 +65,6 @@ export default {
   top 0
   left 0
 
-  &.password--ios
-    height calc( 100vh - 46px - 75px )
-
 .password__footer
   display block
   position absolute
@@ -77,7 +74,7 @@ export default {
   margin auto
   padding 5px 20px
 
-@media ( max-height: 250px )
+@media ( max-height: 500px )
   .password__footer
     display none
 </style>

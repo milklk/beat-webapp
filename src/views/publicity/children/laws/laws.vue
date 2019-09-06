@@ -1,6 +1,6 @@
 <template>
   <section class="messages">
-    <List v-show="$route.path === '/publicity/laws'" children="publicity-law" />
+    <List v-if="$route.path === '/publicity/laws'" children="publicity-law" />
     <router-view />
   </section>
 </template>

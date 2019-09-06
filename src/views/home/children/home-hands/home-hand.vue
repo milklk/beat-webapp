@@ -8,7 +8,7 @@
       @search="submit"
     />
     <!-- eslint-disable-next-line -->
-    <article class="hand__list" :class="{'hand__list--ios': $userAgent === 'ios'}" ref="hand">
+    <article class="hand__list" ref="hand">
       <van-list
         v-model="loading"
         :finished="finished"
@@ -148,8 +148,6 @@ export default {
   overflow hidden
   border-bottom 10px solid #f2f2f2
 
-  &.hand__list--ios
-    height calc( 100vh - 46px - 54px - 50px - 75px )
 
 .hand__footer
   height 50px

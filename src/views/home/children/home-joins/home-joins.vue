@@ -3,7 +3,6 @@
     <!-- eslint-disable-next-line -->
     <article
       class="joins__list"
-      :class="{ 'joins__list--ios': $userAgent === 'ios' }"
       ref="joins"
       v-show="$route.path === '/home/joins'"
     >
@@ -143,6 +142,7 @@ export default {
       const BScroll = this.$BScroll;
       this.bs = new BScroll(this.$refs.joins, {
         scrollY: true,
+        click: true,
         probeType: 3,
         pullUpLoad: true
       });
@@ -180,8 +180,6 @@ export default {
   height calc( 100vh - 46px )
   overflow hidden
 
-  &.joins__list--ios
-    height calc( 100vh - 46px - 75px )
 
   .list__item
     display flex
