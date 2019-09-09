@@ -102,6 +102,7 @@ export default {
       this.bs = new BScroll(this.$refs.hand, {
         scrollY: true,
         probeType: 3,
+        click: true,
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
@@ -147,7 +148,6 @@ export default {
   height calc( 100vh - 46px - 54px - 50px )
   overflow hidden
   border-bottom 10px solid #f2f2f2
-
 
 .hand__footer
   height 50px

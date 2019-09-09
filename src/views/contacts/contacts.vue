@@ -8,10 +8,7 @@
         background="#f2f2f2"
         @search="submit"
       />
-      <article
-        class="contacts__list"
-        ref="contacts"
-      >
+      <article class="contacts__list" ref="contacts">
         <van-list
           v-model="loading"
           :finished="finished"
@@ -205,6 +202,7 @@ export default {
       this.bs = new BScroll(this.$refs.contacts, {
         scrollY: true,
         probeType: 3,
+        click: true,
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);

@@ -211,6 +211,7 @@ export default {
       this.bs = new BScroll(this.$refs.report, {
         scrollY: true,
         probeType: 3,
+        click: true,
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
