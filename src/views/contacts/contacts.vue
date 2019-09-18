@@ -3,10 +3,10 @@
     <div v-show="$route.path === '/contacts'">
       <van-search
         placeholder="请输入搜索关键词"
-        v-model="search"
+        v-model="keyword"
         shape="round"
         background="#f2f2f2"
-        @search="submit"
+        @search="search"
       />
       <article class="contacts__list" ref="contacts">
         <van-list
@@ -16,41 +16,31 @@
           :immediate-check="false"
         >
           <!-- eslint-disable-next-line -->
-          <router-link
-            v-for="(item, i) in list"
-            :key="i"
-            :name="i"
-            class="list__item"
-            :to="{ name: 'contact', params: { id: 1 } }"
-          >
+          <div v-for="(item, i) in list" :key="i" class="list__item" @click="link(item.code)">
             <!-- eslint-disable-next-line -->
-            <van-image class="item__avatar" :src="require('../../assets/img/people-head.png')" />
+            <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
             <ul class="item__content">
               <li class="content__li">
                 <p class="li__p">
-                  <strong class="p__strong">王晓婷</strong>
-                  <span class="p__span">（临桂区）</span>
+                  <strong class="p__strong">{{ item.name }}</strong>
+                  <!-- <span class="p__span">（ {{item.sex}} ）</span> -->
                 </p>
-                <p class="li__p">18011981787</p>
+                <p class="li__p">{{item.mobile}}</p>
               </li>
               <li class="content__li">
-                <p class="li__p">45505319******1100</p>
+                <p class="li__p">{{item.idCard}}</p>
                 <p class="li__p">
                   <!-- eslint-disable-next-line -->
-                  <van-tag class="van-tag" v-if="item.risk === 30" type="danger">高风险</van-tag>
-                  <!-- eslint-disable-next-line -->
-                  <van-tag class="van-tag" v-else-if="item.risk === 20" color="rgb(255, 153, 0)">
-                    <!-- eslint-disable-next-line -->
-                    中风险
-                  </van-tag>
-                  <!-- eslint-disable-next-line -->
-                  <van-tag class="van-tag" v-else type="success">低风险</van-tag>
-                  <!-- eslint-disable-next-line -->
-                  <van-tag class="van-tag" v-if="item.status">{{ item.status }}</van-tag>
+                  <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
+                  <van-tag
+                    class="van-tag"
+                    type="danger"
+                    v-if="item.status"
+                  >{{ item.userStatusName }}</van-tag>
                 </p>
               </li>
             </ul>
-          </router-link>
+          </div>
         </van-list>
       </article>
     </div>
@@ -58,26 +48,26 @@
       <h3 class="header__h">
         <article>
           <strong class="h__name">{{ addict.name }}</strong>
-          <span class="h__area">（{{ addict.area }}）</span>
         </article>
-        <!-- eslint-disable-next-line -->
-        <van-tag class="van-tag" v-if="addict.risk === 30" type="danger">高风险</van-tag>
-        <!-- eslint-disable-next-line -->
-        <van-tag class="van-tag" v-else-if="addict.risk === 20" color="rgb(255, 153, 0)">中风险</van-tag>
-        <!-- eslint-disable-next-line -->
-        <van-tag class="van-tag" v-else type="success">低风险</van-tag>
+        <div>
+          <van-tag class="van-tag" type="success">{{ addict.sex }}</van-tag>
+          <van-tag class="van-tag">{{ addict.idCard }}</van-tag>
+        </div>
       </h3>
       <p class="header__p">
         <!-- eslint-disable-next-line -->
-        {{addict.phone}} {{ addict.type }} {{ addict.startTime }} 至 {{ addict.endTime }}
+        {{addict.mobile}} 社区戒毒 {{ addict.startTime }} 至 {{ addict.endTime }}
       </p>
-      <p class="header__p">{{ addict.site }}</p>
+      <p class="header__p">{{ addict.address }}</p>
     </header>
     <router-view></router-view>
   </section>
 </template>
 
 <script>
+import { archivesList, archivesDetail, headPhoto } from "../../api/index.js";
+import photo from "../../assets/img/people-head.png";
+import { format } from "../../utils/date";
 export default {
   name: "contacts",
   props: {},
@@ -85,117 +75,27 @@ export default {
     return {
       loading: true,
       finished: false,
-      result: [],
-      search: "",
-      list: [
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        }
-      ],
-      addict: {
-        name: "张怀志",
-        area: "临桂区",
-        risk: 20,
-        phone: 18211981789,
-        type: "社区戒毒",
-        startTime: "2017-7-1",
-        endTime: "2020-6-1",
-        site: "广西壮族自治区桂林市临桂区金水路3号"
-      },
-      total: 30,
+      keyword: "",
+      list: [],
+      page: 1,
+      addict: {},
+      total: 0,
       bs: {}
     };
   },
   components: {},
   computed: {},
-  created() {},
+  async created() {
+    await this.updateList();
+    if (this.$route.path !== "/contacts") {
+      const code = this.$route.params.id;
+      await this.updateDetail(code);
+    }
+    if (this.total <= 15) {
+      this.loading = false;
+      this.finished = true;
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       const BScroll = this.$BScroll;
@@ -206,8 +106,6 @@ export default {
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
-      this.loading = this.bs.hasVerticalScroll ? true : false;
-      this.finished = this.bs.hasVerticalScroll ? false : true;
     });
   },
   updated() {
@@ -217,16 +115,49 @@ export default {
     });
   },
   methods: {
-    submit() {},
+    async search() {
+      this.page = 1;
+      const contacts = await archivesList(this.page++, 15, this.keyword);
+      if (contacts.ret === "200") {
+        this.list = contacts.data.list;
+        this.total = contacts.data.total;
+        if (this.total <= 15) {
+          this.loading = false;
+          this.finished = true;
+        }
+      }
+    },
     async pullingUpHandler() {
       if (this.list.length >= this.total) {
         this.finished = true;
         this.loading = false;
       } else {
-        const list = this.list.slice(0, 5);
-        await setTimeout(() => {
-          this.list = this.list.concat(list);
-        }, 2000);
+        this.updateList();
+      }
+    },
+    setPhoto(attId) {
+      const headerImg = attId ? headPhoto(attId) : photo;
+      return headerImg;
+    },
+    async updateList() {
+      const contacts = await archivesList(this.page++, 15, this.keyword);
+      if (contacts.ret === "200") {
+        this.list = contacts.data.list;
+        this.total = contacts.data.total;
+      }
+    },
+    async link(code) {
+      await this.updateDetail(code);
+      this.$router.push({ name: "contact", params: { id: code } });
+    },
+    async updateDetail(code) {
+      const archive = await archivesDetail(code);
+      if (archive.ret === "200") {
+        archive.data.startTime = archive.data.startTime
+          ? format(archive.data.startTime)
+          : "未知";
+        archive.data.endTime = format(archive.data.endTime);
+        this.addict = archive.data;
       }
     }
   }
@@ -262,7 +193,7 @@ export default {
     display inline-flex
     width 260px
     height 50px
-    justify-content space-around
+    justify-content space-between
 
     .content__li
       display flex
@@ -280,6 +211,10 @@ export default {
           line-height 22px
           font-weight 400
           color #152962
+          white-space nowrap
+          max-width 65px
+          overflow hidden
+          text-overflow ellipsis
 
         .p__span
           line-height 22px

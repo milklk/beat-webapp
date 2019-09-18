@@ -2,10 +2,10 @@
   <section class="hand">
     <van-search
       placeholder="请输入搜索关键词"
-      v-model="search"
+      v-model="keyword"
       shape="round"
       background="#f2f2f2"
-      @search="submit"
+      @search="search"
     />
     <!-- eslint-disable-next-line -->
     <article class="hand__list" ref="hand">
@@ -15,26 +15,26 @@
         finished-text="没有更多了"
         :immediate-check="false"
       >
-        <van-checkbox-group v-model="result">
+        <van-radio-group v-model="result">
           <van-cell
             v-for="(item, i) in list"
             :key="i"
-            :value="item.phone"
-            class="van-cell--checkbox"
+            :value="item.mobile"
+            class="van-cell--checkbox van-cell--auto"
           >
             <template #title>
-              <van-checkbox v-model="checked" :name="i">
+              <van-radio :name="item.userId">
                 <!-- eslint-disable-next-line -->
-                <div class="van-checkbox__label">{{ item.name }}({{ item.area }})</div>
-              </van-checkbox>
+                <div class="van-checkbox__label">{{ item.realname }}</div>
+              </van-radio>
             </template>
           </van-cell>
-        </van-checkbox-group>
+        </van-radio-group>
       </van-list>
     </article>
     <footer class="hand__footer">
       <!-- eslint-disable-next-line -->
-      <van-button :to="{name: 'home-hand',params: {id: result} }" class="van-button" type="info">
+      <van-button @click="transfer" class="van-button" type="info">
         <!-- eslint-disable-next-line -->
         确认移交
       </van-button>
@@ -43,57 +43,35 @@
 </template>
 
 <script>
+import { archivesUsers, archivesTransfer } from "../../../../api";
 export default {
   name: "",
   props: {},
   data() {
     return {
-      loading: false,
-      finished: true,
+      loading: true,
+      finished: false,
+      page: 1,
+      keyword: "",
       result: [],
-      search: "",
       checked: [],
-      list: [
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        }
-      ],
-      total: 20
+      list: [],
+      total: 0,
+      bs: {}
     };
   },
   components: {},
   computed: {},
-  created() {
+  async created() {
     const params = this.$route.params;
     if (!params.id) {
       this.$router.go(-1);
+    } else {
+      await this.updateList();
+      if (this.total <= 15) {
+        this.loading = false;
+        this.finished = true;
+      }
     }
   },
   mounted() {
@@ -106,8 +84,6 @@ export default {
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
-      this.loading = this.bs.hasVerticalScroll ? true : false;
-      this.finished = this.bs.hasVerticalScroll ? false : true;
     });
   },
   updated() {
@@ -117,16 +93,45 @@ export default {
     });
   },
   methods: {
-    submit() {},
+    async search() {
+      this.page = 1;
+      const hand = await archivesUsers(this.page++, 15, this.keyword);
+      if (hand.ret === "200") {
+        this.list = hand.data.list;
+        this.total = hand.data.total;
+        if (this.total <= 15) {
+          this.loading = false;
+          this.finished = true;
+        }
+      }
+    },
     async pullingUpHandler() {
       if (this.list.length >= this.total) {
         this.finished = true;
         this.loading = false;
       } else {
-        const list = this.list.slice(0, 5);
-        await setTimeout(() => {
-          this.list = this.list.concat(list);
-        }, 2000);
+        this.updateList();
+      }
+    },
+    async updateList() {
+      const hand = await archivesUsers(this.page++, 15, this.keyword);
+      if (hand.ret === "200") {
+        this.list = this.list.concat(hand.data.list);
+        this.total = hand.data.total;
+      }
+    },
+    async transfer() {
+      const archivesCodes = this.$route.params.id;
+      const userId = this.result;
+      const show = await archivesTransfer(archivesCodes, userId);
+      if (show.ret === "200") {
+        this.$toast.success({
+          message: "移交成功",
+          duration: 500,
+          onClose: () => {
+            this.$router.go(-1);
+          }
+        });
       }
     }
   }

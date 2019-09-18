@@ -1,131 +1,117 @@
 <template>
+  <!-- eslint-disable -->
   <section class="urinalysis">
-    <van-cell-group class="van-cell-group van-cell-group--mini">
-      <van-cell
-        title="尿检记录"
-        :value="total"
-        is-link
-        :to="{
-          name: 'contact-record',
-          params: { header: '尿检记录', id: $route.params.id }
-        }"
-      />
-    </van-cell-group>
-    <van-divider class="van-divider">代上传尿检信息</van-divider>
-    <van-cell-group class="van-cell-group van-cell-group--mini">
-      <van-cell required title="尿检时间" :value="form.time" @click="setTime">
-        <template #right-icon>
-          <van-icon class="van-icon" name="add-o" />
-        </template>
-      </van-cell>
-      <van-field v-model="form.area" label="尿检结果" required>
-        <template #input>
-          <van-radio-group v-model="form.status" class="van-radio-group">
-            <van-radio name="1">阳性</van-radio>
-            <van-radio name="2">阴性</van-radio>
-          </van-radio-group>
-        </template>
-      </van-field>
-      <van-field label="尿检单" required>
-        <template #input>
-          <van-uploader
-            v-model="file"
-            :max-count="1"
-            class="van-uploader"
-            :before-read="beforeRead"
-            upload-text="请上传JPG或PNG图片"
-          />
-        </template>
-      </van-field>
-      <!-- eslint-disable-next-line -->
-      <van-field v-model="form.area" label="尿检地点" placeholder="请输入尿检地址" required />
-      <van-field
-        v-model="form.content"
-        required
-        label="代上传事由"
-        type="textarea"
-        placeholder="请输入代上传事由"
-        rows="3"
-        maxlength
-        error-message="提示：代上传事由输入字数不多于200字"
-      />
-      <!-- eslint-disable-next-line -->
-      <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
-        <van-datetime-picker
-          v-model="time"
-          type="date"
-          @confirm="timeConfirm"
-          @cancel="timeCancel"
+    <div class="urinalysis-main">
+      <van-cell-group class="van-cell-group van-cell-group--mini">
+        <van-cell
+          title="尿检记录"
+          :value="total"
+          is-link
+          :to="{ name: 'contact-record', params: { header: '尿检记录', id: $route.params.id } }"
         />
-      </van-popup>
-    </van-cell-group>
-    <van-divider class="van-divider">社工信息</van-divider>
-    <van-cell-group class="van-cell-group">
-      <van-cell title="社工姓名" :value="worker.name" />
-      <van-cell title="联系电话" :value="worker.phone" />
-      <van-radio-group v-model="radio">
-        <!-- eslint-disable-next-line -->
-        <van-cell title="以上尿检信息属实，由本人代上传尿检信息。" @click="radio=radio === false ? true : false">
-          <template #icon>
-            <van-radio class="van-radio" :name="true" />
+      </van-cell-group>
+      <van-divider class="van-divider">代上传尿检信息</van-divider>
+      <van-cell-group class="van-cell-group van-cell-group--mini">
+        <van-cell required title="尿检时间" :value="form.checkTime" @click="setTime">
+          <template #right-icon>
+            <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
-      </van-radio-group>
-    </van-cell-group>
+        <van-field v-model="form.area" label="尿检结果" required>
+          <template #input>
+            <van-radio-group v-model="form.checkResult" class="van-radio-group">
+              <van-radio name="0">阳性</van-radio>
+              <van-radio name="1">阴性</van-radio>
+            </van-radio-group>
+          </template>
+        </van-field>
+        <Update :file.sync="file" label="尿检单" />
+        <van-field v-model="form.checkAddress" label="尿检地点" placeholder="请输入尿检地址" required />
+        <van-field
+          v-model="form.checkRemark"
+          required
+          label="代上传事由"
+          type="textarea"
+          placeholder="请输入代上传事由"
+          rows="3"
+          maxlength
+          error-message="提示：代上传事由输入字数不多于200字"
+        />
+        <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
+          <van-datetime-picker
+            v-model="time"
+            type="date"
+            @confirm="timeConfirm"
+            @cancel="timeCancel"
+          />
+        </van-popup>
+      </van-cell-group>
+      <van-divider class="van-divider">社工信息</van-divider>
+      <Worker>
+        <van-radio-group v-model="radio">
+          <van-cell title="以上尿检信息属实，由本人代上传尿检信息。" @click="radio=radio === false ? true : false">
+            <template #icon>
+              <van-radio class="van-radio" :name="true" />
+            </template>
+          </van-cell>
+        </van-radio-group>
+      </Worker>
+    </div>
     <footer class="urinalysis__footer">
       <van-button class="van-button" @click="cancel">取消</van-button>
-      <!-- eslint-disable-next-line -->
       <van-button class="van-button" type="primary" @click="confirm">确认</van-button>
     </footer>
   </section>
 </template>
 
 <script>
+import Worker from "../../../components/worker/worker";
+import Update from "../../../components/update/update";
+import { urineAdd, urineRecord, fileAdd } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-urinalysis",
   props: {},
   data() {
     return {
-      total: 3,
+      total: 0,
       show: false,
       time: new Date(),
-      file: [],
+      file: {},
       radio: true,
       form: {
-        time: `${format(new Date(), "yyyy-MM-dd")}`,
-        area: "",
-        content: "",
-        file: "",
-        status: "2"
-      },
-      worker: {
-        name: "彭晓薇",
-        phone: 13423678765
+        checkTime: `${format(new Date(), "yyyy-MM-dd")}`,
+        checkResult: "1",
+        checkAddress: "",
+        checkRemark: "",
+        archivesCode: this.$route.params.id,
+        fileIdTmp: ""
       }
     };
   },
-  components: {},
+  components: {
+    Worker,
+    Update
+  },
   computed: {},
-  created() {},
+  async created() {
+    const id = this.$route.params.id;
+    const record = await urineRecord(id);
+    if (record.ret === "200") {
+      this.total = record.data.total;
+    }
+  },
   methods: {
     setTime() {
       this.show = true;
+      this.checkTime = new Date(this.form.checkTime);
     },
     timeConfirm() {
-      this.form.time = `${format(this.time, "yyyy-MM-dd")}`;
+      this.form.checkTime = `${format(this.time, "yyyy-MM-dd")}`;
       this.show = false;
     },
     timeCancel() {
-      this.time = new Date(this.form.time);
       this.show = false;
-    },
-    beforeRead(file) {
-      const i = file.type.indexOf("image");
-      if (i !== 0) {
-        this.$toast.fail("请上传\n图片类型文件");
-      }
-      return i === 0;
     },
     cancel() {
       this.$toast.fail({
@@ -136,21 +122,40 @@ export default {
         }
       });
     },
-    confirm() {
-      const loading = this.$toast.loading({
-        mask: true,
-        message: "代上传\n尿检信息中"
-      });
-      setTimeout(() => {
-        loading.clear();
-        this.$toast.success({
-          message: "代上传\n尿检信息成功",
-          duration: 500,
-          onClose: () => {
-            this.$router.go(-1);
-          }
+    async confirm() {
+      if (this.radio) {
+        const loading = this.$toast.loading({
+          mask: true,
+          message: "代上传\n尿检信息中"
         });
-      }, 2000);
+        const file = await fileAdd(this.file);
+        if (file.ret === "200") {
+          this.form.fileIdTmp = file.data;
+          const urinalysis = await urineAdd(
+            this.form.checkTime,
+            this.form.checkResult,
+            this.form.checkAddress,
+            this.form.checkRemark,
+            this.form.archivesCode,
+            this.form.fileIdTmp
+          );
+          if (urinalysis.ret === "200") {
+            loading.clear();
+            this.$toast.success({
+              message: "代上传\n尿检信息成功",
+              duration: 500,
+              onClose: () => {
+                this.$router.go(-1);
+              }
+            });
+          }
+        }
+      } else {
+        this.$toast.fail({
+          message: "未同意相关协议",
+          duration: 500
+        });
+      }
     }
   }
 };
@@ -189,6 +194,9 @@ export default {
 
 .van-button
   padding 0 50px
+
+.urinalysis-main
+  min-height calc( 100vh - 54px - 46px - 100px )
 
 .urinalysis__footer
   padding 5px

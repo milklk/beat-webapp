@@ -1,7 +1,7 @@
 <template>
   <section class="list">
     <!-- header -->
-    <van-cell :title="`未读：${total}`" class="list__header">
+    <van-cell :title="`未读：${unread}`" class="list__header" v-if="headerShow">
       <template #right-icon>
         <!-- eslint-disable-next-line -->
         <van-icon name="ellipsis" color="#666" size="16" class="header__i" @click="operation" />
@@ -14,41 +14,44 @@
     <article
       class="list__content"
       :class="{
-        'list__content--main': $route.meta.footer,
+        'list__content--noHeader': !headerShow,
+        'list__content--footer': $route.meta.footer
       }"
       ref="list"
     >
       <!-- eslint-disable-next-line -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
         <!-- eslint-disable-next-line -->
-        <router-link
-          v-for="(item, i) in list"
-          :key="i"
-          :to="{ name: children, params: { id: 1 } }"
-          class="content__item"
-        >
+        <div v-for="(item, i) in list" :key="i" class="content__item" @click="readed(item)">
           <van-image
             class="item__icon"
-            :class="{ 'item__icon--not': !item.status }"
+            :class="{ 'item__icon--not': item.isRead === 0 }"
             :src="require('../../assets/img/list-img.png')"
           />
           <div class="item__main">
             <h3 class="main__h">{{ item.title }}</h3>
-            <p class="main__p">{{ item.content }}</p>
+            <p class="main__p" v-html="item.content"></p>
           </div>
           <aside class="item__time">{{ item.time }}</aside>
-        </router-link>
+        </div>
       </van-list>
     </article>
   </section>
 </template>
 
 <script>
-import { setTimeout } from "timers";
 export default {
   name: "list",
   props: {
-    children: String
+    children: Object,
+    list: Array,
+    total: Number,
+    unread: Number,
+    api: Object,
+    headerShow: {
+      type: Boolean,
+      default: true
+    }
   },
   data() {
     return {
@@ -56,69 +59,6 @@ export default {
       actions: [{ name: "全部已读" }],
       loading: true,
       finished: false,
-      total: 2,
-      list: [
-        {
-          title: "通知公告",
-          content: "国务院“互联网+督查”平台日前开通群众表示认可",
-          time: "2019-07-19",
-          status: 0
-        },
-        {
-          title: "通知公告",
-          content: "桂林市公安局网站域名变更的通知",
-          time: "2019-06-29",
-          status: 0
-        },
-        {
-          title: "通知公告",
-          content: "市局召开桂林公安社会服务平台建设工作情况汇报会议",
-          time: "2019-06-19",
-          status: 1
-        },
-        {
-          title: "通知公告",
-          content: "国务院发布一系列促进深化改革的措施",
-          time: "2019-05-29",
-          status: 1
-        },
-        {
-          title: "通知公告",
-          content: "桂林市公安局网站建设情况的通知",
-          time: "2019-05-09",
-          status: 1
-        },
-        {
-          title: "通知公告",
-          content: "国务院“互联网+督查”平台日前开通群众表示认可",
-          time: "2019-07-19",
-          status: 0
-        },
-        {
-          title: "通知公告",
-          content: "桂林市公安局网站域名变更的通知",
-          time: "2019-06-29",
-          status: 0
-        },
-        {
-          title: "通知公告",
-          content: "市局召开桂林公安社会服务平台建设工作情况汇报会议",
-          time: "2019-06-19",
-          status: 1
-        },
-        {
-          title: "通知公告",
-          content: "国务院发布一系列促进深化改革的措施",
-          time: "2019-05-29",
-          status: 1
-        },
-        {
-          title: "通知公告",
-          content: "桂林市公安局网站建设情况的通知",
-          time: "2019-05-09",
-          status: 1
-        }
-      ],
       bs: {}
     };
   },
@@ -126,6 +66,10 @@ export default {
   computed: {},
   created() {},
   mounted() {
+    if (this.total <= 15) {
+      this.loading = false;
+      this.finished = true;
+    }
     //创建bscroll实例，并绑定上拉加载事件
     this.$nextTick(() => {
       const BScroll = this.$BScroll;
@@ -138,6 +82,12 @@ export default {
       this.bs.on("pullingUp", this.pullingUpHandler);
     });
   },
+  updated() {
+    this.$nextTick(() => {
+      this.bs.finishPullUp();
+      this.bs.refresh();
+    });
+  },
   beforeDestroy() {
     this.bs.destroy();
   },
@@ -146,27 +96,48 @@ export default {
     operation() {
       this.sheetShow = true;
     },
+    async readed(item) {
+      if (item.isRead === 0) {
+        const read = await this.api.readed(item.id);
+        if (read.ret === "200") {
+          item.isRead = 1;
+          const unread = this.unread - 1;
+          await this.$emit("update:unread", unread);
+          this.$router.push({
+            name: this.children.name,
+            params: { id: item[this.children.idName] }
+          });
+        }
+      } else {
+        this.$router.push({
+          name: this.children.name,
+          params: { id: item[this.children.idName] }
+        });
+      }
+    },
     //全部已读提交
-    select() {
+    async select() {
       this.sheetShow = false;
-      const list = this.list.filter(d => !d.status);
-      list.forEach(d => (d.status = 1));
-      this.$toast({ type: "success", message: "全部已读", duration: 500 });
+      if (this.unread !== 0) {
+        const read = await this.api.readAll();
+        if (read.ret === "200") {
+          this.$emit("update:unread", 0);
+          this.$toast({ type: "success", message: "全部已读", duration: 700 });
+          this.list.forEach(d => {
+            d.isRead = 1;
+          });
+        }
+      } else {
+        this.$toast({ type: "fail", message: "已全部已读", duration: 700 });
+      }
     },
     //上拉加载事件
     async pullingUpHandler() {
-      if (this.list.length >= 20) {
-        this.finished = true;
-        this.loading = false;
+      if (this.loading && this.list.length < this.total) {
+        await this.$emit("update");
       } else {
-        const list = this.list.slice(0, 5);
-        await setTimeout(() => {
-          this.list = this.list.concat(list);
-          this.$nextTick(() => {
-            this.bs.finishPullUp();
-            this.bs.refresh();
-          });
-        }, 2000);
+        this.loading = false;
+        this.finished = true;
       }
     }
   }
@@ -223,15 +194,15 @@ export default {
       .main__h
         font-size 16px
         font-weight normal
-        overflow hidden
-        text-overflow ellipsis
-        white-space nowrap
 
-      .main__p
-        overflow hidden
-        text-overflow ellipsis
-        white-space nowrap
+.item__main .main__p, .item__main .main__h
+  overflow hidden
+  text-overflow ellipsis
+  white-space nowrap
 
-.list__content--main
+.list__content--noHeader
+  height calc( 100vh - 46px )
+
+.list__content--footer
   height calc( 100vh - 130px )
 </style>

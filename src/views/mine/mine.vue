@@ -4,21 +4,16 @@
       <header class="mine__header">
         <h3 class="header__h">
           <article>
-            <strong class="h__name">{{ mine.name }}</strong>
-            <span class="h__sex">（{{ mine.sex }}）</span>
+            <strong class="h__name">{{ mine.account }}</strong>
           </article>
-          <p class="header__p">{{ mine.phone }}</p>
         </h3>
-        <p class="header__p">
-          <span>{{ mine.work }}</span>
-          <span>{{ mine.job }}</span>
-        </p>
-        <p class="header__p">电子邮件：{{ mine.email }}</p>
+        <p class="header__p">身份证号：{{ mine.idCard }}</p>
+        <p class="header__p">联系方式：{{ mine.userMobile }}</p>
+        <p class="header__p">居住地址：{{ mine.address }}</p>
       </header>
       <van-cell-group>
-        <van-cell title="修改密码" is-link to="/mine/password" />
         <van-cell title="修改资料" is-link to="/mine/datum" />
-        <van-cell title="一键举报" is-link to="/mine/report" />
+        <!-- <van-cell title="一键举报" is-link to="/mine/report" /> -->
         <van-cell title="关于" is-link to="/mine/about" />
       </van-cell-group>
     </div>
@@ -27,25 +22,33 @@
 </template>
 
 <script>
+import { mineDetail } from "../../api";
 export default {
   name: "mine",
   props: {},
   data() {
     return {
-      mine: {
-        name: "彭晓薇",
-        sex: "女",
-        phone: "12312312311",
-        email: "xiaowei2015@chuxin.com",
-        work: "初心社工咨询有限公司",
-        job: "初心社工"
-      }
+      mine: {}
     };
   },
   components: {},
   computed: {},
-  created() {},
-  methods: {}
+  async created() {
+    const mine = await mineDetail();
+    if (mine.ret === "200") {
+      this.mine = mine.data;
+    }
+  },
+  watch: {
+    async $route() {
+      if (this.$route.path === "/mine") {
+        const mine = await mineDetail();
+        if (mine.ret === "200") {
+          this.mine = mine.data;
+        }
+      }
+    }
+  }
 };
 </script>
 

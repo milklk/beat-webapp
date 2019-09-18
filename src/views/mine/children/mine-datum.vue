@@ -1,18 +1,14 @@
 <template>
-  <section class="datum" >
+  <section class="datum">
     <van-cell-group>
       <!-- eslint-disable-next-line -->
-      <van-field v-model="name" label="用户名" placeholder="请输入用户名" />
+      <van-field v-model="realname" label="用户名" placeholder="请输入用户名" />
       <!-- eslint-disable-next-line -->
-      <van-field v-model="sex" label="性别" placeholder="请输入性别" />
+      <van-field v-model="idCard" label="身份证号" placeholder="请输入身份证号" />
       <!-- eslint-disable-next-line -->
-      <van-field v-model="phone" label="联系电话" placeholder="请输入联系电话" />
+      <van-field v-model="userMobile" label="联系电话" placeholder="请输入联系电话" />
       <!-- eslint-disable-next-line -->
-      <van-field v-model="work" label="公司" placeholder="请输入公司" />
-      <!-- eslint-disable-next-line -->
-      <van-field v-model="phone" label="职位" placeholder="请输入职位" />
-      <!-- eslint-disable-next-line -->
-      <van-field v-model="email" label="电子邮件" placeholder="请输入电子邮件" />
+      <van-field v-model="address" label="居住地址" placeholder="请输入居住地址" />
     </van-cell-group>
     <footer class="datum__footer">
       <van-button type="info" size="large" @click="submit">确认修改</van-button>
@@ -21,38 +17,54 @@
 </template>
 
 <script>
+import { mineDetail, mineDetailUpdate } from "../../../api";
 export default {
   name: "mine-datum",
   props: {},
   data() {
     return {
-      name: "彭晓薇",
-      sex: "女",
-      phone: "12312312311",
-      email: "xiaowei2015@chuxin.com",
-      work: "初心社工咨询有限公司",
-      job: "初心社工"
+      id: "",
+      realname: "",
+      idCard: "",
+      userMobile: "",
+      address: ""
     };
   },
   components: {},
   computed: {},
-  created() {},
+  async created() {
+    const mine = await mineDetail();
+    if (mine.ret === "200") {
+      this.id = mine.data.id;
+      this.realname = mine.data.account;
+      this.idCard = mine.data.idCard;
+      this.userMobile = mine.data.userMobile;
+      this.address = mine.data.address;
+    }
+  },
   methods: {
-    submit() {
+    async submit() {
       const loading = this.$toast.loading({
         mask: true,
         message: "提交修改中"
       });
-      setTimeout(() => {
+      const update = await mineDetailUpdate(
+        this.id,
+        this.realname,
+        this.idCard,
+        this.userMobile,
+        this.address
+      );
+      if (update.ret === "200") {
         loading.clear();
         this.$toast.success({
           message: "修改成功",
           duration: 500,
           onClose: () => {
-            this.$router.go(-1);
+            this.$router.push({ path: "/mine" });
           }
         });
-      }, 2000);
+      }
     }
   }
 };
@@ -64,7 +76,6 @@ export default {
   position relative
   top 0
   left 0
-
 
 .datum__footer
   display block

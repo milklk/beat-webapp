@@ -17,10 +17,10 @@
           <router-link
             v-for="(notice, i) in notices"
             :key="i"
-            :to="{ name: 'home-notice', params: { id: notice.id } }"
+            :to="{ name: 'home-notice', params: { id: notice.noticeId } }"
           >
             <!-- eslint-disable-next-line -->
-            <van-notice-bar left-icon="volume-o" :scrollable="false" :text="notice.text">
+            <van-notice-bar left-icon="volume-o" :scrollable="false" :text="notice.title">
               <template #right-icon>{{ notice.time }}</template>
             </van-notice-bar>
           </router-link>
@@ -42,11 +42,11 @@
           </van-grid>
         </li>
         <!-- 审批事项 -->
-        <li class="home__item home__item--approves">
+        <!-- <li class="home__item home__item--approves">
           <header class="item__h">
             <van-icon name="completed" size="22" color="#1989fa" />
             <h2 class="h_title">审批事项</h2>
-            <!-- eslint-disable-next-line -->
+     
             <router-link to="/home/approves" class="h__route">全部待办</router-link>
           </header>
           <router-link
@@ -57,15 +57,15 @@
               params: { status: 'dandelion', id: approve.id }
             }"
           >
-            <!-- eslint-disable-next-line -->
+       
             <van-notice-bar background="#fff" :scrollable="false" :text="approve.text">
               <template #left-icon>
-                <!-- eslint-disable-next-line -->
+            
                 <van-tag v-if="approve.state" key="true" mark type="success" class="van-tag__left">
-                  <!-- eslint-disable-next-line -->
+         
                   已审批
                 </van-tag>
-                <!-- eslint-disable-next-line -->
+          
                 <van-tag v-else key="false" mark class="van-tag__left">未审批</van-tag>
               </template>
               <template #right-icon>
@@ -73,7 +73,7 @@
               </template>
             </van-notice-bar>
           </router-link>
-        </li>
+        </li>-->
         <li>
           <van-divider class="van-divider">数据概览</van-divider>
         </li>
@@ -92,24 +92,14 @@
 </template>
 
 <script>
+import { noticesList } from "../../api";
 import { format } from "../../utils/date";
 export default {
   name: "home",
   props: {},
   data() {
     return {
-      notices: [
-        {
-          text: "国务院“互联网+督查”平台日前开通",
-          time: "2019-08-19",
-          id: 1
-        },
-        {
-          text: "桂林市公安局网站域名变更换具体情况公告",
-          time: "2019-08-18",
-          id: 2
-        }
-      ],
+      notices: [],
       actions: [
         {
           icon: require("../../assets/img/action-1.png"),
@@ -157,6 +147,15 @@ export default {
   },
   components: {},
   computed: {},
+  async created() {
+    const notices = await noticesList(1, 2);
+    if (notices.ret === "200") {
+      notices.data.list.forEach(d => {
+        d.time = format(d.updateTime);
+      });
+      this.notices = notices.data.list;
+    }
+  },
   mounted() {
     this.setPersonnelEcharts();
   },

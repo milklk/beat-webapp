@@ -5,7 +5,7 @@
         <van-icon name="apps-o" size="22" color="#1989fa" />
         <h2 class="h_title">常用功能</h2>
       </header>
-      <van-grid>
+      <van-grid :column-num="5">
         <!-- eslint-disable-next-line -->
         <van-grid-item v-for="(action, i) in actions" :key="i" :text="action.text" :to="action.to">
           <template #icon>
@@ -25,22 +25,24 @@
           <div class="h__title">{{ item.title }}</div>
         </h3>
         <article class="router__content" v-if="item.title !== '工作小组'">
-          <h3 class="content__h">共计{{ item.title }} {{ item.total }}次</h3>
+          <h3 class="content__h">共计{{ item.title }} {{ item.count }}次</h3>
           <p class="content__p">
             <!-- eslint-disable-next-line -->
-            最近一次{{ item.title }}时间：{{ item.endTime }}
+            最近一次{{ item.title }}时间：{{ item.time ? item.time : '无' }}
           </p>
         </article>
-        <article class="router__content" v-else>
+        <!-- <article class="router__content" v-else>
           <h3 class="content__h">家属联系电话 {{ item.phone }}</h3>
-          <p class="content__p">工作小组：{{ item.total }}人</p>
-        </article>
+          <p class="content__p">工作小组：{{ item.count }}人</p>
+        </article>-->
       </router-link>
     </li>
   </ul>
 </template>
 
 <script>
+import { archivesRecordAll } from "../../api";
+import { format } from "../../utils/date";
 export default {
   name: "contact",
   props: {},
@@ -97,24 +99,24 @@ export default {
           text: "药物维持",
           icon: "iconyaowu",
           to: { name: "contact-drugs", params: { id: id } }
-        },
-        {
-          text: "工作小组",
-          icon: "icongongzuoxiaozu",
-          to: { name: "contact-party", params: { id: id } }
         }
+        // {
+        //   text: "工作小组",
+        //   icon: "icongongzuoxiaozu",
+        //   to: { name: "contact-party", params: { id: id } }
+        // }
       ],
       routes: [
         {
           title: "签到",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: { name: "contact-record", params: { header: "签到记录", id } }
         },
         {
           title: "尿检",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "尿检记录", id: id }
@@ -122,8 +124,8 @@ export default {
         },
         {
           title: "谈话",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "谈话记录", id: id }
@@ -131,8 +133,8 @@ export default {
         },
         {
           title: "拜访",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "拜访记录", id: id }
@@ -140,8 +142,8 @@ export default {
         },
         {
           title: "请假",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "请假记录", id: id }
@@ -149,8 +151,8 @@ export default {
         },
         {
           title: "评估",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "评估记录", id: id }
@@ -158,8 +160,8 @@ export default {
         },
         {
           title: "帮扶救助",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "帮扶救助记录", id: id }
@@ -167,8 +169,8 @@ export default {
         },
         {
           title: "违反协议",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "违反协议记录", id: id }
@@ -176,8 +178,8 @@ export default {
         },
         {
           title: "查找脱失",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "查找脱失记录", id: id }
@@ -185,28 +187,58 @@ export default {
         },
         {
           title: "药物维持",
-          total: 1,
-          endTime: "2019-01-02",
+          count: 0,
+          time: "",
           to: {
             name: "contact-record",
             params: { header: "药物维持记录", id: id }
           }
-        },
-        {
-          title: "工作小组",
-          phone: "13012341234",
-          total: 5,
-          to: {
-            name: "contact-record",
-            params: { header: "工作小组记录", id: id }
-          }
         }
+        // {
+        //   title: "工作小组",
+        //   phone: "13012341234",
+        //   count: 5,
+        //   to: {
+        //     name: "contact-record",
+        //     params: { header: "工作小组记录", id: id }
+        //   }
+        // }
       ]
     };
   },
   components: {},
   computed: {},
-  created() {},
+  async created() {
+    const code = [
+      "sign",
+      "urine",
+      "talk",
+      "visit",
+      "leave",
+      "assess",
+      "help",
+      "violation",
+      "find",
+      "medication"
+    ];
+    const id = this.$route.params.id;
+    const records = await archivesRecordAll(id);
+    if (records.ret === "200") {
+      const data = records.data[0];
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const i = code.findIndex(cod => key.indexOf(cod) === 0);
+          if (i !== -1) {
+            if (key.indexOf("Count") !== -1) {
+              this.routes[i].count = data[key];
+            } else if (key.indexOf("Time") !== -1) {
+              this.routes[i].time = format(data[key]);
+            }
+          }
+        }
+      }
+    }
+  },
   methods: {}
 };
 </script>
@@ -217,7 +249,6 @@ export default {
   margin-bottom 3px
 
 .contact__item
-  margin-bottom 10px
   background #fff
   padding 10px 0 15px
   border-bottom 10px solid #f2f2f2

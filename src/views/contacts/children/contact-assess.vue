@@ -1,74 +1,70 @@
 <template>
-  <section class="talk">
-    <van-cell-group class="van-cell-group van-cell-group--mini">
-      <van-cell
-        title="评估记录"
-        class="van-cell--auto"
-        :value="total"
-        is-link
-        :to="{
-          name: 'contact-record',
-          params: { header: '评估记录', id: $route.params.id }
-        }"
-      />
-    </van-cell-group>
-    <van-divider class="van-divider">评估信息</van-divider>
-    <van-cell-group class="van-cell-group van-cell-group--mini">
-      <!-- eslint-disable-next-line -->
-      <van-cell class="van-cell--auto" required title="评估时间" :value="form.time" @click="setTime">
-        <template #right-icon>
-          <van-icon class="van-icon" name="add-o" />
-        </template>
-      </van-cell>
-      <!-- eslint-disable-next-line -->
-      <van-field v-model="form.field" label="评估人员" placeholder="请输入评估人员" required />
-      <van-field label="评估照片" required>
-        <template #input>
-          <van-uploader
-            v-model="file"
-            :max-count="1"
-            class="van-uploader"
-            :before-read="beforeRead"
-            upload-text="请上传JPG或PNG图片"
-          />
-        </template>
-      </van-field>
-      <!-- eslint-disable-next-line -->
-      <van-field v-model="form.digest" label="评估摘要" placeholder="请输入评估摘要" required />
-      <van-field
-        v-model="form.content"
-        required
-        label="评估内容"
-        type="textarea"
-        placeholder="请输入评估内容"
-        rows="3"
-        maxlength
-        error-message="提示：评估内容输入字数不多于200字"
-      />
-      <!-- eslint-disable-next-line -->
-      <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
-        <van-datetime-picker
-          v-model="time"
-          type="date"
-          @confirm="timeConfirm"
-          @cancel="timeCancel"
+  <section class="assess">
+    <div class="assess-main">
+      <van-cell-group class="van-cell-group van-cell-group--mini">
+        <van-cell
+          title="评估记录"
+          class="van-cell--auto"
+          :value="total"
+          is-link
+          :to="{
+            name: 'contact-record',
+            params: { header: '评估记录', id: $route.params.id }
+          }"
         />
-      </van-popup>
-    </van-cell-group>
-    <van-divider class="van-divider">社工信息</van-divider>
-    <van-cell-group class="van-cell-group">
-      <van-cell title="社工姓名" :value="worker.name" />
-      <van-cell title="联系电话" :value="worker.phone" />
-      <van-radio-group v-model="radio">
+      </van-cell-group>
+      <van-divider class="van-divider">评估信息</van-divider>
+      <van-cell-group class="van-cell-group van-cell-group--mini">
         <!-- eslint-disable-next-line -->
-        <van-cell title="以上评估情况属实，由本人上传评估情况。" @click="radio=radio === false ? true : false">
-          <template #icon>
-            <van-radio class="van-radio" :name="true" />
+        <van-cell
+          class="van-cell--auto"
+          required
+          title="评估时间"
+          :value="form.assessTime"
+          @click="setTime"
+        >
+          <template #right-icon>
+            <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
-      </van-radio-group>
-    </van-cell-group>
-    <footer class="urinalysis__footer">
+        <!-- eslint-disable-next-line -->
+        <van-field v-model="form.ids" label="评估人员" placeholder="请输入评估人员" required />
+        <Update :file.sync="file" label="评估照片" />
+        <!-- eslint-disable-next-line -->
+        <van-field v-model="form.assessTitle" label="评估摘要" placeholder="请输入评估摘要" required />
+        <van-field
+          v-model="form.assessRemark"
+          required
+          label="评估内容"
+          type="textarea"
+          placeholder="请输入评估内容"
+          rows="3"
+          maxlength
+          error-message="提示：评估内容输入字数不多于200字"
+        />
+        <!-- eslint-disable-next-line -->
+        <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
+          <van-datetime-picker
+            v-model="time"
+            type="date"
+            @confirm="timeConfirm"
+            @cancel="timeCancel"
+          />
+        </van-popup>
+      </van-cell-group>
+      <van-divider class="van-divider">社工信息</van-divider>
+      <Worker>
+        <van-radio-group v-model="radio">
+          <!-- eslint-disable-next-line -->
+          <van-cell title="以上评估情况属实，由本人上传评估情况。" @click="radio=radio === false ? true : false">
+            <template #icon>
+              <van-radio class="van-radio" :name="true" />
+            </template>
+          </van-cell>
+        </van-radio-group>
+      </Worker>
+    </div>
+    <footer class="assess__footer">
       <van-button class="van-button" @click="cancel">取消</van-button>
       <!-- eslint-disable-next-line -->
       <van-button class="van-button" type="primary" @click="confirm">确认</van-button>
@@ -77,43 +73,52 @@
 </template>
 
 <script>
+import Worker from "../../../components/worker/worker";
+import Update from "../../../components/update/update";
+import { personAssessAdd, fileAdd, personAssessRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-assess",
   props: {},
   data() {
     return {
-      total: 3,
+      total: 0,
       show: false,
       time: new Date(),
-      file: [],
+      file: {},
       radio: true,
       form: {
-        time: `${format(new Date(), "yyyy-MM-dd")}`,
-        field: "",
-        content: "",
-        digest: "",
-        file: ""
-      },
-      worker: {
-        name: "彭晓薇",
-        phone: 13423678765
+        archivesCode: this.$route.params.id,
+        assessTitle: "",
+        assessRemark: "",
+        assessTime: `${format(new Date(), "yyyy-MM-dd")}`,
+        ids: "",
+        fileIdTmp: ""
       }
     };
   },
-  components: {},
+  components: {
+    Worker,
+    Update
+  },
   computed: {},
-  created() {},
+  async created() {
+    const id = this.$route.params.id;
+    const record = await personAssessRecord(id);
+    if (record.ret === "200") {
+      this.total = record.data.total ? record.data.total : record.data.length;
+    }
+  },
   methods: {
     setTime() {
+      this.time = new Date(this.form.assessTime);
       this.show = true;
     },
     timeConfirm() {
-      this.form.time = `${format(this.time, "yyyy-MM-dd")}`;
+      this.form.assessTime = `${format(this.time, "yyyy-MM-dd")}`;
       this.show = false;
     },
     timeCancel() {
-      this.time = new Date(this.form.time);
       this.show = false;
     },
     beforeRead(file) {
@@ -132,21 +137,40 @@ export default {
         }
       });
     },
-    confirm() {
-      const loading = this.$toast.loading({
-        mask: true,
-        message: "上传\n评估情况中"
-      });
-      setTimeout(() => {
-        loading.clear();
-        this.$toast.success({
-          message: "上传\n评估情况成功",
-          duration: 500,
-          onClose: () => {
-            this.$router.go(-1);
-          }
+    async confirm() {
+      if (this.radio) {
+        const loading = this.$toast.loading({
+          mask: true,
+          message: "上传\n评估情况中"
         });
-      }, 2000);
+        const file = await fileAdd(this.file);
+        if (file.ret === "200") {
+          this.form.fileIdTmp = file.data;
+          const sign = await personAssessAdd(
+            this.form.archivesCode,
+            this.form.assessTitle,
+            this.form.assessRemark,
+            this.form.assessTime,
+            this.form.ids,
+            this.form.fileIdTmp
+          );
+          if (sign.ret === "200") {
+            loading.clear();
+            this.$toast.success({
+              message: "上传\n评估情况成功",
+              duration: 500,
+              onClose: () => {
+                this.$router.go(-1);
+              }
+            });
+          }
+        }
+      } else {
+        this.$toast.fail({
+          message: "未同意相关协议",
+          duration: 500
+        });
+      }
     }
   }
 };
@@ -186,7 +210,10 @@ export default {
 .van-button
   padding 0 50px
 
-.urinalysis__footer
+.assess-main
+  min-height calc( 100vh - 54px - 46px - 100px )
+
+.assess__footer
   padding 5px
   display flex
   justify-content space-around

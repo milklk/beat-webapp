@@ -1,24 +1,39 @@
 <template>
   <section>
     <van-cell-group v-show="$route.path === '/publicity'">
-      <van-cell title="法律法规" is-link to="/publicity/laws" />
-      <van-cell title="禁毒知识" is-link to="/publicity/knowledges" />
-      <van-cell title="工作技巧" is-link to="/publicity/skills" />
+      <!-- eslint-disable-next-line -->
+      <van-cell v-for="item in types" :key="item.type" :title="item.name" is-link :to="item.to" />
     </van-cell-group>
     <router-view />
   </section>
 </template>
 
 <script>
+import { knowledgeType } from "../../api";
 export default {
   name: "publicity",
   props: {},
   data() {
-    return {};
+    return {
+      types: []
+    };
   },
   components: {},
   computed: {},
-  created() {},
+  async created() {
+    const types = await knowledgeType();
+    const links = [
+      "/publicity/laws",
+      "/publicity/knowledges",
+      "/publicity/skills"
+    ];
+    if (types.ret === "200") {
+      types.data.forEach(d => {
+        d.to = { path: links[Number(d.type) - 1], query: { type: d.type } };
+      });
+      this.types = types.data;
+    }
+  },
   methods: {}
 };
 </script>

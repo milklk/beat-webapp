@@ -3,7 +3,7 @@
   <van-tabbar v-model="active">
     <van-tabbar-item to="/home" icon="wap-home">首页</van-tabbar-item>
     <!-- eslint-disable-next-line -->
-    <van-tabbar-item to="/messages" icon="comment-o" info="5">消息</van-tabbar-item>
+    <van-tabbar-item to="/messages" icon="comment-o">消息</van-tabbar-item>
     <van-tabbar-item to="/contacts" icon="phone-o">通讯录</van-tabbar-item>
     <van-tabbar-item to="/publicity" icon="volume-o">宣传</van-tabbar-item>
     <van-tabbar-item to="/mine" icon="friends-o">我的</van-tabbar-item>

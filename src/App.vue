@@ -4,7 +4,9 @@
       <headerBar />
     </header>
     <main class="app__main" ref="main" :class="mainClass">
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </main>
     <footer class="app__footer" v-show="$route.meta.footer">
       <footerTab />
@@ -14,6 +16,8 @@
 <script>
 import footerTab from "./components/tab/tab";
 import headerBar from "./components/bar/bar";
+import { ddAuthCode } from "./api/dingtalk";
+import { login } from "./api";
 export default {
   name: "web-app",
   data() {
@@ -28,7 +32,14 @@ export default {
     footerTab,
     headerBar
   },
-  created() {},
+  async created() {
+    const authCode = await ddAuthCode();
+    const user = await login(authCode);
+    if (user.ret === "200") {
+      window.sessionStorage.setItem("token", user.data.token);
+      // this.$router.push({ path: "/home" });
+    }
+  },
   mounted() {},
   watch: {
     $route() {

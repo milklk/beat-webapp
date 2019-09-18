@@ -3,10 +3,10 @@
     <div v-show="$route.path === '/home/hands'">
       <van-search
         placeholder="请输入搜索关键词"
-        v-model="search"
+        v-model="keyword"
         shape="round"
         background="#f2f2f2"
-        @search="submit"
+        @search="search"
       />
       <!-- eslint-disable-next-line -->
       <article class="hands__list" ref="hands">
@@ -18,33 +18,25 @@
         >
           <van-checkbox-group v-model="result">
             <!-- eslint-disable-next-line -->
-            <van-checkbox v-for="(item,i) in list" :key="i" :name="i" class="list__item">
-              <van-image
-                class="item__avatar"
-                :src="require('../../../../assets/img/people-head.png')"
-              />
+            <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
+              <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
               <ul class="item__content">
                 <li class="content__li">
                   <p class="li__p">
-                    <strong class="p__strong">王晓婷</strong>
-                    <span class="p__span">（临桂区）</span>
+                    <strong class="p__strong">{{ item.name }}</strong>
+                    <!-- <span class="p__span">（临桂区）</span> -->
                   </p>
-                  <p class="li__p">18011981787</p>
+                  <p class="li__p">{{ item.mobile }}</p>
                 </li>
                 <li class="content__li">
-                  <p class="li__p">45505319******1100</p>
+                  <p class="li__p">{{ item.idCard }}</p>
                   <p class="li__p">
                     <!-- eslint-disable-next-line -->
-                    <van-tag class="van-tag" v-if="item.risk === 30" type="danger">高风险</van-tag>
-                    <!-- eslint-disable-next-line -->
-                    <van-tag class="van-tag" v-else-if="item.risk === 20" color="rgb(255, 153, 0)">
+                    <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
+                    <van-tag class="van-tag" type="danger" v-if="item.status">
                       <!-- eslint-disable-next-line -->
-                      中风险
+                      {{ item.userStatusName }}
                     </van-tag>
-                    <!-- eslint-disable-next-line -->
-                    <van-tag class="van-tag" v-else type="success">低风险</van-tag>
-                    <!-- eslint-disable-next-line -->
-                    <van-tag class="van-tag" v-if="item.status">{{ item.status }}</van-tag>
                   </p>
                 </li>
               </ul>
@@ -65,6 +57,8 @@
 </template>
 
 <script>
+import { archives, headPhoto } from "../../../../api";
+import photo from "../../../../assets/img/people-head.png";
 export default {
   name: "home-hands",
   props: {},
@@ -72,78 +66,30 @@ export default {
     return {
       loading: true,
       finished: false,
+      page: 1,
+      keyword: "",
       result: [],
-      search: "",
-      list: [
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20,
-          status: "脱失"
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          card: "45505319******1100",
-          phone: "18907711179",
-          risk: 20
-        }
-      ],
-      total: 20,
+      list: [],
+      total: 0,
       bs: {}
     };
   },
   components: {},
   computed: {},
+  watch: {
+    // 如果路由发生变化，再次执行该方法
+    $route() {
+      this.result = [];
+      this.search();
+    }
+  },
   mounted() {
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
+      await this.updateList();
+      if (this.total <= 15) {
+        this.loading = false;
+        this.finished = true;
+      }
       const BScroll = this.$BScroll;
       this.bs = new BScroll(this.$refs.hands, {
         scrollY: true,
@@ -152,8 +98,6 @@ export default {
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
-      this.loading = this.bs.hasVerticalScroll ? true : false;
-      this.finished = this.bs.hasVerticalScroll ? false : true;
     });
   },
   updated() {
@@ -165,23 +109,35 @@ export default {
     }
   },
   methods: {
-    submit() {
-      this.list = this.list.slice(0, 5);
-      this.$nextTick(() => {
-        this.bs.refresh();
-        this.loading = this.bs.hasVerticalScroll ? true : false;
-        this.finished = this.bs.hasVerticalScroll ? false : true;
-      });
+    async search() {
+      this.page = 1;
+      const hands = await archives(this.page++, 15, this.keyword);
+      if (hands.ret === "200") {
+        this.list = hands.data.list;
+        this.total = hands.data.total;
+        if (this.total <= 15) {
+          this.loading = false;
+          this.finished = true;
+        }
+      }
+    },
+    setPhoto(attId) {
+      const headerImg = attId ? headPhoto(attId) : photo;
+      return headerImg;
     },
     async pullingUpHandler() {
       if (this.list.length >= this.total) {
         this.finished = true;
         this.loading = false;
       } else {
-        const list = this.list.slice(0, 5);
-        await setTimeout(() => {
-          this.list = this.list.concat(list);
-        }, 2000);
+        this.updateList();
+      }
+    },
+    async updateList() {
+      const hands = await archives(this.page++, 15, this.keyword);
+      if (hands.ret === "200") {
+        this.list = hands.data.list;
+        this.total = hands.data.total;
       }
     }
   }
@@ -232,12 +188,16 @@ export default {
         color #1989fa
         display flex
         align-items center
+        white-space nowrap
 
         .p__strong
           font-size 15px
           line-height 22px
           font-weight 400
           color #152962
+          max-width 85px
+          overflow hidden
+          text-overflow ellipsis
 
         .p__span
           line-height 22px

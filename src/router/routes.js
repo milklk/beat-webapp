@@ -35,9 +35,8 @@ import ContactFind from "../views/contacts/children/contact-find.vue";
 import ContactParty from "../views/contacts/children/contact-party.vue";
 import ContactDrugs from "../views/contacts/children/contact-drugs.vue";
 import MineAbout from "../views/mine/children/mine-about.vue";
-import MinePassword from "../views/mine/children/mine-password.vue";
 import MineDatum from "../views/mine/children/mine-datum.vue";
-import MineReport from "../views/mine/children/mine-report.vue";
+// import MineReport from "../views/mine/children/mine-report.vue";
 
 //设置router路由
 export default [
@@ -226,7 +225,6 @@ export default [
         path: "/publicity/laws",
         component: PublicityLaws,
         meta: {
-          footer: true,
           header: "法律法规"
         },
         children: [
@@ -244,7 +242,6 @@ export default [
         path: "/publicity/Knowledges",
         component: PublicityKnowledges,
         meta: {
-          footer: true,
           header: "禁毒知识"
         },
         children: [
@@ -262,7 +259,6 @@ export default [
         path: "/publicity/skills",
         component: PublicitySkills,
         meta: {
-          footer: true,
           header: "工作技巧"
         },
         children: [
@@ -294,26 +290,19 @@ export default [
         }
       },
       {
-        path: "/mine/password",
-        component: MinePassword,
-        meta: {
-          header: "修改密码"
-        }
-      },
-      {
         path: "/mine/datum",
         component: MineDatum,
         meta: {
           header: "修改资料"
         }
-      },
-      {
-        path: "/mine/report",
-        component: MineReport,
-        meta: {
-          header: "一键举报"
-        }
       }
+      // {
+      //   path: "/mine/report",
+      //   component: MineReport,
+      //   meta: {
+      //     header: "一键举报"
+      //   }
+      // }
     ]
   },
   {
@@ -322,6 +311,6 @@ export default [
   },
   {
     path: "/",
-    redirect: "/login"
+    redirect: "/home"
   }
 ];

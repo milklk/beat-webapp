@@ -242,9 +242,7 @@ export default {
         });
       }, 2000);
     },
-    focus(event) {
-      console.log(event);
-    },
+    focus(event) {},
     beforeRead(file) {
       const i = file.type.indexOf("image");
       if (i !== 0) {

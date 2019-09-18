@@ -1,5 +1,5 @@
 <template>
-  <section class="login" :style="{height: `${height}px`}">
+  <section class="login" :style="{ height: `${height}px` }">
     <article class="login__article">
       <!-- eslint-disable-next-line -->
       <van-field v-model="user" placeholder="请输入用户名" label="用户名" left-icon="contact" />
@@ -16,6 +16,8 @@
 </template>
 
 <script>
+import { ddAuthCode } from "../../api/dingtalk";
+import { login } from "../../api";
 export default {
   name: "login",
   props: {},
@@ -28,8 +30,11 @@ export default {
   },
   components: {},
   computed: {},
-  created() {
+  async created() {
     this.height = window.innerHeight;
+    const authCode = await ddAuthCode();
+    const user = await login(authCode);
+
   },
   methods: {
     login() {

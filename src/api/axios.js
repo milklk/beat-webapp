@@ -1,6 +1,6 @@
 import axios from "axios";
-import { Toast  } from "vant";
-import router from "../router";
+// import { Toast } from "vant";
+// import router from "../router";
 
 axios.defaults.timeout = 100000;
 //跨域请求，允许保存cookie
@@ -8,27 +8,22 @@ axios.defaults.withCredentials = true;
 
 axios.defaults.headers.post["Content-Type"] =
   "application/x-www-form-urlencoded";
-const config = {
-  headers: { "Content-Type": "multipart/form-data" }
+let fileHeader = {
+  headers: {
+    //添加请求头
+    token: window.sessionStorage.getItem("token"),
+    "Content-Type": "multipart/form-data"
+  }
 };
-export default function ajax(url, data = {}, type = "get", use = true) {
-  response = use;
-  axios.defaults.headers.common["token"] = window.sessionStorage.token;
+export default function ajax(url, data = {}, type = "get") {
+  axios.defaults.headers.common["token"] = window.sessionStorage.getItem(
+    "token"
+  );
   let promise;
   let formData = new FormData();
   for (const key in data) {
     if (data.hasOwnProperty(key)) {
-      if (data[key] && data[key].type === "file") {
-        if (data[key].files.length) {
-          data[key].files.forEach(file => {
-            formData.append(key, file.raw, file.name);
-          });
-        } else {
-          formData.append(key, "");
-        }
-      } else {
-        formData.append(key, data[key]);
-      }
+      formData.append(key, data[key]);
     }
   }
   return new Promise(function(resolve, reject) {
@@ -37,7 +32,7 @@ export default function ajax(url, data = {}, type = "get", use = true) {
     } else if (type === "post") {
       promise = axios.post(url, formData);
     } else if (type === "file") {
-      promise = axios.post(url, formData, config);
+      promise = axios.post(url, formData, fileHeader);
     }
     promise
       .then(function(response) {
@@ -49,57 +44,49 @@ export default function ajax(url, data = {}, type = "get", use = true) {
   });
 }
 
+//HTTPrequest拦截
+// const msg = "不知道谁又写出bug了，请稍后再试。如果还不行就别试了";
+// axios.interceptors.request.use(
+//   config => {
+//     if (store.getters.token) {
+//       config.headers["token"] = store.getters.token;
+//     }
+//     if (
+//       config.method === "post" &&
+//       (!config.headers["Content-Type"] ||
+//         config.headers["Content-Type"].indexOf("multipart") == -1)
+//     ) {
+//       config.data = qs.stringify(config.data, { arrayFormat: "brackets" });
+//     }
+//     return config;
+//   },
+//   error => {
+//     return Promise.reject(new Error(msg));
+//   }
+// );
 //HTTPresponse拦截
-axios.interceptors.response.use(
-  data => {
-    if (!response) {
-      response = true;
-      return data;
-    }
-    if (!data || data.data.code == "401") {
-      Toast .fail({
-        title: "登陆超时",
-        message: "登陆超时，请重新登录"
-      });
-      router.push({ path: "/login" });
-      window.sessionStorage.clear();
-    } else {
-      if (data.data.ret != "200") {
-        if (data.data.ret == "300" && data.data.msg) {
-          Toast .fail({
-            title: "请求异常",
-            message: data.data.msg
-          });
-        } else if (data.data.result !== 0) {
-          Toast .fail({
-            title: "网络异常",
-            message: "网络异常，请刷新后重试"
-          });
-        }
-      }
-      return data;
-    }
-  },
-  error => {
-    let msg = "请求错误，请刷新页面稍后再试！";
-    if (error.response.status == "400") {
-      msg = "400 请求出错！";
-    } else if (error.response.status == "403") {
-      msg = "403 禁止访问！";
-    } else if (error.response.status == "404") {
-      msg = "404 请求找不到资源！";
-    } else if (error.response.status == "405") {
-      msg = "405 不允许此方法！";
-    } else if (error.response.status == "500") {
-      msg = "500 服务器的内部错误！";
-    } else if (error.response.status == "502") {
-      msg = "502 网关出错！";
-    }
-    Toast .fail({
-      title: "请求错误 请联系管理员",
-      message: msg
-    });
-    // return Promise.reject(new Error(msg));
-    //  return Promise.reject(error)
-  }
-);
+// axios.interceptors.response.use(
+//   data => {
+//     if (data.data.code == "401") {
+//       store.dispatch("Login").then(res => {
+//         if (res.ret != "200") {
+//           Toast.fail("免登失败");
+//           router.push({ path: "/login" });
+//         }
+//       });
+//     } else {
+//       if (data.data.ret != "200") {
+//         if (data.data.ret == "300" && data.data.msg) {
+//           Toast.text(data.data.msg);
+//         } else {
+//           Toast.fail("请求错误");
+//         }
+//       }
+//       return data.data;
+//     }
+//   },
+//   error => {
+//     Toast.fail("请求错误");
+//     return Promise.reject(new Error(msg));
+//   }
+// );

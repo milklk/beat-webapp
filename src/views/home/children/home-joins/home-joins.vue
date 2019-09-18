@@ -1,35 +1,28 @@
 <template>
   <section class="joins">
     <!-- eslint-disable-next-line -->
-    <article
-      class="joins__list"
-      ref="joins"
-      v-show="$route.path === '/home/joins'"
-    >
+    <article class="joins__list" ref="joins" v-show="$route.path === '/home/joins'">
       <!-- eslint-disable-next-line -->
       <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
         <router-link
           v-for="(item, i) in list"
           :key="i"
-          :to="{ name: 'home-join', params: { id: 1 } }"
+          :to="{ name: 'home-join', params: { id: item.id } }"
           class="list__item"
         >
           <!-- eslint-disable-next-line -->
-          <van-image class="item__img" :src="require('../../../../assets/img/people-head.png')" />
+          <van-image class="item__img" :src="setPhoto(item.headPhoto)" />
           <article class="item__content">
             <h3 class="content__h">
               <strong class="h__name">{{ item.name }}</strong>
-              <span class="h_area">（{{ item.area }}）</span>
+              <span class="h_area">（{{ item.sex }}）</span>
             </h3>
-            <p class="content__p">强戒结束日期：{{ item.endTime }}</p>
+            <p class="content__p">出所日期：{{ item.outTime }}</p>
             <!-- eslint-disable-next-line -->
-            <p class="content__p">经办人：{{ item.principal }} 电话：{{item.phone}}</p>
+            <!-- <p class="content__p">经办人：{{ item.agentOrg ? item.agentOrg : '暂无数据' }}</p> -->
             <aside class="content__aside">
-              <p class="aside__p">{{ item.agency }}</p>
-              <van-tag v-if="item.risk === 30" type="danger">高风险</van-tag>
-              <!-- eslint-disable-next-line -->
-              <van-tag v-else-if="item.risk === 20" color="rgb(255, 153, 0)">中风险</van-tag>
-              <van-tag v-else type="success">低风险</van-tag>
+              <p class="aside__p">{{ item.idcard }}</p>
+              <van-tag type="danger">{{ item.type==='1' ? '社区戒毒' : '社区康复' }}</van-tag>
             </aside>
           </article>
         </router-link>
@@ -40,6 +33,9 @@
 </template>
 
 <script>
+import { joinsList, headPhoto } from "../../../../api";
+import { format } from "../../../../utils/date";
+import photo from "../../../../assets/img/people-head.png";
 export default {
   name: "home-joins",
   props: {},
@@ -48,95 +44,33 @@ export default {
       bs: {},
       loading: true,
       finished: false,
-      list: [
-        {
-          name: "张怀志",
-          area: "临桂区",
-          endTime: "2019-10-1 11:00",
-          principal: "张向阳",
-          phone: "18907711179",
-          agency: "桂林市强戒所",
-          risk: 20
-        },
-        {
-          name: "赵德意",
-          area: "临桂区",
-          endTime: "2019-10-12 11:00",
-          principal: "李楠楠",
-          phone: "18207711991",
-          agency: "南宁市强戒所",
-          risk: 30
-        },
-        {
-          name: "喵喵喵",
-          area: "临桂区",
-          endTime: "2019-10-22 11:00",
-          principal: "汪汪汪",
-          phone: "18202341789",
-          agency: "钦州市强戒所",
-          risk: 10
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          endTime: "2019-10-1 11:00",
-          principal: "张向阳",
-          phone: "18907711179",
-          agency: "桂林市强戒所",
-          risk: 20
-        },
-        {
-          name: "赵德意",
-          area: "临桂区",
-          endTime: "2019-10-12 11:00",
-          principal: "李楠楠",
-          phone: "18207711991",
-          agency: "南宁市强戒所",
-          risk: 30
-        },
-        {
-          name: "喵喵喵",
-          area: "临桂区",
-          endTime: "2019-10-22 11:00",
-          principal: "汪汪汪",
-          phone: "18202341789",
-          agency: "钦州市强戒所",
-          risk: 10
-        },
-        {
-          name: "张怀志",
-          area: "临桂区",
-          endTime: "2019-10-1 11:00",
-          principal: "张向阳",
-          phone: "18907711179",
-          agency: "桂林市强戒所",
-          risk: 20
-        },
-        {
-          name: "赵德意",
-          area: "临桂区",
-          endTime: "2019-10-12 11:00",
-          principal: "李楠楠",
-          phone: "18207711991",
-          agency: "南宁市强戒所",
-          risk: 30
-        },
-        {
-          name: "喵喵喵",
-          area: "临桂区",
-          endTime: "2019-10-22 11:00",
-          principal: "汪汪汪",
-          phone: "18202341789",
-          agency: "钦州市强戒所",
-          risk: 10
-        }
-      ],
-      total: 20
+      page: 1,
+      list: [],
+      total: 0
     };
   },
   components: {},
   computed: {},
-  created() {},
+  watch: {
+    async $route() {
+      this.page = 1;
+      const jions = await joinsList(this.page++, 15);
+      if (jions.ret === "200") {
+        jions.data.list.forEach(d => {
+          d.outTime = format(d.outTime);
+        });
+        this.list = jions.data.list;
+        this.total = jions.data.total;
+      }
+    }
+  },
+  async created() {
+    await this.updateList();
+    if (this.total <= 15) {
+      this.loading = false;
+      this.finished = true;
+    }
+  },
   mounted() {
     this.$nextTick(() => {
       const BScroll = this.$BScroll;
@@ -147,8 +81,6 @@ export default {
         pullUpLoad: true
       });
       this.bs.on("pullingUp", this.pullingUpHandler);
-      this.loading = this.bs.hasVerticalScroll ? true : false;
-      this.finished = this.bs.hasVerticalScroll ? false : true;
     });
   },
   updated() {
@@ -165,10 +97,21 @@ export default {
         this.finished = true;
         this.loading = false;
       } else {
-        const list = this.list.slice(0, 5);
-        await setTimeout(() => {
-          this.list = this.list.concat(list);
-        }, 2000);
+        this.updateList();
+      }
+    },
+    setPhoto(attId) {
+      const headerImg = attId ? headPhoto(attId) : photo;
+      return headerImg;
+    },
+    async updateList() {
+      const jions = await joinsList(this.page++, 15);
+      if (jions.ret === "200") {
+        jions.data.list.forEach(d => {
+          d.outTime = format(d.outTime);
+        });
+        this.list = this.list.concat(jions.data.list);
+        this.total = jions.data.total;
       }
     }
   }
@@ -180,12 +123,11 @@ export default {
   height calc( 100vh - 46px )
   overflow hidden
 
-
   .list__item
     display flex
     justify-content space-around
     align-items center
-    height 100px
+    height 50px
 
     .item__img
       width 36px
@@ -193,7 +135,7 @@ export default {
 
     .item__content
       width 300px
-      height 80px
+      height 42px
       padding-left 20px
       border-left 2px solid #ccc
       display flex

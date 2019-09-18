@@ -4,9 +4,7 @@
 .van-cell__value {
   flex: 3;
 }
-.van-cell--auto .van-cell__value {
-  flex: auto;
-}
+
 .approves .van-tabs__line {
   background-color: #09f;
 }
@@ -22,12 +20,12 @@
 .record .van-step__circle {
   background-color: #07c160;
 }
-.contacts .van-uploader *:not(i) {
+.van-uploader *:not(i) {
   width: 100% !important;
   height: 100% !important;
   text-align: center;
 }
-.contacts .van-uploader .van-uploader__upload-text {
+.van-uploader .van-uploader__upload-text {
   height: auto !important;
 }
 .contacts .van-image__img {
@@ -35,4 +33,8 @@
 }
 .contacts .van-cell--required::before {
   top: 15px;
+}
+.van-cell--auto .van-cell__value,
+.van-cell--auto .van-cell__title {
+  flex: auto;
 }

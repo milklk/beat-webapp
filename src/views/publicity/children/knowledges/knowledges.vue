@@ -1,25 +1,56 @@
 <template>
   <section class="messages">
     <!-- eslint-disable-next-line -->
-    <List v-if="$route.path === '/publicity/knowledges'" children="publicity-knowledge" />
+    <List
+      v-if="$route.path === '/publicity/knowledges' && list.length"
+      :list="list"
+      :total="total"
+      :headerShow="false"
+      :children="children"
+      @update="updateList"
+    />
     <router-view />
   </section>
 </template>
 
 <script>
 import List from "../../../../components/list/list";
+import { knowledgeList } from "../../../../api";
+import { format } from "../../../../utils/date";
 export default {
   name: "publicity-knowledges",
   props: {},
   data() {
-    return {};
+    return {
+      list: [],
+      total: 0,
+      page: 1,
+      children: {
+        name: "publicity-knowledge",
+        idName: "id"
+      }
+    };
   },
   components: {
     List
   },
   computed: {},
-  created() {},
-  methods: {}
+  created() {
+    this.updateList();
+  },
+  methods: {
+    async updateList() {
+      const type = this.$route.query.type;
+      const knowledges = await knowledgeList(this.page++, 15, type);
+      if (knowledges.ret === "200") {
+        knowledges.data.list.forEach(d => {
+          d.time = format(d.updateTime);
+        });
+        this.list = this.list.concat(knowledges.data.list);
+        this.total = knowledges.data.total;
+      }
+    }
+  }
 };
 </script>
 
