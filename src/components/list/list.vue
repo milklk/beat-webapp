@@ -30,7 +30,7 @@
           />
           <div class="item__main">
             <h3 class="main__h">{{ item.title }}</h3>
-            <p class="main__p" v-html="item.content"></p>
+            <!-- <p class="main__p" v-html="item.content"></p> -->
           </div>
           <aside class="item__time">{{ item.time }}</aside>
         </div>
@@ -158,7 +158,7 @@ export default {
     transform translateY( 3px )
 
 .list__content
-  height calc( 100vh - 80px )
+  height calc( 100vh - 80px + 46px )
   background #fff
   overflow hidden
 
@@ -167,6 +167,7 @@ export default {
     justify-content space-between
     padding 10px 10px 10px 20px
     height 60px
+    border-bottom 1px solid #f2f2f2
 
     .item__icon
       width 40px
@@ -188,7 +189,7 @@ export default {
     .item__main
       display flex
       flex-direction column
-      justify-content space-between
+      justify-content center
       width 210px
 
       .main__h
@@ -201,8 +202,8 @@ export default {
   white-space nowrap
 
 .list__content--noHeader
-  height calc( 100vh - 46px )
+  height calc( 100vh - 46px + 46px )
 
 .list__content--footer
-  height calc( 100vh - 130px )
+  height calc( 100vh - 130px + 46px )
 </style>

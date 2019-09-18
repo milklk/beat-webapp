@@ -202,7 +202,7 @@ export default {
   padding 0 50px
 
 .find-main
-  min-height calc( 100vh - 54px - 46px - 100px )
+  min-height calc( 100vh - 54px - 46px + 46px - 100px )
 
 .find__footer
   padding 5px

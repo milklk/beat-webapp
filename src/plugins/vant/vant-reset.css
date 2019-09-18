@@ -38,3 +38,10 @@
 .van-cell--auto .van-cell__title {
   flex: auto;
 }
+.van-cell:not(:last-child)::after {
+  left: 0;
+}
+.van-divider::after,
+.van-divider::before {
+  border-color: #f2f2f2;
+}

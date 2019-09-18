@@ -120,7 +120,7 @@ export default {
 
 <style lang="stylus" scoped>
 .joins__list
-  height calc( 100vh - 46px )
+  height calc( 100vh - 46px + 46px )
   overflow hidden
 
   .list__item

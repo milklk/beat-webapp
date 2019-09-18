@@ -272,7 +272,7 @@ export default {
   margin-left 10px
 
 .join__main
-  min-height calc( 100vh - 55px - 46px )
+  min-height calc( 100vh - 55px - 46px + 46px )
 
 .join__footer
   padding 5px

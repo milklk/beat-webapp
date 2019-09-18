@@ -72,7 +72,7 @@ export default {
 
 <style lang="stylus" scoped>
 .datum
-  height calc( 100vh - 46px )
+  height calc( 100vh - 46px + 46px )
   position relative
   top 0
   left 0

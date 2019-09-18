@@ -60,13 +60,13 @@ export default {
 
 <style lang="stylus" scoped>
 .password
-  height calc( 100vh - 46px )
+  height calc( 100vh - 46px + 46px )
   position relative
   top 0
   left 0
 
   &.password--ios
-    height calc( 100vh - 46px - 75px )
+    height calc( 100vh - 46px + 46px - 75px )
 
 .password__footer
   display block

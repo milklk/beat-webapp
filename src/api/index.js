@@ -150,20 +150,14 @@ export const personSignAdd = (
   archivesCode,
   signTime,
   signAddress,
-  signRemark,
+
   fileIdTmp
-) =>
-  axios(
-    `${api}/personSign/add`,
-    { archivesCode, signTime, signAddress, signRemark, fileIdTmp },
-    "post"
-  );
+) => axios(`${api}/addSign`, { signTime, signAddress, fileIdTmp }, "post");
 /**
  * 签到记录
  * @param {String} archivesCode 人员Id
  */
-export const personSignRecord = archivesCode =>
-  axios(`${api}/personSign/list`, { archivesCode }, "get");
+export const personSignRecord = () => axios(`${api}/signList`);
 
 /**
  * 尿检
@@ -576,15 +570,16 @@ export const approvesDetail = id =>
  * 审批操作
  * @param {String} id 人员id
  */
-export const approvesEdit = (status,id,fileIdTmp2,remark="") =>
-  axios(`${api}/change/authLeave`, { status,id,fileIdTmp2,remark }, "get");
+export const approvesEdit = (status, id, fileIdTmp2, remark = "") =>
+  axios(`${api}/change/authLeave`, { status, id, fileIdTmp2, remark }, "get");
 /**
  * 审批列表
  * @param {Number} personId 人员id
  */
-export const approvesRecord = (personId) =>
-  axios(
-    `${api}/change/leaveList`,
-    { personId },
-    "get"
-  );
+export const approvesRecord = personId =>
+  axios(`${api}/change/leaveList`, { personId }, "get");
+
+/**
+ * 人员统计
+ */
+export const personList = () => axios(`${api}/person/list`);

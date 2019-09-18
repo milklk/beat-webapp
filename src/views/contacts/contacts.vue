@@ -5,7 +5,7 @@
         placeholder="请输入搜索关键词"
         v-model="keyword"
         shape="round"
-        background="#f2f2f2"
+        background="#fff"
         @search="search"
       />
       <article class="contacts__list" ref="contacts">
@@ -176,7 +176,7 @@ export default {
   margin auto
 
 .contacts__list
-  height calc( 100vh - 46px - 54px - 50px )
+  height calc( 100vh - 46px + 46px - 54px - 50px )
   overflow hidden
 
 .list__item

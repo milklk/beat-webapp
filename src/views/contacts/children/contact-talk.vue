@@ -211,7 +211,7 @@ export default {
   padding 0 50px
 
 .talk-main
-  min-height calc( 100vh - 54px - 46px - 100px )
+  min-height calc( 100vh - 54px - 46px + 46px - 100px )
 
 .talk__footer
   padding 5px

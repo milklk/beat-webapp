@@ -30,9 +30,23 @@ export default {
 };
 </script>
 
+<style lang="stylus">
+.article__content
+  ul
+    li
+      list-style disc
+
+  ol
+    li
+      list-style decimal
+
+  img
+    width 100vw
+    padding 0 20px
+</style>
 <style lang="stylus" scoped>
 .article
-  padding 15px
+  padding 20px
 
 .article__h
   font-size 20px

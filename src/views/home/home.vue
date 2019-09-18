@@ -3,13 +3,13 @@
     <template v-if="$route.path === '/home'">
       <h1 class="home__item home__item--h">
         社戒社康中心
-        <img class="home__img" src="../../assets/img/title.png" />
+        <van-image class="home__img" :src="titlePhoto" />
       </h1>
       <ul class="home__content">
         <!-- 公告信息 -->
         <li class="home__item">
           <header class="item__h">
-            <van-icon name="apps-o" size="22" color="#1989fa" />
+            <van-icon name="volume-o" size="22" color="#1989fa" />
             <h2 class="h_title">公告信息</h2>
             <!-- eslint-disable-next-line -->
             <router-link to="/home/notices" class="h__route">全部公告</router-link>
@@ -82,6 +82,7 @@
           <header class="item__h item__h--actions">
             <van-icon name="chart-trending-o" size="22" color="#1989fa" />
             <h2 class="h_title">人员总览</h2>
+            <aside class="h_aside">总人数：2500</aside>
           </header>
           <div class="item__personnel" ref="personnel"></div>
         </li>
@@ -92,7 +93,7 @@
 </template>
 
 <script>
-import { noticesList } from "../../api";
+import { noticesList, personList } from "../../api";
 import { format } from "../../utils/date";
 export default {
   name: "home",
@@ -100,6 +101,7 @@ export default {
   data() {
     return {
       notices: [],
+      titlePhoto: require("../../assets/img/title.png"),
       actions: [
         {
           icon: require("../../assets/img/action-1.png"),
@@ -136,13 +138,7 @@ export default {
           id: "2"
         }
       ],
-      personnel: [
-        { name: "高风险", value: 500 },
-        { name: "中风险", value: 500 },
-        { name: "低风险", value: 500 },
-        { name: "未报到", value: 500 },
-        { name: "脱失", value: 500 }
-      ]
+      personnel: []
     };
   },
   components: {},
@@ -156,14 +152,26 @@ export default {
       this.notices = notices.data.list;
     }
   },
-  mounted() {
-    this.setPersonnelEcharts();
+  async mounted() {
+    const person = await personList();
+    if (person.ret === "200") {
+      const data = person.data[0];
+      this.personnel = [
+        { name: `高风险：${data.hlevel}`, value: data.hlevel },
+        { name: `中风险：${data.mlevel}`, value: data.mlevel },
+        { name: `低风险：${data.llevel}`, value: data.llevel },
+        { name: `未报到：${data.noreport}`, value: data.noreport },
+        { name: `脱失：${data.lose}`, value: data.lose }
+      ];
+      this.setPersonnelEcharts();
+    }
   },
   updated() {
     this.setPersonnelEcharts();
   },
   methods: {
     setPersonnelEcharts() {
+      const data = [10, 20];
       if (this.$refs.personnel) {
         const personnelEcharts = this.$echarts.init(this.$refs.personnel);
         const personnelData = this.personnel;
@@ -181,13 +189,13 @@ export default {
           },
           tooltip: {
             trigger: "item",
-            formatter: "{b}: {c} ({d}%)"
+            formatter: "{b}"
           },
           legend: {
             orient: "vertical",
             x: "65%",
             y: "center",
-            data: ["高风险", "中风险", "低风险", "未报到", "脱失"]
+            data: personnelData.map(d => `${d.name}`)
           },
           series: [
             {
@@ -238,6 +246,12 @@ export default {
       position absolute
       right 15px
 
+    .h_aside
+      position absolute
+      right 15px
+      top 5px
+      color red
+
 .home__item--h
   font-size 16px
   font-weight bold
@@ -247,11 +261,13 @@ export default {
   margin-bottom 0
 
   .home__img
-    width 100%
+    width 345px
+    height 117px
 
 .home__item--actions
   padding-bottom 0
   height 120px
+  margin 0
 
   .item__h--actions
     padding-bottom 0
@@ -271,7 +287,6 @@ export default {
 
 .van-divider
   color #999999
-  border-color #999999
   padding 0 16px
   margin 5px 0
 

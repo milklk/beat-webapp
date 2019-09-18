@@ -5,7 +5,7 @@
         placeholder="请输入搜索关键词"
         v-model="keyword"
         shape="round"
-        background="#f2f2f2"
+        background="#fff"
         @search="search"
       />
       <!-- eslint-disable-next-line -->
@@ -158,7 +158,7 @@ export default {
   line-height 40px
 
 .hands__list
-  height calc( 100vh - 46px - 54px - 50px )
+  height calc( 100vh - 46px + 46px - 54px - 50px )
   overflow hidden
   border-bottom 10px solid #f2f2f2
 

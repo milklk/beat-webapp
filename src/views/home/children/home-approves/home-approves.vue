@@ -13,7 +13,7 @@
           placeholder="请输入搜索关键词"
           v-model="keyword[tab.status]"
           shape="round"
-          background="#f2f2f2"
+          background="#fff"
           @search="search"
         />
         <article class="approves__list" ref="content">
