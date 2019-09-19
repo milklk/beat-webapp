@@ -2,7 +2,7 @@
   <section class="datum">
     <van-cell-group>
       <!-- eslint-disable-next-line -->
-      <van-field v-model="realname" label="用户名" placeholder="请输入用户名" />
+      <van-field v-model="realname" label="姓名" placeholder="请输入姓名" />
       <!-- eslint-disable-next-line -->
       <van-field v-model="idCard" label="身份证号" placeholder="请输入身份证号" />
       <!-- eslint-disable-next-line -->
@@ -36,7 +36,7 @@ export default {
     const mine = await mineDetail();
     if (mine.ret === "200") {
       this.id = mine.data.id;
-      this.realname = mine.data.account;
+      this.realname = mine.data.realname;
       this.idCard = mine.data.idCard;
       this.userMobile = mine.data.userMobile;
       this.address = mine.data.address;

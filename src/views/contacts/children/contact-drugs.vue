@@ -55,7 +55,7 @@
           <!-- eslint-disable-next-line -->
           <van-cell title="以上药物维持情况属实，由本人上传药物维持情况。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -88,7 +88,7 @@ export default {
       time: new Date(),
       tradeTableFile: {},
       checkReportFile: {},
-      radio: true,
+      radio: false,
       form: {
         archivesCode: this.$route.params.id,
         useTime: `${format(new Date(), "yyyy-MM-dd")}`,

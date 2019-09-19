@@ -45,3 +45,11 @@
 .van-divider::before {
   border-color: #f2f2f2;
 }
+.van-radio__icon--disabled.van-radio__icon--checked .van-icon {
+  color: #fff;
+  background: #1989fa;
+}
+.img-icon .van-info {
+  top: 8px;
+  right: 3px;
+}

@@ -1,6 +1,6 @@
 <template>
   <van-cell-group class="van-cell-group">
-    <van-cell title="社工姓名" :value="account" />
+    <van-cell title="社工姓名" :value="realname" />
     <van-cell title="联系电话" :value="userMobile" />
     <slot></slot>
   </van-cell-group>
@@ -13,7 +13,7 @@ export default {
   props: {},
   data() {
     return {
-      account: "",
+      realname: "",
       userMobile: ""
     };
   },
@@ -22,7 +22,7 @@ export default {
   async created() {
     const worker = await mineDetail();
     if (worker.ret === "200") {
-      this.account = worker.data.account;
+      this.realname = worker.data.realname;
       this.userMobile = worker.data.userMobile;
     }
   },

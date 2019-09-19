@@ -18,11 +18,7 @@
     <!-- eslint-disable-next-line -->
     <van-cell-group v-if="$route.params.status === 'dandelion'" class="van-cell-group">
       <!-- eslint-disable-next-line -->
-      <van-cell
-        title="请假记录"
-        is-link
-        :to="{ name: 'home-record',  params: { id : detail.personId} }"
-      />
+      <van-cell title="请假记录" is-link :to="{ name: 'home-record', params: { id: detail.personId} }" />
     </van-cell-group>
     <!-- 请假信息 -->
     <van-cell-group class="van-cell-group">
@@ -54,11 +50,11 @@
     </van-steps>-->
     <!-- 审批人 -->
     <!-- eslint-disable-next-line -->
-    <van-cell-group class="van-cell-group" v-if="$route.params.status === 'approval'">
-      <!-- eslint-disable-next-line -->
-      <!-- <van-cell v-for="(d,i) in handle" :key="i" :title="d.title" :value="d.value" /> -->
+    <!-- <van-cell-group class="van-cell-group" v-if="$route.params.status === 'approval'">
+  
+      <van-cell v-for="(d,i) in handle" :key="i" :title="d.title" :value="d.value" />
       <van-cell title="审批备注" label="以上请假情况属实，同意请假"></van-cell>
-    </van-cell-group>
+    </van-cell-group>-->
 
     <!-- 审批操作 -->
     <footer v-if="$route.params.status === 'dandelion'" class="approve__footer">
@@ -174,7 +170,6 @@ export default {
   async created() {
     const id = this.$route.params.id;
     const detail = await approvesDetail(id);
-    console.log(detail);
     if (detail.ret === "200") {
       detail.data.startTime = format(detail.data.startTime);
       detail.data.endTime = format(detail.data.endTime);

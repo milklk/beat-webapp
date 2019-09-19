@@ -4,10 +4,11 @@ import routes from "./routes";
 import { ddAuthCode } from "../api/dingtalk";
 import { login } from "../api";
 Vue.use(Router);
-
+const base =
+  process.env.NODE_ENV === "development" ? process.env.BASE_URL : "/bsapp/";
 const router = new Router({
   mode: "history",
-  base: process.env.BASE_URL,
+  base: base,
   routes
 });
 export default router;

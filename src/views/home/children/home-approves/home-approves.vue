@@ -32,7 +32,10 @@
                 params: { status: tab.status, id: item.id }
               }"
               class="list__item"
-              :class="item.status === 0 ? '' : item.status === 1 ? 'success' : 'danger'"
+              :class="{
+                success: item.status === 1,
+                danger: item.status === 2
+              }"
             >
               <van-image
                 class="item__img"
@@ -289,6 +292,9 @@ export default {
       .content__p
         font-size 14px
         color #737397
+        overflow hidden
+        text-overflow ellipsis
+        white-space nowrap
 
       .content__p--status
         color #09f

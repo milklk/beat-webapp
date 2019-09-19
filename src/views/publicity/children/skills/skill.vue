@@ -30,7 +30,7 @@ export default {
     if (skill.ret === "200") {
       const article = skill.data.list[0];
       this.title = article.title;
-      this.source = article.sendName;
+      this.source = article.keyword;
       this.content = article.content;
       this.time = format(article.updateTime);
     }

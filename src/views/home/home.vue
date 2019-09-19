@@ -3,7 +3,8 @@
     <template v-if="$route.path === '/home'">
       <h1 class="home__item home__item--h">
         社戒社康中心
-        <van-image class="home__img" :src="titlePhoto" />
+        <!-- <img :src="titlePhoto.src" /> -->
+        <van-image class="home__img" :src="titlePhoto.src" />
       </h1>
       <ul class="home__content">
         <!-- 公告信息 -->
@@ -38,10 +39,15 @@
             <van-grid-item
               v-for="(action, i) in actions"
               :key="i"
-              :icon="action.icon"
               :text="action.text"
               :to="action.to"
-            />
+              info="99"
+            >
+              <template #icon>
+                <van-icon :name="action.icon" :info="info[action.info]" size="40" class="img-icon" />
+              </template>
+            </van-grid-item>
+            <van-grid-item icon="search" text="文字" />
           </van-grid>
         </li>
         <!-- 审批事项 -->
@@ -94,7 +100,13 @@
 </template>
 
 <script>
-import { noticesList, personList } from "../../api";
+import {
+  noticesList,
+  personList,
+  joinsList,
+  approvesList,
+  archives
+} from "../../api";
 import { format } from "../../utils/date";
 export default {
   name: "home",
@@ -102,45 +114,44 @@ export default {
   data() {
     return {
       notices: [],
-      titlePhoto: require("../../assets/img/approve-head.jpg"),
+      titlePhoto: { src: require("../../assets/img/title.png") },
       actions: [
         {
           icon: require("../../assets/img/action-1.png"),
+
           text: "衔接",
-          to: "/home/joins"
+          to: "/home/joins",
+          info: "joins"
         },
         {
           icon: require("../../assets/img/action-2.png"),
+
           text: "通讯录",
           to: "/contacts"
         },
         {
           icon: require("../../assets/img/action-3.png"),
+
           text: "审批",
-          to: "/home/approves"
+          to: "/home/approves",
+          info: "approves"
         },
         {
           icon: require("../../assets/img/action-4.png"),
+
           text: "移交",
-          to: "/home/hands"
+          to: "/home/hands",
+          info: "hands"
         }
       ],
-      approves: [
-        {
-          text: "低风险人员张小莉的地址变更审批",
-          time: "2019-08-19",
-          state: 1,
-          id: "1"
-        },
-        {
-          text: "低风险人员张小莉的外出请假审批",
-          time: "2019-08-18",
-          state: 0,
-          id: "2"
-        }
-      ],
+      approves: [],
       personnel: [],
-      personnelSum: 0
+      personnelSum: 0,
+      info: {
+        joins: 0,
+        approves: 0,
+        hands: 0
+      }
     };
   },
   components: {},
@@ -152,6 +163,21 @@ export default {
         d.time = format(d.updateTime);
       });
       this.notices = notices.data.list;
+    }
+    const jions = await joinsList(1, 1);
+    if (jions.ret === "200") {
+      jions.data.list.forEach(d => {
+        d.outTime = format(d.outTime);
+      });
+      this.info.joins = jions.data.total;
+    }
+    const approves = await approvesList(1, 1, 1);
+    if (approves.ret === "200") {
+      this.info.approves = approves.data.total;
+    }
+    const hands = await archives(1, 15);
+    if (hands.ret === "200") {
+      this.info.hands = hands.data.total;
     }
   },
   async mounted() {

@@ -48,11 +48,11 @@ export const joinsDetail = id =>
 /**
  * 衔接拒绝
  * @param {String} id 人员Id
- * @param {String} reason 拒绝原因
+ * @param {String} remark 拒绝原因
  * @param {String} refuse 拒绝为1
  */
-export const joinsUpdateFalse = (id, reason, refuse = "1") =>
-  axios(`${api}/personJoin/update`, { id, reason, refuse }, "post");
+export const joinsUpdateFalse = (id, remark, refuse = "1") =>
+  axios(`${api}/personJoin/update`, { id, remark, refuse }, "post");
 /**
  * 衔接确认
  * @param {String} id 人员Id
@@ -162,7 +162,8 @@ export const personSignAdd = (
  * 签到记录
  * @param {String} archivesCode 人员Id
  */
-export const personSignRecord = () => axios(`${api}/personSign/list`);
+export const personSignRecord = archivesCode =>
+  axios(`${api}/personSign/list`, { archivesCode });
 
 /**
  * 尿检

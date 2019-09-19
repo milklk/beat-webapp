@@ -55,7 +55,7 @@
           <!-- eslint-disable-next-line -->
           <van-cell title="以上违反协议情况属实，由本人上传违反协议情况。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -87,7 +87,7 @@ export default {
       show: false,
       time: new Date(),
       file: {},
-      radio: true,
+      radio: false,
       form: {
         archivesCode: this.$route.params.id,
         violationTitle: "",

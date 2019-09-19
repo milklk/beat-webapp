@@ -15,7 +15,10 @@
           params: { status: 'approval', id: item.id }
         }"
         class="list__item"
-        :class="item.status === 0 ? '' : item.status === 1 ? 'success' : 'danger'"
+        :class="{
+          success: item.status === 1,
+          danger: item.status === 2
+        }"
       >
         <van-image
           class="item__img"

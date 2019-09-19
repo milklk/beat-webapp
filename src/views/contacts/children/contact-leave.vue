@@ -64,7 +64,7 @@
           <!-- eslint-disable-next-line -->
           <van-cell title="以上请假信息属实，由本人代为上传请假信息。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -90,7 +90,7 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      radio: true,
+      radio: false,
       timeType: "",
       form: {
         archivesCode: this.$route.params.id,

@@ -4,7 +4,7 @@
       <header class="mine__header">
         <h3 class="header__h">
           <article>
-            <strong class="h__name">{{ mine.account }}</strong>
+            <strong class="h__name">{{ mine.realname }}</strong>
           </article>
         </h3>
         <p class="header__p">身份证号：{{ mine.idCard }}</p>

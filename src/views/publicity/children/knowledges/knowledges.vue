@@ -9,7 +9,8 @@
       :children="children"
       @update="updateList"
     />
-    <NoData v-else label="暂无数据" />
+    <!-- eslint-disable-next-line -->
+    <NoData v-else-if="$route.path === '/publicity/knowledges'" label="暂无数据" />
     <router-view />
   </section>
 </template>

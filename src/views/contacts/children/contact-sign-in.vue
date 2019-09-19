@@ -7,13 +7,14 @@
           :value="total"
           is-link
           :to="{
-          name: 'contact-record',
-          params: { header: '签到记录', id: $route.params.id }
-        }"
+            name: 'contact-record',
+            params: { header: '签到记录', id: $route.params.id }
+          }"
         />
       </van-cell-group>
       <van-divider class="van-divider">代上传签到信息</van-divider>
       <van-cell-group class="van-cell-group van-cell-group--mini">
+        <!-- eslint-disable-next-line -->
         <van-cell required title="签到时间" :value="form.signTime" @click="setTime">
           <template #right-icon>
             <van-icon class="van-icon" name="add-o" />
@@ -21,9 +22,9 @@
         </van-cell>
         <Update :file.sync="file" label="签到图像" />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.signRemark" label="签到地址" placeholder="请输入签到地址" required />
+        <van-field v-model="form.signAddress" label="签到地址" placeholder="请输入签到地址" required />
         <van-field
-          v-model="form.content"
+          v-model="form.signRemark"
           required
           label="代签事由"
           type="textarea"
@@ -48,7 +49,7 @@
           <!-- eslint-disable-next-line -->
           <van-cell title="以上签到信息属实，由本人代上传签到信息。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -76,7 +77,7 @@ export default {
       show: false,
       time: new Date(),
       file: {},
-      radio: true,
+      radio: false,
       form: {
         archivesCode: this.$route.params.id,
         signTime: `${format(new Date(), "yyyy-MM-dd")}`,

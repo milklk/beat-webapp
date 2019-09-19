@@ -1,7 +1,7 @@
 <template>
   <section>
     <!-- eslint-disable-next-line -->
-    <article-text :title="title" :source="source" :time="time" :content="content" />
+    <article-text sourceTitle="来源" :title="title" :source="source" :time="time" :content="content" />
   </section>
 </template>
 

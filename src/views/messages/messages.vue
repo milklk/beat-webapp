@@ -9,7 +9,7 @@
       :children="children"
       @update="updateList"
     />
-    <NoData v-else label="暂无消息" />
+    <NoData v-else-if="$route.path === '/messages'" label="暂无消息" />
     <router-view />
   </section>
 </template>
@@ -46,6 +46,11 @@ export default {
   created() {
     this.updateList();
   },
+  watch: {
+    unread() {
+      this.$store.commit("messagesU/set_unread", this.unread);
+    }
+  },
   methods: {
     async updateList() {
       const notifies = await notifyList(this.page++, 15);
@@ -58,6 +63,7 @@ export default {
         this.unread = notifies.data.list[0].unread
           ? Number(notifies.data.list[0].unread)
           : 0;
+        this.$store.commit("messagesU/set_unread", this.unread);
       }
     }
   }

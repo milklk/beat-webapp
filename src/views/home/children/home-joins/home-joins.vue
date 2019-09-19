@@ -160,6 +160,11 @@ export default {
           font-size 16px
           font-weight normal
           color #152952
+          width 70px
+          overflow hidden
+          text-overflow ellipsis
+          white-space nowrap
+          display inline-block
 
         .h_area
           font-size 12px

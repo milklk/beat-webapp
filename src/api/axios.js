@@ -1,6 +1,6 @@
 import axios from "axios";
-// import { Toast } from "vant";
-// import router from "../router";
+import { Toast } from "vant";
+import router from "../router";
 
 axios.defaults.timeout = 100000;
 //跨域请求，允许保存cookie
@@ -11,7 +11,6 @@ axios.defaults.headers.post["Content-Type"] =
 let fileHeader = {
   headers: {
     //添加请求头
-    token: window.sessionStorage.getItem("token"),
     "Content-Type": "multipart/form-data"
   }
 };
@@ -44,49 +43,39 @@ export default function ajax(url, data = {}, type = "get") {
   });
 }
 
-//HTTPrequest拦截
-// const msg = "不知道谁又写出bug了，请稍后再试。如果还不行就别试了";
-// axios.interceptors.request.use(
-//   config => {
-//     if (store.getters.token) {
-//       config.headers["token"] = store.getters.token;
-//     }
-//     if (
-//       config.method === "post" &&
-//       (!config.headers["Content-Type"] ||
-//         config.headers["Content-Type"].indexOf("multipart") == -1)
-//     ) {
-//       config.data = qs.stringify(config.data, { arrayFormat: "brackets" });
-//     }
-//     return config;
-//   },
-//   error => {
-//     return Promise.reject(new Error(msg));
-//   }
-// );
-//HTTPresponse拦截
-// axios.interceptors.response.use(
-//   data => {
-//     if (data.data.code == "401") {
-//       store.dispatch("Login").then(res => {
-//         if (res.ret != "200") {
-//           Toast.fail("免登失败");
-//           router.push({ path: "/login" });
-//         }
-//       });
-//     } else {
-//       if (data.data.ret != "200") {
-//         if (data.data.ret == "300" && data.data.msg) {
-//           Toast.text(data.data.msg);
-//         } else {
-//           Toast.fail("请求错误");
-//         }
-//       }
-//       return data.data;
-//     }
-//   },
-//   error => {
-//     Toast.fail("请求错误");
-//     return Promise.reject(new Error(msg));
-//   }
-// );
+// HTTPresponse拦截;
+axios.interceptors.response.use(
+  data => {
+    if (!data || data.data.code == "401") {
+      Toast.fail("登陆超时");
+      window.sessionStorage.clear();
+      router.push({ path: "/" });
+    } else {
+      if (data.data.ret != "200") {
+        if (data.data.ret == "300" && data.data.msg) {
+          Toast.fail(data.data.msg);
+        } else if (data.data.result !== 0) {
+          Toast.fail("网络异常，请刷新后重试");
+        }
+      }
+      return data;
+    }
+  },
+  error => {
+    let msg = "请求错误，请刷新页面稍后再试！";
+    if (error.response.status == "400") {
+      msg = "400 请求出错！";
+    } else if (error.response.status == "403") {
+      msg = "403 禁止访问！";
+    } else if (error.response.status == "404") {
+      msg = "404 请求找不到资源！";
+    } else if (error.response.status == "405") {
+      msg = "405 不允许此方法！";
+    } else if (error.response.status == "500") {
+      msg = "500 服务器的内部错误！";
+    } else if (error.response.status == "502") {
+      msg = "502 网关出错！";
+    }
+    Toast.fail(msg);
+  }
+);

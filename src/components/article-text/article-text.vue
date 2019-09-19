@@ -3,8 +3,8 @@
     <!-- 标题以及相关信息 -->
     <h2 class="article__h">{{title}}</h2>
     <aside class="article__aside">
-      <p class="aside__source">来源：{{source}}</p>
-      <p class="aside__time">日期：{{time}}</p>
+      <p class="aside__source">{{ sourceTitle }}：{{ source }}</p>
+      <p class="aside__time">日期：{{ time }}</p>
     </aside>
     <!-- 文章内容 -->
     <article class="article__content" v-html="content"></article>
@@ -18,7 +18,11 @@ export default {
     title: String,
     source: String,
     time: String,
-    content: String
+    content: String,
+    sourceTitle: {
+      type: String,
+      default: "关键词"
+    }
   },
   data() {
     return {};

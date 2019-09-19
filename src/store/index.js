@@ -1,12 +1,12 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
-import login from "./modules/login";
+import messagesU from "./modules/messages-u";
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   modules: {
-    login
+    messagesU
   }
 });

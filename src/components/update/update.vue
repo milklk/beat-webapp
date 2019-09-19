@@ -8,7 +8,7 @@
         :before-read="beforeRead"
         :after-read="afterRead"
         :before-delete="beforeDelete"
-        upload-text="请上传JPG或PNG图片"
+        upload-text="请上传一张JPG或PNG图片"
       />
     </template>
   </van-field>
@@ -47,7 +47,6 @@ export default {
       this.$emit("update:file", file.file);
     },
     beforeDelete() {
-    
       this.$emit("update:file", {});
     }
   }

@@ -30,7 +30,7 @@ export default {
     if (knowledge.ret === "200") {
       const article = knowledge.data.list[0];
       this.title = article.title;
-      this.source = article.sendName;
+      this.source = article.keyword;
       this.content = article.content;
       this.time = format(article.updateTime);
     }

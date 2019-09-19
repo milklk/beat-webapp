@@ -1,13 +1,13 @@
 <template>
   <section class="notice">
     <!-- eslint-disable-next-line -->
-    <article-text :title="title" :source="source" :time="time" :content="content" />
+    <article-text :title="title" :source="source" :time="time" :content="content" sourceTitle="来源" />
   </section>
 </template>
 
 <script>
 import ArticleText from "../../../../components/article-text/article-text";
-import { noticesDetail } from "../../../../api";
+import { noticesDetail, noticesRead } from "../../../../api";
 import { format } from "../../../../utils/date";
 export default {
   name: "home-notice",
@@ -33,6 +33,9 @@ export default {
       this.source = article.source;
       this.content = article.content;
       this.time = format(article.updateTime);
+      if (!article.isRead) {
+        noticesRead(noticeId);
+      }
     }
   },
   methods: {}

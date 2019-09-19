@@ -17,7 +17,7 @@
             <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
-        <van-field v-model="form.area" label="尿检结果" required>
+        <van-field label="尿检结果" required>
           <template #input>
             <van-radio-group v-model="form.checkResult" class="van-radio-group">
               <van-radio name="0">阳性</van-radio>
@@ -51,7 +51,7 @@
         <van-radio-group v-model="radio">
           <van-cell title="以上尿检信息属实，由本人代上传尿检信息。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -78,7 +78,7 @@ export default {
       show: false,
       time: new Date(),
       file: {},
-      radio: true,
+      radio: false,
       form: {
         checkTime: `${format(new Date(), "yyyy-MM-dd")}`,
         checkResult: "1",

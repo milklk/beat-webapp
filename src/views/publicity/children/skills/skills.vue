@@ -8,7 +8,7 @@
       :children="children"
       @update="updateList"
     />
-    <NoData v-else label="暂无数据" />
+    <NoData v-else-if="$route.path === '/publicity/skills'" label="暂无数据" />
     <router-view />
   </section>
 </template>

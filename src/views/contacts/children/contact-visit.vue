@@ -52,7 +52,7 @@
           <!-- eslint-disable-next-line -->
           <van-cell title="以上拜访情况属实，由本人上传拜访情况。" @click="radio=radio === false ? true : false">
             <template #icon>
-              <van-radio class="van-radio" :name="true" />
+              <van-radio class="van-radio" :name="true" disabled />
             </template>
           </van-cell>
         </van-radio-group>
@@ -80,7 +80,7 @@ export default {
       show: false,
       time: new Date(),
       file: {},
-      radio: true,
+      radio: false,
       form: {
         archivesCode: this.$route.params.id,
         visitTitle: "",

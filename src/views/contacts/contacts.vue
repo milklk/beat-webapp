@@ -25,18 +25,17 @@
                   <strong class="p__strong">{{ item.name }}</strong>
                   <!-- <span class="p__span">（ {{item.sex}} ）</span> -->
                 </p>
-                <p class="li__p">{{item.mobile}}</p>
+                <p class="li__p">{{ item.mobile }}</p>
               </li>
               <li class="content__li">
-                <p class="li__p">{{item.idCard}}</p>
+                <p class="li__p">{{ item.idCard }}</p>
                 <p class="li__p">
                   <!-- eslint-disable-next-line -->
                   <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
-                  <van-tag
-                    class="van-tag"
-                    type="danger"
-                    v-if="item.status"
-                  >{{ item.userStatusName }}</van-tag>
+                  <van-tag class="van-tag" type="danger" v-if="item.status">
+                    <!-- eslint-disable-next-line -->
+                    {{ item.userStatusName }}
+                  </van-tag>
                 </p>
               </li>
             </ul>
@@ -55,8 +54,15 @@
         </div>
       </h3>
       <p class="header__p">
-        <!-- eslint-disable-next-line -->
-        {{addict.mobile}} 社区戒毒 {{ addict.startTime }} 至 {{ addict.endTime }}
+        {{ addict.mobile }}
+        <span v-if="addict.type">
+          <!-- eslint-disable-next-line -->
+          {{ addict.type === "1" ? "社区戒毒" : "社区康复" }}
+        </span>
+        <span v-if="addict.startTime && addict.endTime && addict.type">
+          <!-- eslint-disable-next-line -->
+          {{ addict.startTime }} 至 {{ addict.endTime }}
+        </span>
       </p>
       <p class="header__p">{{ addict.address }}</p>
     </header>
@@ -155,8 +161,10 @@ export default {
       if (archive.ret === "200") {
         archive.data.startTime = archive.data.startTime
           ? format(archive.data.startTime)
-          : "未知";
-        archive.data.endTime = format(archive.data.endTime);
+          : false;
+        archive.data.endTime = archive.data.startTime
+          ? format(archive.data.startTime)
+          : false;
         this.addict = archive.data;
       }
     }

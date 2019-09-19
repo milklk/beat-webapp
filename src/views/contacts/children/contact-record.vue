@@ -188,7 +188,9 @@ export default {
         this.leave.length ||
         this.assess.length ||
         this.helping.length ||
-        this.agreement.length
+        this.agreement.length ||
+        this.find.length ||
+        this.drugs.length
       );
     }
   },
@@ -203,6 +205,7 @@ export default {
     if (worker.ret === "200") {
       this.account = worker.data.account;
     }
+    console.log(show);
     switch (show) {
       case "签到记录":
         {
@@ -306,6 +309,7 @@ export default {
         break;
       case "药物维持记录":
         {
+          console.log(1111);
           const data = await personMedicationRecord(id);
           if (data.ret === "200") {
             data.data.list.forEach(d => {

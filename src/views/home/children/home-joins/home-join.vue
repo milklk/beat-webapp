@@ -163,9 +163,8 @@ export default {
     if (detail.ret === "200") {
       detail.data[0].type =
         detail.data[0].type === "1" ? "社区戒毒" : "社区康复";
-
+      detail.data[0].outTime = format(detail.data[0].outTime);
       this.detail = detail.data[0];
-
       this.id = this.detail.id;
     }
     const mine = await mineDetail();

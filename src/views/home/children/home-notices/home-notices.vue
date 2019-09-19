@@ -9,7 +9,7 @@
       :children="children"
       @update="updateList"
     />
-    <NoData v-else label="暂无公告" />
+    <NoData v-else-if="$route.path === '/home/notices'" label="暂无公告" />
     <router-view />
   </section>
 </template>

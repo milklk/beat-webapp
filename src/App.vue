@@ -4,9 +4,7 @@
       <headerBar />
     </header>-->
     <main class="app__main" ref="main" :class="mainClass">
-      <keep-alive>
-        <router-view />
-      </keep-alive>
+      <router-view />
     </main>
     <footer class="app__footer" v-show="$route.meta.footer">
       <footerTab />
@@ -37,7 +35,6 @@ export default {
     const user = await login(authCode);
     if (user.ret === "200") {
       window.sessionStorage.setItem("token", user.data.token);
-      // this.$router.push({ path: "/home" });
     }
   },
   mounted() {},
@@ -84,6 +81,7 @@ html, body
   top 0
   left 0
   overflow auto
+  border-top 1px solid #f2f2f2
 
   &.app__main--header
     height calc( 100vh - 46px + 46px )

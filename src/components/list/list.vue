@@ -99,6 +99,7 @@ export default {
     async readed(item) {
       if (item.isRead === 0) {
         const read = await this.api.readed(item.id);
+        console.log(read);
         if (read.ret === "200") {
           item.isRead = 1;
           const unread = this.unread - 1;
