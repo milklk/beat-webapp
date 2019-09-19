@@ -1,6 +1,6 @@
 <template>
   <section class="record">
-    <van-steps direction="vertical" :active="0" active-icon="checked">
+    <van-steps direction="vertical" :active="0" active-icon="checked" v-if="show">
       <!-- 签到记录 -->
       <template v-if="$route.params.header === '签到记录'">
         <van-step v-for="(item, i) in signIn" :key="i">
@@ -133,6 +133,7 @@
         </van-step>
       </template>
     </van-steps>
+    <NoData v-else :label="`暂无${$route.params.header}`" />
   </section>
 </template>
 
@@ -152,6 +153,7 @@ import {
   personMedicationRecord
 } from "../../../api";
 import { format } from "../../../utils/date";
+import NoData from "../../../components/no-data";
 export default {
   name: "contact-record",
   props: {},
@@ -171,8 +173,23 @@ export default {
       account: ""
     };
   },
-  components: {},
-  computed: {},
+  components: {
+    NoData
+  },
+  computed: {
+    show() {
+      return (
+        this.signIn.length ||
+        this.urinalysis.length ||
+        this.talk.length ||
+        this.visit.length ||
+        this.leave.length ||
+        this.assess.length ||
+        this.helping.length ||
+        this.agreement.length
+      );
+    }
+  },
   async created() {
     const show = this.$route.params.header;
     const id = this.$route.params.id;

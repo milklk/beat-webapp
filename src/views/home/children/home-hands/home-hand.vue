@@ -1,49 +1,53 @@
 <template>
   <section class="hand">
-    <van-search
-      placeholder="请输入搜索关键词"
-      v-model="keyword"
-      shape="round"
-      background="#fff"
-      @search="search"
-    />
-    <!-- eslint-disable-next-line -->
-    <article class="hand__list" ref="hand">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        :immediate-check="false"
-      >
-        <van-radio-group v-model="result">
-          <van-cell
-            v-for="(item, i) in list"
-            :key="i"
-            :value="item.mobile"
-            class="van-cell--checkbox van-cell--auto"
-          >
-            <template #title>
-              <van-radio :name="item.userId">
-                <!-- eslint-disable-next-line -->
-                <div class="van-checkbox__label">{{ item.realname }}</div>
-              </van-radio>
-            </template>
-          </van-cell>
-        </van-radio-group>
-      </van-list>
-    </article>
-    <footer class="hand__footer">
+    <div v-show="list.length">
+      <van-search
+        placeholder="请输入搜索关键词"
+        v-model="keyword"
+        shape="round"
+        background="#fff"
+        @search="search"
+      />
       <!-- eslint-disable-next-line -->
-      <van-button @click="transfer" class="van-button" type="info">
+      <article class="hand__list" ref="hand">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          :immediate-check="false"
+        >
+          <van-radio-group v-model="result">
+            <van-cell
+              v-for="(item, i) in list"
+              :key="i"
+              :value="item.mobile"
+              class="van-cell--checkbox van-cell--auto"
+            >
+              <template #title>
+                <van-radio :name="item.userId">
+                  <!-- eslint-disable-next-line -->
+                  <div class="van-checkbox__label">{{ item.realname }}</div>
+                </van-radio>
+              </template>
+            </van-cell>
+          </van-radio-group>
+        </van-list>
+      </article>
+      <footer class="hand__footer">
         <!-- eslint-disable-next-line -->
-        确认移交
-      </van-button>
-    </footer>
+        <van-button @click="transfer" class="van-button" type="info">
+          <!-- eslint-disable-next-line -->
+          确认移交
+        </van-button>
+      </footer>
+    </div>
+    <NoData v-if="!list.length" label="暂无可接收人员" />
   </section>
 </template>
 
 <script>
 import { archivesUsers, archivesTransfer } from "../../../../api";
+import NoData from "../../../../components/no-data";
 export default {
   name: "",
   props: {},
@@ -60,7 +64,9 @@ export default {
       bs: {}
     };
   },
-  components: {},
+  components: {
+    NoData
+  },
   computed: {},
   async created() {
     const params = this.$route.params;

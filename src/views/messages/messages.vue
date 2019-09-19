@@ -9,12 +9,14 @@
       :children="children"
       @update="updateList"
     />
+    <NoData v-else label="暂无消息" />
     <router-view />
   </section>
 </template>
 
 <script>
 import List from "../../components/list/list";
+import NoData from "../../components/no-data";
 import { notifyList, notifyRead, notifyReadAll } from "../../api";
 import { format } from "../../utils/date";
 export default {
@@ -37,7 +39,8 @@ export default {
     };
   },
   components: {
-    List
+    List,
+    NoData
   },
   computed: {},
   created() {

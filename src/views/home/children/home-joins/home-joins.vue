@@ -3,30 +3,33 @@
     <!-- eslint-disable-next-line -->
     <article class="joins__list" ref="joins" v-show="$route.path === '/home/joins'">
       <!-- eslint-disable-next-line -->
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
-        <router-link
-          v-for="(item, i) in list"
-          :key="i"
-          :to="{ name: 'home-join', params: { id: item.id } }"
-          class="list__item"
-        >
-          <!-- eslint-disable-next-line -->
-          <van-image class="item__img" :src="setPhoto(item.headPhoto)" />
-          <article class="item__content">
-            <h3 class="content__h">
-              <strong class="h__name">{{ item.name }}</strong>
-              <span class="h_area">（{{ item.sex }}）</span>
-            </h3>
-            <p class="content__p">出所日期：{{ item.outTime }}</p>
+      <template v-if="list.length">
+        <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
+          <router-link
+            v-for="(item, i) in list"
+            :key="i"
+            :to="{ name: 'home-join', params: { id: item.id } }"
+            class="list__item"
+          >
             <!-- eslint-disable-next-line -->
-            <!-- <p class="content__p">经办人：{{ item.agentOrg ? item.agentOrg : '暂无数据' }}</p> -->
-            <aside class="content__aside">
-              <p class="aside__p">{{ item.idcard }}</p>
-              <van-tag type="danger">{{ item.type==='1' ? '社区戒毒' : '社区康复' }}</van-tag>
-            </aside>
-          </article>
-        </router-link>
-      </van-list>
+            <van-image class="item__img" :src="setPhoto(item.headPhoto)" />
+            <article class="item__content">
+              <h3 class="content__h">
+                <strong class="h__name">{{ item.name }}</strong>
+                <span class="h_area">（{{ item.sex }}）</span>
+              </h3>
+              <p class="content__p">出所日期：{{ item.outTime }}</p>
+              <!-- eslint-disable-next-line -->
+              <!-- <p class="content__p">经办人：{{ item.agentOrg ? item.agentOrg : '暂无数据' }}</p> -->
+              <aside class="content__aside">
+                <p class="aside__p">{{ item.idcard }}</p>
+                <van-tag type="danger">{{ item.type==='1' ? '社区戒毒' : '社区康复' }}</van-tag>
+              </aside>
+            </article>
+          </router-link>
+        </van-list>
+      </template>
+      <NoData v-else label="暂无衔接" />
     </article>
     <router-view />
   </section>
@@ -36,6 +39,7 @@
 import { joinsList, headPhoto } from "../../../../api";
 import { format } from "../../../../utils/date";
 import photo from "../../../../assets/img/people-head.png";
+import NoData from "../../../../components/no-data";
 export default {
   name: "home-joins",
   props: {},
@@ -49,7 +53,9 @@ export default {
       total: 0
     };
   },
-  components: {},
+  components: {
+    NoData
+  },
   computed: {},
   watch: {
     async $route() {

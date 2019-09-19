@@ -21,7 +21,7 @@
           <van-list
             v-model="loading[tab.status]"
             :finished="finished[tab.status]"
-            finished-text="没有更多了"
+            :finished-text="tab.data.length ? '没有更多了' : '暂无审批数据'"
             :immediate-check="false"
           >
             <router-link
@@ -246,7 +246,7 @@ export default {
   background url( '../../../../assets/img/danger.png' ) right 60% / 32.67vw 26.67vw no-repeat
 
 .approves__list
-  height calc( 100vh - 145px )
+  height calc( 100vh - 145px + 45px )
   overflow hidden
 
   .list__item

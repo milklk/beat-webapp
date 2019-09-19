@@ -150,14 +150,19 @@ export const personSignAdd = (
   archivesCode,
   signTime,
   signAddress,
-
+  signRemark,
   fileIdTmp
-) => axios(`${api}/addSign`, { signTime, signAddress, fileIdTmp }, "post");
+) =>
+  axios(
+    `${api}/personSign/add`,
+    { signTime, signAddress, archivesCode, signRemark, fileIdTmp },
+    "post"
+  );
 /**
  * 签到记录
  * @param {String} archivesCode 人员Id
  */
-export const personSignRecord = () => axios(`${api}/signList`);
+export const personSignRecord = () => axios(`${api}/personSign/list`);
 
 /**
  * 尿检

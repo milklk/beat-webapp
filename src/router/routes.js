@@ -44,7 +44,8 @@ export default [
     path: "/home",
     component: Home,
     meta: {
-      footer: true
+      footer: true,
+      header: "社戒社康中心"
     },
     children: [
       {

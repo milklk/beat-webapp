@@ -1,6 +1,6 @@
 <template>
   <section class="hands">
-    <div v-show="$route.path === '/home/hands'">
+    <div v-show="$route.path === '/home/hands' && list.length">
       <van-search
         placeholder="请输入搜索关键词"
         v-model="keyword"
@@ -10,39 +10,41 @@
       />
       <!-- eslint-disable-next-line -->
       <article class="hands__list" ref="hands">
-        <van-list
-          v-model="loading"
-          :finished="finished"
-          finished-text="没有更多了"
-          :immediate-check="false"
-        >
-          <van-checkbox-group v-model="result">
-            <!-- eslint-disable-next-line -->
-            <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
-              <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
-              <ul class="item__content">
-                <li class="content__li">
-                  <p class="li__p">
-                    <strong class="p__strong">{{ item.name }}</strong>
-                    <!-- <span class="p__span">（临桂区）</span> -->
-                  </p>
-                  <p class="li__p">{{ item.mobile }}</p>
-                </li>
-                <li class="content__li">
-                  <p class="li__p">{{ item.idCard }}</p>
-                  <p class="li__p">
-                    <!-- eslint-disable-next-line -->
-                    <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
-                    <van-tag class="van-tag" type="danger" v-if="item.status">
+        <template v-if="list.length">
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            :immediate-check="false"
+          >
+            <van-checkbox-group v-model="result">
+              <!-- eslint-disable-next-line -->
+              <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
+                <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
+                <ul class="item__content">
+                  <li class="content__li">
+                    <p class="li__p">
+                      <strong class="p__strong">{{ item.name }}</strong>
+                      <!-- <span class="p__span">（临桂区）</span> -->
+                    </p>
+                    <p class="li__p">{{ item.mobile }}</p>
+                  </li>
+                  <li class="content__li">
+                    <p class="li__p">{{ item.idCard }}</p>
+                    <p class="li__p">
                       <!-- eslint-disable-next-line -->
-                      {{ item.userStatusName }}
-                    </van-tag>
-                  </p>
-                </li>
-              </ul>
-            </van-checkbox>
-          </van-checkbox-group>
-        </van-list>
+                      <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
+                      <van-tag class="van-tag" type="danger" v-if="item.status">
+                        <!-- eslint-disable-next-line -->
+                        {{ item.userStatusName }}
+                      </van-tag>
+                    </p>
+                  </li>
+                </ul>
+              </van-checkbox>
+            </van-checkbox-group>
+          </van-list>
+        </template>
       </article>
       <footer class="hands__footer">
         <!-- eslint-disable-next-line -->
@@ -52,6 +54,7 @@
         </van-button>
       </footer>
     </div>
+    <NoData v-if="!list.length" label="暂无可移交人员" />
     <router-view></router-view>
   </section>
 </template>
@@ -59,6 +62,7 @@
 <script>
 import { archives, headPhoto } from "../../../../api";
 import photo from "../../../../assets/img/people-head.png";
+import NoData from "../../../../components/no-data";
 export default {
   name: "home-hands",
   props: {},
@@ -74,7 +78,9 @@ export default {
       bs: {}
     };
   },
-  components: {},
+  components: {
+    NoData
+  },
   computed: {},
   watch: {
     // 如果路由发生变化，再次执行该方法

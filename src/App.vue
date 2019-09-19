@@ -37,7 +37,7 @@ export default {
     const user = await login(authCode);
     if (user.ret === "200") {
       window.sessionStorage.setItem("token", user.data.token);
-      this.$router.push({ path: "/home" });
+      // this.$router.push({ path: "/home" });
     }
   },
   mounted() {},
@@ -87,12 +87,11 @@ html, body
 
   &.app__main--header
     height calc( 100vh - 46px + 46px )
-    margin-top 46px
 
   &.app__main--footer
     height calc( 100vh - 50px )
 
   &.app__main--header.app__main--footer
-    height calc( 100vh - 96px )
-    margin-top 46px
+    height calc( 100vh - 96px + 46px )
+    margin-top 0
 </style>

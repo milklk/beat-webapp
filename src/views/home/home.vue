@@ -14,16 +14,19 @@
             <!-- eslint-disable-next-line -->
             <router-link to="/home/notices" class="h__route">全部公告</router-link>
           </header>
-          <router-link
-            v-for="(notice, i) in notices"
-            :key="i"
-            :to="{ name: 'home-notice', params: { id: notice.noticeId } }"
-          >
-            <!-- eslint-disable-next-line -->
-            <van-notice-bar left-icon="volume-o" :scrollable="false" :text="notice.title">
-              <template #right-icon>{{ notice.time }}</template>
-            </van-notice-bar>
-          </router-link>
+          <template v-if="notices.length">
+            <router-link
+              v-for="(notice, i) in notices"
+              :key="i"
+              :to="{ name: 'home-notice', params: { id: notice.noticeId } }"
+            >
+              <!-- eslint-disable-next-line -->
+              <van-notice-bar left-icon="volume-o" :scrollable="false" :text="notice.title">
+                <template #right-icon>{{ notice.time }}</template>
+              </van-notice-bar>
+            </router-link>
+          </template>
+          <van-divider v-else class="van-divider">暂无公告</van-divider>
         </li>
         <!-- 常用功能 -->
         <li class="home__item home__item--actions">
@@ -74,15 +77,13 @@
             </van-notice-bar>
           </router-link>
         </li>-->
-        <li>
-          <van-divider class="van-divider">数据概览</van-divider>
-        </li>
+
         <!-- 人员总览 -->
         <li class="home__item home__personnel">
           <header class="item__h item__h--actions">
             <van-icon name="chart-trending-o" size="22" color="#1989fa" />
             <h2 class="h_title">人员总览</h2>
-            <aside class="h_aside">总人数：2500</aside>
+            <aside class="h_aside">总人数：{{ personnelSum }}</aside>
           </header>
           <div class="item__personnel" ref="personnel"></div>
         </li>
@@ -101,7 +102,7 @@ export default {
   data() {
     return {
       notices: [],
-      titlePhoto: require("../../assets/img/title.png"),
+      titlePhoto: require("../../assets/img/approve-head.jpg"),
       actions: [
         {
           icon: require("../../assets/img/action-1.png"),
@@ -138,7 +139,8 @@ export default {
           id: "2"
         }
       ],
-      personnel: []
+      personnel: [],
+      personnelSum: 0
     };
   },
   components: {},
@@ -157,12 +159,14 @@ export default {
     if (person.ret === "200") {
       const data = person.data[0];
       this.personnel = [
-        { name: `高风险：${data.hlevel}`, value: data.hlevel },
-        { name: `中风险：${data.mlevel}`, value: data.mlevel },
-        { name: `低风险：${data.llevel}`, value: data.llevel },
-        { name: `未报到：${data.noreport}`, value: data.noreport },
-        { name: `脱失：${data.lose}`, value: data.lose }
+        { name: `高风险：${data.hlevel}人`, value: data.hlevel },
+        { name: `中风险：${data.mlevel}人`, value: data.mlevel },
+        { name: `低风险：${data.llevel}人`, value: data.llevel },
+        { name: `未报到：${data.noreport}人`, value: data.noreport },
+        { name: `脱失：${data.lose}人`, value: data.lose }
       ];
+      this.personnelSum =
+        data.hlevel + data.mlevel + data.llevel + data.noreport + data.lose;
       this.setPersonnelEcharts();
     }
   },
@@ -171,7 +175,6 @@ export default {
   },
   methods: {
     setPersonnelEcharts() {
-      const data = [10, 20];
       if (this.$refs.personnel) {
         const personnelEcharts = this.$echarts.init(this.$refs.personnel);
         const personnelData = this.personnel;
@@ -189,7 +192,7 @@ export default {
           },
           tooltip: {
             trigger: "item",
-            formatter: "{b}"
+            formatter: "{b}({d}%)"
           },
           legend: {
             orient: "vertical",
@@ -199,7 +202,7 @@ export default {
           },
           series: [
             {
-              name: "访问来源",
+              name: "人员总览",
               type: "pie",
               radius: ["50%", "70%"],
               center: ["25%", "50%"],
@@ -267,7 +270,6 @@ export default {
 .home__item--actions
   padding-bottom 0
   height 120px
-  margin 0
 
   .item__h--actions
     padding-bottom 0

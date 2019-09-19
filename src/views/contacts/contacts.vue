@@ -12,7 +12,7 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          finished-text="没有更多了"
+          :finished-text="list.length ? '没有更多了' : '暂无通讯录人员'"
           :immediate-check="false"
         >
           <!-- eslint-disable-next-line -->
