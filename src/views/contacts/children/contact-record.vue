@@ -1,5 +1,6 @@
 <template>
   <section class="record">
+    <!-- eslint-disable-next-line -->
     <van-steps direction="vertical" :active="0" active-icon="checked" v-if="show">
       <!-- 签到记录 -->
       <template v-if="$route.params.header === '签到记录'">
@@ -60,9 +61,10 @@
           <header class="van-step__header">
             <p class="header__p">{{ item.reason }}</p>
             <!-- eslint-disable-next-line -->
-            <p
-              class="header__p"
-            >{{ item.status === 0 ? "待审批" : item.status === 1 ? '审批通过' : '审批拒绝' }}</p>
+            <p class="header__p">
+              <!-- eslint-disable-next-line -->
+              {{ item.status === 0 ? "待审批" : item.status === 1 ? '审批通过' : '审批拒绝' }}
+            </p>
           </header>
           <article class="van-step__article">
             <p>起止日期：{{ item.startTime }} 至 {{ item.startTime }}</p>

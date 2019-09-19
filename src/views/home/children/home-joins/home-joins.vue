@@ -4,6 +4,7 @@
     <article class="joins__list" ref="joins" v-show="$route.path === '/home/joins'">
       <!-- eslint-disable-next-line -->
       <template v-if="list.length">
+        <!-- eslint-disable-next-line -->
         <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
           <router-link
             v-for="(item, i) in list"
@@ -23,6 +24,7 @@
               <!-- <p class="content__p">经办人：{{ item.agentOrg ? item.agentOrg : '暂无数据' }}</p> -->
               <aside class="content__aside">
                 <p class="aside__p">{{ item.idcard }}</p>
+                <!-- eslint-disable-next-line -->
                 <van-tag type="danger">{{ item.type==='1' ? '社区戒毒' : '社区康复' }}</van-tag>
               </aside>
             </article>

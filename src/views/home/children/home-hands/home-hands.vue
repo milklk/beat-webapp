@@ -20,6 +20,7 @@
             <van-checkbox-group v-model="result">
               <!-- eslint-disable-next-line -->
               <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
+                <!-- eslint-disable-next-line -->
                 <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
                 <ul class="item__content">
                   <li class="content__li">

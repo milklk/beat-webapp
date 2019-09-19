@@ -15,7 +15,7 @@
 </template>
 <script>
 import footerTab from "./components/tab/tab";
-import headerBar from "./components/bar/bar";
+// import headerBar from "./components/bar/bar";
 import { ddAuthCode, ddTitle } from "./api/dingtalk";
 import { login } from "./api";
 export default {
@@ -29,8 +29,8 @@ export default {
     };
   },
   components: {
-    footerTab,
-    headerBar
+    footerTab
+    // headerBar
   },
   async created() {
     const authCode = await ddAuthCode();
