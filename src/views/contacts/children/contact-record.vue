@@ -11,7 +11,7 @@
           <van-step v-for="(item, i) in signIn" :key="i">
             <header class="van-step__header">
               <!-- eslint-disable-next-line -->
-              <p class="header__p">{{ name }}签到（社工{{ account }}代签)</p>
+              <p class="header__p">{{ name }}签到（社工{{ realname }}代签)</p>
               <p class="header__p">{{ item.signTime }}</p>
             </header>
             <article class="van-step__article">
@@ -25,7 +25,7 @@
           <van-step v-for="(item, i) in urinalysis" :key="i">
             <header class="van-step__header">
               <!-- eslint-disable-next-line -->
-              <p class="header__p">{{ item.checkResult === 0 ? '阳性' : '阴性' }}（社工{{ account }}代上传)</p>
+              <p class="header__p">{{ item.checkResult === 0 ? '阳性' : '阴性' }}（社工{{ realname }}代上传)</p>
               <p class="header__p">{{ item.checkTime }}</p>
             </header>
             <article class="van-step__article">
@@ -39,7 +39,7 @@
           <van-step v-for="(item, i) in talk" :key="i">
             <header class="van-step__header">
               <!-- eslint-disable-next-line -->
-              <p class="header__p">谈话渠道{{ item.talkMode }}（社工{{ account }}代签)</p>
+              <p class="header__p">谈话渠道{{ item.talkMode }}（社工{{ realname }}代签)</p>
               <p class="header__p">{{ item.talkTime }}</p>
             </header>
             <article class="van-step__article">
@@ -91,7 +91,7 @@
         <template v-if="$route.params.header === '帮扶救助记录'">
           <van-step v-for="(item, i) in helping" :key="i">
             <header class="van-step__header">
-              <p class="header__p">社工姓名：{{ account }}</p>
+              <p class="header__p">社工姓名：{{ realname }}</p>
               <p class="header__p">{{ item.helpTime }}</p>
             </header>
             <article class="van-step__article">
@@ -104,7 +104,7 @@
           <van-step v-for="(item, i) in agreement" :key="i">
             <header class="van-step__header">
               <!-- eslint-disable-next-line -->
-              <p class="header__p">社工姓名：{{ account }}</p>
+              <p class="header__p">社工姓名：{{ realname }}</p>
               <p class="header__p">{{ item.violationTime }}</p>
             </header>
             <article class="van-step__article">
@@ -178,7 +178,7 @@ export default {
       find: [],
       drugs: [],
       name: "",
-      account: "",
+      realname: "",
       actions: [
         {
           text: "签到",
@@ -257,7 +257,7 @@ export default {
     }
     const worker = await mineDetail();
     if (worker.ret === "200") {
-      this.account = worker.data.account;
+      this.realname = worker.data.realname;
     }
     switch (show) {
       case "签到记录":
