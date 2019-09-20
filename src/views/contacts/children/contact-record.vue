@@ -51,7 +51,7 @@
         <template v-if="$route.params.header === '拜访记录'">
           <van-step v-for="(item, i) in visit" :key="i">
             <header class="van-step__header">
-              <p class="header__p">同行人员:{{ item.ids }}</p>
+              <p class="header__p">同行人员:{{ item.colleagueUser }}</p>
               <p class="header__p">{{ item.visitTime }}</p>
             </header>
             <article class="van-step__article">
@@ -99,8 +99,8 @@
             </article>
           </van-step>
         </template>
-        <!-- 违反协议记录 -->
-        <template v-if="$route.params.header === '违反协议记录'">
+        <!-- 告诫信息记录 -->
+        <template v-if="$route.params.header === '告诫信息记录'">
           <van-step v-for="(item, i) in agreement" :key="i">
             <header class="van-step__header">
               <!-- eslint-disable-next-line -->
@@ -116,7 +116,7 @@
         <template v-if="$route.params.header === '查找脱失记录'">
           <van-step v-for="(item, i) in find" :key="i">
             <header class="van-step__header">
-              <p class="header__p">同行人员:{{ item.ids }}</p>
+              <p class="header__p">同行人员:{{ item.colleagueUser }}</p>
               <p class="header__p">{{ item.findTime }}</p>
             </header>
             <article class="van-step__article">
@@ -210,7 +210,7 @@ export default {
           to: { name: "contact-helping", params: { id: id } }
         },
         {
-          text: "违反协议",
+          text: "告诫信息",
           to: { name: "contact-agreement", params: { id: id } }
         },
         {
@@ -338,7 +338,7 @@ export default {
           }
         }
         break;
-      case "违反协议记录":
+      case "告诫信息记录":
         {
           const data = await personViolationRecord(id);
           if (data.ret === "200") {

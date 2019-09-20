@@ -86,7 +86,7 @@ export default {
           to: { name: "contact-helping", params: { id: id } }
         },
         {
-          text: "违反协议",
+          text: "告诫信息",
           icon: "iconxieyi-copy",
           to: { name: "contact-agreement", params: { id: id } }
         },
@@ -168,12 +168,12 @@ export default {
           }
         },
         {
-          title: "违反协议",
+          title: "告诫信息",
           count: 0,
           time: "",
           to: {
             name: "contact-record",
-            params: { header: "违反协议记录", id: id }
+            params: { header: "告诫信息记录", id: id }
           }
         },
         {

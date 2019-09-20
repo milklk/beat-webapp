@@ -29,11 +29,11 @@
         </van-cell>
         <!-- eslint-disable-next-line -->
         <van-field
-          v-model="form.ids"
+          v-model="form.colleagueUser"
           label="评估人员"
           placeholder="请输入评估人员"
           required
-          error-message="提示：多个人员之间使用逗号(，)隔开"
+          error-message="提示：多个人员之间使用逗号(,)隔开"
         />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.assessTitle" label="评估摘要" placeholder="请输入评估摘要" required />
@@ -98,7 +98,7 @@ export default {
         assessTitle: "",
         assessRemark: "",
         assessTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        ids: "",
+        colleagueUser: "",
         fileIdTmp: []
       }
     };
@@ -149,13 +149,13 @@ export default {
           mask: true,
           message: "上传\n评估情况中"
         });
-
+        this.form.colleagueUser.replace(/，/gi, ",");
         const sign = await personAssessAdd(
           this.form.archivesCode,
           this.form.assessTitle,
           this.form.assessRemark,
           this.form.assessTime,
-          this.form.ids,
+          this.form.colleagueUser,
           this.form.fileIdTmp
         );
         if (sign.ret === "200") {

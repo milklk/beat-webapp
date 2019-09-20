@@ -55,12 +55,12 @@
       </h3>
       <p class="header__p">
         {{ addict.mobile }}
-        <template v-if="addict.userStatus">
+        <template v-if="addict.userStatusName">
           <!-- eslint-disable-next-line -->
-          {{ addict.userStatus === "1" ? "社区戒毒" : "社区康复" }}
+          {{ addict.userStatusName }}
         </template>
         <!-- eslint-disable-next-line -->
-        <template v-if="addict.startTime && addict.endTime && addict.userStatus">
+        <template v-if="addict.startTime && addict.endTime && addict.userStatusName">
           <!-- eslint-disable-next-line -->
           {{ addict.startTime }} 至 {{ addict.endTime }}
         </template>

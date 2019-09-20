@@ -118,27 +118,23 @@ export default {
       actions: [
         {
           icon: require("../../assets/img/action-1.png"),
-
           text: "衔接",
           to: "/home/joins",
           info: "joins"
         },
         {
           icon: require("../../assets/img/action-2.png"),
-
           text: "通讯录",
           to: "/contacts"
         },
         {
           icon: require("../../assets/img/action-3.png"),
-
           text: "审批",
           to: "/home/approves",
           info: "approves"
         },
         {
           icon: require("../../assets/img/action-4.png"),
-
           text: "移交",
           to: "/home/hands",
           info: "hands"
@@ -156,29 +152,15 @@ export default {
   },
   components: {},
   computed: {},
+  watch: {
+    $route(to) {
+      if (to.path === "/home") {
+        this.$_created();
+      }
+    }
+  },
   async created() {
-    const notices = await noticesList(1, 2);
-    if (notices.ret === "200") {
-      notices.data.list.forEach(d => {
-        d.time = format(d.updateTime);
-      });
-      this.notices = notices.data.list;
-    }
-    const jions = await joinsList(1, 1);
-    if (jions.ret === "200") {
-      jions.data.list.forEach(d => {
-        d.outTime = format(d.outTime);
-      });
-      this.info.joins = jions.data.total;
-    }
-    const approves = await approvesList(1, 1, 1);
-    if (approves.ret === "200") {
-      this.info.approves = approves.data.total;
-    }
-    const hands = await archives(1, 15);
-    if (hands.ret === "200") {
-      this.info.hands = hands.data.total;
-    }
+    this.$_created();
   },
   async mounted() {
     const person = await personList();
@@ -246,6 +228,30 @@ export default {
         };
         personnelEcharts.setOption(personnelOption);
       }
+    },
+    async $_created() {
+      const notices = await noticesList(1, 2);
+      if (notices.ret === "200") {
+        notices.data.list.forEach(d => {
+          d.time = format(d.updateTime);
+        });
+        this.notices = notices.data.list;
+      }
+      const jions = await joinsList(1, 1);
+      if (jions.ret === "200") {
+        jions.data.list.forEach(d => {
+          d.outTime = format(d.outTime);
+        });
+        this.info.joins = jions.data.total;
+      }
+      const approves = await approvesList(1, 1, 1);
+      if (approves.ret === "200") {
+        this.info.approves = approves.data.total;
+      }
+      const hands = await archives(1, 15);
+      if (hands.ret === "200") {
+        this.info.hands = hands.data.total;
+      }
     }
   }
 };
@@ -304,6 +310,7 @@ export default {
 .item__personnel
   height 200px
   padding 0 15px
+  width 100vw
 
 .van-tag__left
   margin-right 5px

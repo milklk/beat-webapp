@@ -22,6 +22,7 @@ export default {
   async created() {
     const worker = await mineDetail();
     if (worker.ret === "200") {
+      console.log(worker);
       this.realname = worker.data.realname;
       this.userMobile = worker.data.userMobile;
     }

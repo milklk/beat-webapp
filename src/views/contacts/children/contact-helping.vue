@@ -28,7 +28,7 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
+        <van-field v-model="form.colleagueUser" label="同行人员" placeholder="请输入同行人员" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.helpTitle" label="帮扶救助摘要" placeholder="请输入帮扶救助摘要" required />
         <van-field
@@ -93,7 +93,7 @@ export default {
         helpContent: "",
         helpTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
-        ids: ""
+        colleagueUser: ""
       }
     };
   },
@@ -143,14 +143,14 @@ export default {
           mask: true,
           message: "上传\n帮扶救助情况中"
         });
-
+        this.form.colleagueUser.replace(/，/gi, ",");
         const sign = await personHelpAdd(
           this.form.archivesCode,
           this.form.helpTitle,
           this.form.helpContent,
           this.form.helpTime,
           this.form.fileIdTmp,
-          this.form.ids
+          this.form.colleagueUser
         );
         if (sign.ret === "200") {
           loading.clear();

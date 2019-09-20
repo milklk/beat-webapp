@@ -244,7 +244,7 @@ export const personVisitAdd = (
   visitContent,
   visitTime,
   fileIdTmp,
-  ids
+  colleagueUser
 ) =>
   axios(
     `${api}/personVisit/add`,
@@ -254,7 +254,7 @@ export const personVisitAdd = (
       visitContent,
       visitTime,
       fileIdTmp,
-      ids
+      colleagueUser
     },
     "post"
   );
@@ -314,7 +314,7 @@ export const personLeaveRecord = archivesCode =>
  * @param {String} assessTitle 评估摘要
  * @param {String} assessRemark 评估情况
  * @param {String} assessTime 评估时间
- * @param {String} ids 小组人员，用逗号隔开
+ * @param {String} colleagueUser 小组人员，用逗号隔开
  * @param {String} fileIdTmp 附件Id
  */
 export const personAssessAdd = (
@@ -322,7 +322,7 @@ export const personAssessAdd = (
   assessTitle,
   assessRemark,
   assessTime,
-  ids,
+  colleagueUser,
   fileIdTmp
 ) =>
   axios(
@@ -332,7 +332,7 @@ export const personAssessAdd = (
       assessTitle,
       assessRemark,
       assessTime,
-      ids,
+      colleagueUser,
       fileIdTmp
     },
     "post"
@@ -380,13 +380,13 @@ export const personHelpRecord = archivesCode =>
   axios(`${api}/personHelp/list`, { archivesCode }, "get");
 
 /**
- * 违反协议
+ * 告诫信息
  * @param {String} archivesCode 人员Id
- * @param {String} violationRemark 违反协议摘要
- * @param {String} warnRemark 违反协议情况
- * @param {String} issueDate 违反协议时间
+ * @param {String} violationRemark 告诫信息摘要
+ * @param {String} warnRemark 告诫信息情况
+ * @param {String} issueDate 告诫信息时间
  * @param {String} fileIdTmp 附件Id
- * @param {String} warnType 违反协议类型
+ * @param {String} warnType 告诫信息类型
  */
 export const personViolationAdd = (
   archivesCode,
@@ -410,13 +410,13 @@ export const personViolationAdd = (
   );
 
 /**
- * 违反协议记录
+ * 告诫信息记录
  * @param {String} archivesCode 人员Id
  */
 export const personViolationRecord = archivesCode =>
   axios(`${api}/personViolation/list`, { archivesCode }, "get");
 /**
- * 违反协议类型
+ * 告诫信息类型
  * @param {String} archivesCode 人员Id
  */
 export const personViolationType = (dicType = "warnType") =>
@@ -439,7 +439,7 @@ export const personFindAdd = (
   findContent,
   findTime,
   fileIdTmp,
-  ids
+  colleagueUser
 ) =>
   axios(
     `${api}/personFind/add`,
@@ -449,7 +449,7 @@ export const personFindAdd = (
       findContent,
       findTime,
       fileIdTmp,
-      ids
+      colleagueUser
     },
     "post"
   );

@@ -143,7 +143,7 @@ export default {
     async updateList() {
       const hands = await archives(this.page++, 15, this.keyword);
       if (hands.ret === "200") {
-        this.list = hands.data.list;
+        this.list = this.list.concat(hands.data.list);
         this.total = hands.data.total;
       }
     }

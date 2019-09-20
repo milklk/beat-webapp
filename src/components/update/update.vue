@@ -8,6 +8,7 @@
         :before-read="beforeRead"
         :before-delete="beforeDelete"
         upload-text="请上传JPG或PNG图片"
+        multiple
       />
     </template>
   </van-field>

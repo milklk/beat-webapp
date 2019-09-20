@@ -139,7 +139,7 @@ export default {
       worker: [
         {
           title: "社工姓名",
-          value: "account"
+          value: "realname"
         },
         {
           title: "联系方式",

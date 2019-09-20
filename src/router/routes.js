@@ -192,7 +192,7 @@ export default [
         path: "/contacts/agreement/:id",
         name: "contact-agreement",
         component: ContactAgreement,
-        meta: { header: `违反协议` }
+        meta: { header: `告诫信息` }
       },
       {
         path: "/contacts/find/:id",

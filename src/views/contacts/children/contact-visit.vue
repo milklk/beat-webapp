@@ -21,7 +21,7 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
+        <van-field v-model="form.colleagueUser" label="同行人员" placeholder="请输入同行人员" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.visitTitle" label="拜访摘要" placeholder="请输入拜访摘要" required />
         <van-field
@@ -86,7 +86,7 @@ export default {
         visitContent: "",
         visitTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
-        ids: ""
+        colleagueUser: ""
       }
     };
   },
@@ -136,14 +136,14 @@ export default {
           mask: true,
           message: "上传\n拜访情况中"
         });
-
+        this.form.colleagueUser.replace(/，/gi, ",");
         const visit = await personVisitAdd(
           this.form.archivesCode,
           this.form.visitTitle,
           this.form.visitContent,
           this.form.visitTime,
           this.form.fileIdTmp,
-          this.form.ids
+          this.form.colleagueUser
         );
         if (visit.ret === "200") {
           loading.clear();

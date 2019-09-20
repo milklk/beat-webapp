@@ -3,17 +3,17 @@
     <div class="agreement-main">
       <van-cell-group class="van-cell-group van-cell-group--mini">
         <van-cell
-          title="违反协议记录"
+          title="告诫信息记录"
           class="van-cell--auto"
           :value="total"
           is-link
           :to="{
             name: 'contact-record',
-            params: { header: '违反协议记录', id: $route.params.id }
+            params: { header: '告诫信息记录', id: $route.params.id }
           }"
         />
       </van-cell-group>
-      <van-divider class="van-divider">违反协议信息</van-divider>
+      <van-divider class="van-divider">告诫信息</van-divider>
       <!-- eslint-disable-next-line -->
       <van-field v-model="form.violationRemark" label="违反协议摘要" placeholder="请输入违反协议摘要" required />
       <van-field
@@ -63,7 +63,7 @@
       <Worker>
         <van-radio-group v-model="radio">
           <!-- eslint-disable-next-line -->
-          <van-cell title="以上违反协议情况属实，由本人上传违反协议情况。" @click="radio=radio === false ? true : false">
+          <van-cell title="以上告诫信息情况属实，由本人上传告诫信息情况。" @click="radio=radio === false ? true : false">
             <template #icon>
               <van-radio class="van-radio" :name="true" disabled />
             </template>
@@ -150,7 +150,7 @@ export default {
     },
     cancel() {
       this.$toast.fail({
-        message: "已取消上传违反协议情况",
+        message: "已取消上传告诫信息",
         duration: 500,
         onClose: () => {
           this.$router.go(-1);
@@ -161,7 +161,7 @@ export default {
       if (this.radio) {
         const loading = this.$toast.loading({
           mask: true,
-          message: "上传\n违反协议情况中"
+          message: "上传\n告诫信息中"
         });
 
         const sign = await personViolationAdd(
@@ -174,7 +174,7 @@ export default {
         if (sign.ret === "200") {
           loading.clear();
           this.$toast.success({
-            message: "上传\n违反协议情况成功",
+            message: "上传\n告诫信息情况成功",
             duration: 500,
             onClose: () => {
               this.$router.go(-1);

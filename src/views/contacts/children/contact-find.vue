@@ -28,7 +28,7 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
+        <van-field v-model="form.colleagueUser" label="同行人员" placeholder="请输入同行人员" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.findTitle" label="查找脱失摘要" placeholder="请输入查找脱失摘要" required />
         <van-field
@@ -93,7 +93,7 @@ export default {
         findContent: "",
         findTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
-        ids: ""
+        colleagueUser: ""
       }
     };
   },
@@ -136,13 +136,13 @@ export default {
           mask: true,
           message: "上传\n查找脱失情况中"
         });
-
+        this.form.colleagueUser.replace(/，/gi, ",");
         const sign = await personFindAdd(
           this.form.archivesCode,
           this.form.findTitle,
           this.form.findContent,
           this.form.findTime,
-          this.form.ids
+          this.form.colleagueUser
         );
         if (sign.ret === "200") {
           loading.clear();
