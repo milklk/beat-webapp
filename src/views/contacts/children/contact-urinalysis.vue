@@ -25,7 +25,6 @@
             </van-radio-group>
           </template>
         </van-field>
-        <Update :file.sync="file" label="尿检单" />
         <van-field v-model="form.checkAddress" label="尿检地点" placeholder="请输入尿检地址" required />
         <van-field
           v-model="form.checkRemark"
@@ -37,6 +36,7 @@
           maxlength
           error-message="提示：代上传事由输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="尿检单" />
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
             v-model="time"
@@ -67,7 +67,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { urineAdd, urineRecord, fileAdd } from "../../../api";
+import { urineAdd, urineRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-urinalysis",
@@ -77,7 +77,7 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         checkTime: `${format(new Date(), "yyyy-MM-dd")}`,
@@ -85,7 +85,7 @@ export default {
         checkAddress: "",
         checkRemark: "",
         archivesCode: this.$route.params.id,
-        fileIdTmp: ""
+        fileIdTmp: []
       }
     };
   },
@@ -128,27 +128,24 @@ export default {
           mask: true,
           message: "代上传\n尿检信息中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const urinalysis = await urineAdd(
-            this.form.checkTime,
-            this.form.checkResult,
-            this.form.checkAddress,
-            this.form.checkRemark,
-            this.form.archivesCode,
-            this.form.fileIdTmp
-          );
-          if (urinalysis.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "代上传\n尿检信息成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const urinalysis = await urineAdd(
+          this.form.checkTime,
+          this.form.checkResult,
+          this.form.checkAddress,
+          this.form.checkRemark,
+          this.form.archivesCode,
+          this.form.fileIdTmp
+        );
+        if (urinalysis.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "代上传\n尿检信息成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="publicity">
     <van-cell-group v-show="$route.path === '/publicity'">
       <!-- eslint-disable-next-line -->
       <van-cell v-for="item in types" :key="item.type" :title="item.name" is-link :to="item.to" />
@@ -38,4 +38,8 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped></style>
+<style lang="stylus">
+.publicity
+  .van-hairline--top-bottom::after, .van-hairline-unset--top-bottom::after
+    border-top 0 solid #ffffff
+</style>

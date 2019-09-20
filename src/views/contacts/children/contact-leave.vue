@@ -18,12 +18,6 @@
       <van-divider class="van-divider">代上传请假信息</van-divider>
       <van-cell-group class="van-cell-group van-cell-group--mini">
         <!-- eslint-disable-next-line -->
-        <van-cell required title="申请时间" :value="form.leaveTime" @click="setTime('leaveTime')">
-          <template #right-icon>
-            <van-icon class="van-icon" name="add-o" />
-          </template>
-        </van-cell>
-        <!-- eslint-disable-next-line -->
         <van-cell required title="开始时间" :value="form.startTime" @click="setTime('startTime')">
           <template #right-icon>
             <van-icon class="van-icon" name="add-o" />
@@ -38,11 +32,9 @@
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.reason" label="请假事由" placeholder="请输入请假事由" required />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.visitOrg" label="被访单位" placeholder="请输入被访单位" required />
+        <van-field v-model="form.visitOrg" label="被访对象" placeholder="请输入被访对象" required />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.visitUser" label="被访人姓名" placeholder="请输入被访人姓名" required />
-        <!-- eslint-disable-next-line -->
-        <van-field v-model="form.visitUserMobile" label="被访人电话" placeholder="请输入被访人电话" required />
+        <van-field v-model="form.visitUserMobile" label="被访对象电话" placeholder="请输入被访对象电话" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.relationship" label="双方关系" placeholder="请输入双方关系" required />
         <!-- eslint-disable-next-line -->
@@ -97,7 +89,6 @@ export default {
         leaveTime: `${format(new Date(), "yyyy-MM-dd")}`,
         reason: "",
         visitOrg: "",
-        visitUser: "",
         visitUserMobile: "",
         relationship: "",
         startTime: `${format(new Date(), "yyyy-MM-dd")}`,
@@ -147,10 +138,8 @@ export default {
         });
         const leave = await personLeaveAdd(
           this.form.archivesCode,
-          this.form.leaveTime,
           this.form.reason,
           this.form.visitOrg,
-          this.form.visitUser,
           this.form.visitUserMobile,
           this.form.relationship,
           this.form.startTime,

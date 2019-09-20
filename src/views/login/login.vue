@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import { ddAuthCode } from "../../api/dingtalk";
-import { login } from "../../api";
+// import { ddAuthCode } from "../../api/dingtalk";
+// import { login } from "../../api";
 export default {
   name: "login",
   props: {},
@@ -31,10 +31,9 @@ export default {
   components: {},
   computed: {},
   async created() {
-    this.height = window.innerHeight;
-    const authCode = await ddAuthCode();
-    const user = await login(authCode);
-
+    // this.height = window.innerHeight;
+    // const authCode = await ddAuthCode();
+    // login(authCode);
   },
   methods: {
     login() {

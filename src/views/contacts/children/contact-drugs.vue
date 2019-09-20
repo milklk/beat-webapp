@@ -20,7 +20,7 @@
           class="van-cell--auto"
           required
           title="药物维持时间"
-          :value="form.useTime"
+          :value="form.medicineTime"
           @click="setTime"
         >
           <template #right-icon>
@@ -28,17 +28,16 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.name" label="药物名称" placeholder="请输入药物名称" required />
-        <!-- eslint-disable-next-line -->
-        <van-field v-model="form.useAmount" label="服用剂量" placeholder="请输入服用剂量(默认单位：mg)" required />
+        <van-field v-model="form.medicineName" label="药物名称" placeholder="请输入药物名称" required />
+
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.treatArea" label="药物治疗地点" placeholder="请输入药物治疗地点" required />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.doctor" label="医务人员" placeholder="请输入医务人员姓名" required />
+        <van-field v-model="form.doctor" label="主治医师" placeholder="请输入医务人员姓名" required />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.doctorMobile" label="医务人员电话" placeholder="请输入医务人员电话" required />
-        <Update :file.sync="tradeTableFile" label="药物治疗单" />
-        <Update :file.sync="checkReportFile" label="医学检查报告" />
+        <van-field v-model="form.doctorMobile" label="联系电话" placeholder="请输入医务人员电话" required />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="药物治疗图像" />
+
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -91,13 +90,12 @@ export default {
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
-        useTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        useAmount: "",
+        medicineName: "",
+        medicineTime: `${format(new Date(), "yyyy-MM-dd")}`,
         treatArea: "",
         doctor: "",
         doctorMobile: "",
-        tradeTable: "",
-        checkReport: ""
+        fileIdTmp: []
       }
     };
   },
@@ -110,16 +108,16 @@ export default {
     const id = this.$route.params.id;
     const record = await personMedicationRecord(id);
     if (record.ret === "200") {
-      this.total = record.data.total;
+      this.total = record.data.length;
     }
   },
   methods: {
     setTime() {
-      this.time = new Date(this.form.useTime);
+      this.time = new Date(this.form.medicineTime);
       this.show = true;
     },
     timeConfirm() {
-      this.form.useTime = `${format(this.time, "yyyy-MM-dd")}`;
+      this.form.medicineTime = `${format(this.time, "yyyy-MM-dd")}`;
       this.show = false;
     },
     timeCancel() {
@@ -147,13 +145,12 @@ export default {
           this.form.checkReport = checkReportFile.data;
           const sign = await personMedicationAdd(
             this.form.archivesCode,
-            this.form.useTime,
-            this.form.useAmount,
+            this.form.medicineName,
+            this.form.medicineTime,
             this.form.treatArea,
             this.form.doctor,
             this.form.doctorMobile,
-            this.form.tradeTable,
-            this.form.checkReport
+            this.form.fileIdTmp
           );
           if (sign.ret === "200") {
             loading.clear();

@@ -29,7 +29,6 @@
         </van-cell>
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
-        <Update :file.sync="file" label="帮扶救助照片" />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.helpTitle" label="帮扶救助摘要" placeholder="请输入帮扶救助摘要" required />
         <van-field
@@ -42,6 +41,7 @@
           maxlength
           error-message="提示：帮扶救助内容输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="帮扶救助照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -75,7 +75,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personHelpAdd, fileAdd, personHelpRecord } from "../../../api";
+import { personHelpAdd, personHelpRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-helping",
@@ -85,14 +85,14 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
         helpTitle: "",
         helpContent: "",
         helpTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        fileIdTmp: "",
+        fileIdTmp: [],
         ids: ""
       }
     };
@@ -143,26 +143,24 @@ export default {
           mask: true,
           message: "上传\n帮扶救助情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const sign = await personHelpAdd(
-            this.form.archivesCode,
-            this.form.helpTitle,
-            this.form.helpContent,
-            this.form.helpTime,
-            this.form.fileIdTmp
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n帮扶救助情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const sign = await personHelpAdd(
+          this.form.archivesCode,
+          this.form.helpTitle,
+          this.form.helpContent,
+          this.form.helpTime,
+          this.form.fileIdTmp,
+          this.form.ids
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n帮扶救助情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

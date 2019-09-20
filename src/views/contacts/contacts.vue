@@ -55,14 +55,15 @@
       </h3>
       <p class="header__p">
         {{ addict.mobile }}
-        <span v-if="addict.type">
+        <template v-if="addict.userStatus">
           <!-- eslint-disable-next-line -->
-          {{ addict.type === "1" ? "社区戒毒" : "社区康复" }}
-        </span>
-        <span v-if="addict.startTime && addict.endTime && addict.type">
+          {{ addict.userStatus === "1" ? "社区戒毒" : "社区康复" }}
+        </template>
+        <!-- eslint-disable-next-line -->
+        <template v-if="addict.startTime && addict.endTime && addict.userStatus">
           <!-- eslint-disable-next-line -->
           {{ addict.startTime }} 至 {{ addict.endTime }}
-        </span>
+        </template>
       </p>
       <p class="header__p">{{ addict.address }}</p>
     </header>
@@ -148,7 +149,7 @@ export default {
     async updateList() {
       const contacts = await archivesList(this.page++, 15, this.keyword);
       if (contacts.ret === "200") {
-        this.list = contacts.data.list;
+        this.list = this.list.concat(contacts.data.list);
         this.total = contacts.data.total;
       }
     },

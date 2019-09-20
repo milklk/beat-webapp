@@ -14,31 +14,41 @@
         />
       </van-cell-group>
       <van-divider class="van-divider">违反协议信息</van-divider>
+      <!-- eslint-disable-next-line -->
+      <van-field v-model="form.violationRemark" label="违反协议摘要" placeholder="请输入违反协议摘要" required />
+      <van-field
+        v-model="form.warnRemark"
+        required
+        label="违反协议内容"
+        type="textarea"
+        placeholder="请输入违反协议内容"
+        rows="3"
+        maxlength
+        error-message="提示：违反协议内容输入字数不多于200字"
+      />
       <van-cell-group class="van-cell-group van-cell-group--mini">
         <van-cell
           class="van-cell--auto"
           required
           title="违反协议登记时间"
-          :value="form.violationTime"
+          :value="form.issueDate"
           @click="setTime"
         >
           <template #right-icon>
             <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
-        <Update :file.sync="file" label="违反协议照片" />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.violationTitle" label="违反协议摘要" placeholder="请输入违反协议摘要" required />
-        <van-field
-          v-model="form.violationContent"
-          required
-          label="违反协议内容"
-          type="textarea"
-          placeholder="请输入违反协议内容"
-          rows="3"
-          maxlength
-          error-message="提示：违反协议内容输入字数不多于200字"
-        />
+        <van-cell class="van-cell--auto" required title="违反协议类型">
+          <van-dropdown-menu class="van-dropdown-menu">
+            <van-dropdown-item
+              v-model="form.warnType"
+              :options="type"
+              title-class="van-dropdown-title"
+            />
+          </van-dropdown-menu>
+        </van-cell>
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="违反协议照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -74,8 +84,8 @@ import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
 import {
   personViolationAdd,
-  fileAdd,
-  personViolationRecord
+  personViolationRecord,
+  personViolationType
 } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
@@ -86,14 +96,15 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+      type: [],
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
-        violationTitle: "",
-        violationContent: "",
-        violationTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        fileIdTmp: ""
+        violationRemark: "",
+        warnRemark: "",
+        issueDate: `${format(new Date(), "yyyy-MM-dd")}`,
+        fileIdTmp: [],
+        warnType: ""
       }
     };
   },
@@ -106,16 +117,25 @@ export default {
     const id = this.$route.params.id;
     const record = await personViolationRecord(id);
     if (record.ret === "200") {
-      this.total = record.data.total;
+      this.total = record.data.length;
+    }
+    const type = await personViolationType();
+    if (type.ret === "200") {
+      type.data.forEach(d => {
+        d.text = d.value;
+        d.value = d.code;
+      });
+      this.type = type.data;
+      this.form.warnType = type.data[0].value;
     }
   },
   methods: {
     setTime() {
       this.show = true;
-      this.time = new Date(this.form.violationTime);
+      this.time = new Date(this.form.issueDate);
     },
     timeConfirm() {
-      this.form.violationTime = `${format(this.time, "yyyy-MM-dd")}`;
+      this.form.issueDate = `${format(this.time, "yyyy-MM-dd")}`;
       this.show = false;
     },
     timeCancel() {
@@ -143,26 +163,23 @@ export default {
           mask: true,
           message: "上传\n违反协议情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const sign = await personViolationAdd(
-            this.form.archivesCode,
-            this.form.violationTitle,
-            this.form.violationContent,
-            this.form.violationTime,
-            this.form.fileIdTmp
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n违反协议情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const sign = await personViolationAdd(
+          this.form.archivesCode,
+          this.form.violationRemark,
+          this.form.warnRemark,
+          this.form.issueDate,
+          this.form.fileIdTmp
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n违反协议情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({
@@ -209,6 +226,10 @@ export default {
 .van-button
   padding 0 50px
 
+.van-dropdown-menu
+  height 100%
+  justify-content flex-end
+
 .agreement-main
   min-height calc( 100vh - 54px - 46px + 46px - 100px )
 
@@ -221,4 +242,14 @@ export default {
 .van-radio-group
   display flex
   justify-content space-around
+</style>
+<style lang="stylus">
+.van-dropdown-menu .van-dropdown-menu__item
+  justify-content flex-end
+  padding-right 10px
+
+.van-dropdown-title
+  color #969799 !important
+  font-size 3.73vw !important
+  padding 0 11px !important
 </style>

@@ -25,7 +25,6 @@
         </van-cell>
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.talkMode" label="谈话渠道" placeholder="请输入谈话渠道" required />
-        <Update :file.sync="file" label="谈话截图" />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.talkTitle" label="谈话摘要" placeholder="请输入谈话摘要" required />
         <van-field
@@ -38,6 +37,7 @@
           maxlength
           error-message="提示：谈话内容输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="谈话截图" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -71,7 +71,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personTalkAdd, fileAdd, personTalkRecord } from "../../../api";
+import { personTalkAdd, personTalkRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-talk",
@@ -81,7 +81,7 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
@@ -89,7 +89,7 @@ export default {
         talkContent: "",
         talkMode: "",
         talkTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        fileIdTmp: ""
+        fileIdTmp: []
       },
       worker: {
         name: "彭晓薇",
@@ -143,27 +143,24 @@ export default {
           mask: true,
           message: "上传\n谈话情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const talk = await personTalkAdd(
-            this.form.archivesCode,
-            this.form.talkTitle,
-            this.form.talkContent,
-            this.form.talkMode,
-            this.form.talkTime,
-            this.form.fileIdTmp
-          );
-          if (talk.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n谈话情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const talk = await personTalkAdd(
+          this.form.archivesCode,
+          this.form.talkTitle,
+          this.form.talkContent,
+          this.form.talkMode,
+          this.form.talkTime,
+          this.form.fileIdTmp
+        );
+        if (talk.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n谈话情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

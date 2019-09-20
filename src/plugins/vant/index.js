@@ -28,7 +28,9 @@ import { DatetimePicker } from "vant";
 import { Popup } from "vant";
 import { Uploader } from "vant";
 import { RadioGroup, Radio } from "vant";
+import { DropdownMenu, DropdownItem } from "vant";
 
+Vue.use(DropdownMenu).use(DropdownItem);
 Vue.use(RadioGroup);
 Vue.use(Radio);
 Vue.use(Uploader);

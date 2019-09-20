@@ -1,5 +1,5 @@
 import axios from "./axios";
-import { api } from "./proxy";
+import { api, fileApi } from "./proxy";
 /**
  * 登录
  * @param {String} authCode code
@@ -117,12 +117,6 @@ export const knowledgeDetail = id =>
  */
 export const archivesList = (pageNumber, pageSize, keyword) =>
   axios(`${api}/archivesList`, { pageNumber, pageSize, keyword }, "get");
-
-/**
- * 获取图片地址
- * @param {String} attId iid
- */
-export const headPhoto = attId => `${api}/attachment/download?attId=${attId}`;
 
 /**
  * 人员详情
@@ -249,7 +243,8 @@ export const personVisitAdd = (
   visitTitle,
   visitContent,
   visitTime,
-  fileIdTmp
+  fileIdTmp,
+  ids
 ) =>
   axios(
     `${api}/personVisit/add`,
@@ -258,7 +253,8 @@ export const personVisitAdd = (
       visitTitle,
       visitContent,
       visitTime,
-      fileIdTmp
+      fileIdTmp,
+      ids
     },
     "post"
   );
@@ -272,10 +268,8 @@ export const personVisitRecord = archivesCode =>
 /**
  * 请假
  * @param {String} archivesCode 人员Id
- * @param {String} leaveTime 请假申请时间
  * @param {String} reason 请假事由
  * @param {String} visitOrg 被访单位
- * @param {String} visitUser 被访人姓名
  * @param {String} visitUserMobile 被访人电话
  * @param {String} relationship 双方关系
  * @param {String} startTime 请假开始时间
@@ -284,10 +278,8 @@ export const personVisitRecord = archivesCode =>
  */
 export const personLeaveAdd = (
   archivesCode,
-  leaveTime,
   reason,
   visitOrg,
-  visitUser,
   visitUserMobile,
   relationship,
   startTime,
@@ -298,10 +290,8 @@ export const personLeaveAdd = (
     `${api}/personLeave/add`,
     {
       archivesCode,
-      leaveTime,
       reason,
       visitOrg,
-      visitUser,
       visitUserMobile,
       relationship,
       startTime,
@@ -324,7 +314,7 @@ export const personLeaveRecord = archivesCode =>
  * @param {String} assessTitle 评估摘要
  * @param {String} assessRemark 评估情况
  * @param {String} assessTime 评估时间
- * @param {String} ids 小组人员id，用逗号隔开
+ * @param {String} ids 小组人员，用逗号隔开
  * @param {String} fileIdTmp 附件Id
  */
 export const personAssessAdd = (
@@ -392,26 +382,29 @@ export const personHelpRecord = archivesCode =>
 /**
  * 违反协议
  * @param {String} archivesCode 人员Id
- * @param {String} assessTitle 违反协议摘要
- * @param {String} violationContent 违反协议情况
- * @param {String} violationTime 违反协议时间
+ * @param {String} violationRemark 违反协议摘要
+ * @param {String} warnRemark 违反协议情况
+ * @param {String} issueDate 违反协议时间
  * @param {String} fileIdTmp 附件Id
+ * @param {String} warnType 违反协议类型
  */
 export const personViolationAdd = (
   archivesCode,
-  violationTitle,
-  violationContent,
-  violationTime,
-  fileIdTmp
+  violationRemark,
+  warnRemark,
+  issueDate,
+  fileIdTmp,
+  warnType
 ) =>
   axios(
     `${api}/personViolation/add`,
     {
       archivesCode,
-      violationTitle,
-      violationContent,
-      violationTime,
-      fileIdTmp
+      violationRemark,
+      warnRemark,
+      issueDate,
+      fileIdTmp,
+      warnType
     },
     "post"
   );
@@ -422,7 +415,16 @@ export const personViolationAdd = (
  */
 export const personViolationRecord = archivesCode =>
   axios(`${api}/personViolation/list`, { archivesCode }, "get");
-
+/**
+ * 违反协议类型
+ * @param {String} archivesCode 人员Id
+ */
+export const personViolationType = (dicType = "warnType") =>
+  axios(
+    `${fileApi}/dictionary/getBaseDictionarySelectList`,
+    { dicType },
+    "get"
+  );
 /**
  * 查找脱失
  * @param {String} archivesCode 人员Id
@@ -436,7 +438,8 @@ export const personFindAdd = (
   findTitle,
   findContent,
   findTime,
-  fileIdTmp
+  fileIdTmp,
+  ids
 ) =>
   axios(
     `${api}/personFind/add`,
@@ -445,7 +448,8 @@ export const personFindAdd = (
       findTitle,
       findContent,
       findTime,
-      fileIdTmp
+      fileIdTmp,
+      ids
     },
     "post"
   );
@@ -460,35 +464,33 @@ export const personFindRecord = archivesCode =>
 /**
  *
  * @param {String} archivesCode 人员Id
- * @param {String} useTime 药物治疗时间
- * @param {String} useAmount 服药剂量
+ * @param {String} medicineName 药物名称
+ * @param {String} medicineTime 药物治疗时间
  * @param {String} treatArea 药物治疗地点
  * @param {String} doctor 医务人员
  * @param {String} doctorMobile 医务人员电话
- * @param {String} tradeTable 药物治疗单
- * @param {String} checkReport 医学检查报告
+ * @param {String} fileIdTmp 药物附件
  */
+
 export const personMedicationAdd = (
   archivesCode,
-  useTime,
-  useAmount,
+  medicineName,
+  medicineTime,
   treatArea,
   doctor,
   doctorMobile,
-  tradeTable,
-  checkReport
+  fileIdTmp
 ) =>
   axios(
     `${api}/personMedication/add`,
     {
       archivesCode,
-      useTime,
-      useAmount,
+      medicineName,
+      medicineTime,
       treatArea,
       doctor,
       doctorMobile,
-      tradeTable,
-      checkReport
+      fileIdTmp
     },
     "post"
   );
@@ -499,12 +501,7 @@ export const personMedicationAdd = (
  */
 export const personMedicationRecord = archivesCode =>
   axios(`${api}/personMedication/list`, { archivesCode }, "get");
-/**
- * 附件上传
- * @param {File} file
- */
-export const fileAdd = file =>
-  axios(`${api}/attachment/upload`, { file }, "file");
+
 /**
  * 个人信息
  */
@@ -589,3 +586,33 @@ export const approvesRecord = personId =>
  * 人员统计
  */
 export const personList = () => axios(`${api}/person/list`);
+/**
+ * 附件上传
+ * @param {File} file
+ */
+export const fileAdd = file =>
+  axios(`${fileApi}/attachment/upload`, { file }, "file");
+/**
+ * 附件列表
+ * @param {String} relationId 附件关联ID
+ */
+export const fileList = relationId =>
+  axios(`${fileApi}/attachment/getFileList`, { relationId }, "get");
+/**
+ * 附件删除
+ * @param {String} attId 附件关联ID
+ */
+export const fileDel = attId =>
+  axios(`${fileApi}/attachment/deleteFile`, { attId }, "post");
+/**
+ * 附件下载
+ * @param {String} attId 附件ID
+ */
+export const fileDownload = attId =>
+  axios(`${fileApi}/attachment/download`, { attId }, "get");
+/**
+ * 获取图片地址
+ * @param {String} attId iid
+ */
+export const headPhoto = attId =>
+  `${fileApi}/attachment/download?attId=${attId}`;

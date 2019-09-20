@@ -11,7 +11,6 @@
 </template>
 
 <script>
-import { notifyList } from "../../api";
 import { mapState } from "vuex";
 export default {
   name: "footer-tab",
@@ -35,22 +34,12 @@ export default {
   },
   created() {
     this.$_setActive();
-    this.$_messagesU();
   },
   methods: {
     // 设置tab栏高亮tab
     $_setActive() {
       const path = this.$route.path;
       this.active = this.paths.findIndex(d => path.indexOf(d) === 0);
-    },
-    async $_messagesU() {
-      const notifies = await notifyList(1, 15);
-      if (notifies.ret === "200") {
-        const unread = notifies.data.list[0].unread
-          ? Number(notifies.data.list[0].unread)
-          : 0;
-        this.$store.commit("messagesU/set_unread", unread);
-      }
     }
   }
 };

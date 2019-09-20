@@ -22,8 +22,11 @@
 }
 .van-uploader *:not(i) {
   width: 100% !important;
-  height: 100% !important;
+  height: 80px !important;
   text-align: center;
+}
+.van-uploader .van-uploader__wrapper {
+  height: auto !important;
 }
 .van-uploader .van-uploader__upload-text {
   height: auto !important;

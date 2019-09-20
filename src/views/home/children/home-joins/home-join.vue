@@ -56,6 +56,7 @@
           </van-cell>
           <!-- eslint-disable-next-line -->
           <van-field v-model="primary.joinArea" label="衔接地点" placeholder="请输入衔接地点" required />
+          <!-- eslint-disable-next-line  -->
           <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
             <van-datetime-picker
               v-model="time"

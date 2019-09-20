@@ -21,9 +21,7 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.field" label="同行人员" placeholder="请输入同行人员" required />
-        <Update :file.sync="file" label="拜访现场照片" />
-
+        <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.visitTitle" label="拜访摘要" placeholder="请输入拜访摘要" required />
         <van-field
@@ -36,6 +34,7 @@
           maxlength
           error-message="提示：拜访内容输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="拜访现场照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -69,7 +68,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personVisitAdd, fileAdd, personVisitRecord } from "../../../api";
+import { personVisitAdd, personVisitRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-visit",
@@ -79,14 +78,15 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
         visitTitle: "",
         visitContent: "",
         visitTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        fileIdTmp: ""
+        fileIdTmp: [],
+        ids: ""
       }
     };
   },
@@ -136,26 +136,24 @@ export default {
           mask: true,
           message: "上传\n拜访情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const visit = await personVisitAdd(
-            this.form.archivesCode,
-            this.form.visitTitle,
-            this.form.visitContent,
-            this.form.visitTime,
-            this.form.fileIdTmp
-          );
-          if (visit.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n拜访情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const visit = await personVisitAdd(
+          this.form.archivesCode,
+          this.form.visitTitle,
+          this.form.visitContent,
+          this.form.visitTime,
+          this.form.fileIdTmp,
+          this.form.ids
+        );
+        if (visit.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n拜访情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

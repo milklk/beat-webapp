@@ -28,8 +28,13 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.ids" label="评估人员" placeholder="请输入评估人员" required />
-        <Update :file.sync="file" label="评估照片" />
+        <van-field
+          v-model="form.ids"
+          label="评估人员"
+          placeholder="请输入评估人员"
+          required
+          error-message="提示：多个人员之间使用逗号(，)隔开"
+        />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.assessTitle" label="评估摘要" placeholder="请输入评估摘要" required />
         <van-field
@@ -42,6 +47,7 @@
           maxlength
           error-message="提示：评估内容输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="评估照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -75,7 +81,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personAssessAdd, fileAdd, personAssessRecord } from "../../../api";
+import { personAssessAdd, personAssessRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-assess",
@@ -85,7 +91,7 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
@@ -93,7 +99,7 @@ export default {
         assessRemark: "",
         assessTime: `${format(new Date(), "yyyy-MM-dd")}`,
         ids: "",
-        fileIdTmp: ""
+        fileIdTmp: []
       }
     };
   },
@@ -143,27 +149,24 @@ export default {
           mask: true,
           message: "上传\n评估情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const sign = await personAssessAdd(
-            this.form.archivesCode,
-            this.form.assessTitle,
-            this.form.assessRemark,
-            this.form.assessTime,
-            this.form.ids,
-            this.form.fileIdTmp
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n评估情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const sign = await personAssessAdd(
+          this.form.archivesCode,
+          this.form.assessTitle,
+          this.form.assessRemark,
+          this.form.assessTime,
+          this.form.ids,
+          this.form.fileIdTmp
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n评估情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

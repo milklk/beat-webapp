@@ -3,34 +3,40 @@
     <template #input>
       <van-uploader
         v-model="fileList"
-        :max-count="1"
+        :max-count="9"
         class="van-uploader"
         :before-read="beforeRead"
-        :after-read="afterRead"
         :before-delete="beforeDelete"
-        upload-text="请上传一张JPG或PNG图片"
+        upload-text="请上传JPG或PNG图片"
       />
     </template>
   </van-field>
 </template>
 
 <script>
+import { fileAdd, fileDel } from "../../api";
 export default {
   name: "update",
   props: {
-    file: [File, Object],
+    fileIdTmp: Array,
     label: String
   },
   data() {
     return {
-      fileList: []
+      fileList: [],
+      fileId: []
     };
   },
   components: {},
   computed: {},
   created() {},
+  watch: {
+    fileId() {
+      this.$emit("update:fileIdTmp", this.fileId);
+    }
+  },
   methods: {
-    beforeRead(file) {
+    async beforeRead(file) {
       const i = file.type.indexOf("image");
       if (i !== 0) {
         this.$toast.fail("请上传\n图片类型文件");
@@ -41,13 +47,19 @@ export default {
         this.$toast.fail("请上传\n小于10M图片");
         return false;
       }
-      return true;
+      const show = await fileAdd(file);
+      if (show.ret === "200") {
+        this.fileId = this.fileId.concat([show.data]);
+        return true;
+      }
     },
-    afterRead(file) {
-      this.$emit("update:file", file.file);
-    },
-    beforeDelete() {
-      this.$emit("update:file", {});
+    async beforeDelete(file, detail) {
+      const index = detail.index;
+      const show = await fileDel(this.fileId[index]);
+      if (show.ret === "200") {
+        this.fileId = this.fileId.filter((d, i) => index !== i);
+        return true;
+      }
     }
   }
 };
@@ -55,6 +67,5 @@ export default {
 
 <style lang="stylus" scoped>
 .van-uploader
-  height 80px
   width 100%
 </style>

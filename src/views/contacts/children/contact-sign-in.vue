@@ -20,7 +20,6 @@
             <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
-        <Update :file.sync="file" label="签到图像" />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.signAddress" label="签到地址" placeholder="请输入签到地址" required />
         <van-field
@@ -33,6 +32,7 @@
           maxlength
           error-message="提示：代签事由输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="签到图像" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -66,7 +66,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personSignAdd, fileAdd, personSignRecord } from "../../../api";
+import { personSignAdd, personSignRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-sign-in",
@@ -76,14 +76,14 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
         signTime: `${format(new Date(), "yyyy-MM-dd")}`,
         signAddress: "",
         signRemark: "",
-        fileIdTmp: ""
+        fileIdTmp: []
       }
     };
   },
@@ -126,26 +126,23 @@ export default {
           mask: true,
           message: "代签到中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const sign = await personSignAdd(
-            this.form.archivesCode,
-            this.form.signTime,
-            this.form.signAddress,
-            this.form.signRemark,
-            this.form.fileIdTmp
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "代签到成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const sign = await personSignAdd(
+          this.form.archivesCode,
+          this.form.signTime,
+          this.form.signAddress,
+          this.form.signRemark,
+          this.form.fileIdTmp
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "代签到成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

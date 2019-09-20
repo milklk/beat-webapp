@@ -15,7 +15,7 @@
 import footerTab from "./components/tab/tab";
 // import headerBar from "./components/bar/bar";
 import { ddAuthCode, ddTitle } from "./api/dingtalk";
-import { login } from "./api";
+import { login, notifyList } from "./api";
 export default {
   name: "web-app",
   data() {
@@ -35,6 +35,13 @@ export default {
     const user = await login(authCode);
     if (user.ret === "200") {
       window.sessionStorage.setItem("token", user.data.token);
+      const notifies = await notifyList(1, 1);
+      if (notifies.ret === "200") {
+        const unread = notifies.data.list[0].unread
+          ? Number(notifies.data.list[0].unread)
+          : 0;
+        this.$store.commit("messagesU/set_unread", unread);
+      }
     }
   },
   mounted() {},

@@ -44,10 +44,10 @@
               info="99"
             >
               <template #icon>
+                <!-- eslint-disable-next-line -->
                 <van-icon :name="action.icon" :info="info[action.info]" size="40" class="img-icon" />
               </template>
             </van-grid-item>
-            <van-grid-item icon="search" text="文字" />
           </van-grid>
         </li>
         <!-- 审批事项 -->
@@ -183,16 +183,15 @@ export default {
   async mounted() {
     const person = await personList();
     if (person.ret === "200") {
-      const data = person.data[0];
+      const data = person.data.data;
       this.personnel = [
         { name: `高风险：${data.hlevel}人`, value: data.hlevel },
         { name: `中风险：${data.mlevel}人`, value: data.mlevel },
         { name: `低风险：${data.llevel}人`, value: data.llevel },
-        { name: `未报到：${data.noreport}人`, value: data.noreport },
-        { name: `脱失：${data.lose}人`, value: data.lose }
+        { name: `未评估：${data.nolevel}人`, value: data.nolevel }
       ];
       this.personnelSum =
-        data.hlevel + data.mlevel + data.llevel + data.noreport + data.lose;
+        data.hlevel + data.mlevel + data.llevel + data.nolevel;
       this.setPersonnelEcharts();
     }
   },
@@ -294,8 +293,7 @@ export default {
     height 117px
 
 .home__item--actions
-  padding-bottom 0
-  height 120px
+  height 130px
 
   .item__h--actions
     padding-bottom 0

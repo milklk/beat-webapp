@@ -1,9 +1,13 @@
 <template>
   <section class="article">
     <!-- 标题以及相关信息 -->
-    <h2 class="article__h">{{title}}</h2>
+    <h2 class="article__h">{{ title }}</h2>
     <aside class="article__aside">
-      <p class="aside__source">{{ sourceTitle }}：{{ source }}</p>
+      <p class="aside__source">
+        <span>{{ sourceTitle }}</span>
+        ：
+        <span>{{ source ? source : "无" }}</span>
+      </p>
       <p class="aside__time">日期：{{ time }}</p>
     </aside>
     <!-- 文章内容 -->
@@ -45,7 +49,7 @@ export default {
       list-style decimal
 
   img
-    width 100vw
+    width 100%
     padding 0 20px
 </style>
 <style lang="stylus" scoped>

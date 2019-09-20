@@ -28,8 +28,7 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.field" label="同行人员" placeholder="请输入同行人员" required />
-        <Update :file.sync="file" label="查找脱失照片" />
+        <van-field v-model="form.ids" label="同行人员" placeholder="请输入同行人员" required />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.findTitle" label="查找脱失摘要" placeholder="请输入查找脱失摘要" required />
         <van-field
@@ -42,6 +41,7 @@
           maxlength
           error-message="提示：查找脱失内容输入字数不多于200字"
         />
+        <Update :fileIdTmp.sync="form.fileIdTmp" label="查找脱失照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
           <van-datetime-picker
@@ -75,7 +75,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personFindAdd, fileAdd, personFindRecord } from "../../../api";
+import { personFindAdd, personFindRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-find",
@@ -85,14 +85,15 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      file: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
         findTitle: "",
         findContent: "",
         findTime: `${format(new Date(), "yyyy-MM-dd")}`,
-        fileIdTmp: ""
+        fileIdTmp: [],
+        ids: ""
       }
     };
   },
@@ -135,26 +136,23 @@ export default {
           mask: true,
           message: "上传\n查找脱失情况中"
         });
-        const file = await fileAdd(this.file);
-        if (file.ret === "200") {
-          this.form.fileIdTmp = file.data;
-          const sign = await personFindAdd(
-            this.form.archivesCode,
-            this.form.findTitle,
-            this.form.findContent,
-            this.form.findTime,
-            this.form.ids
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n查找脱失情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
-              }
-            });
-          }
+
+        const sign = await personFindAdd(
+          this.form.archivesCode,
+          this.form.findTitle,
+          this.form.findContent,
+          this.form.findTime,
+          this.form.ids
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n查找脱失情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

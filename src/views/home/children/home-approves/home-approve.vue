@@ -79,14 +79,14 @@
           placeholder="请输入审批备注,字数少于200"
           error-message="提示：输入字数应少于200"
         />-->
-        <Update :file.sync="file" />
+        <Update :fileIdTmp.sync="fileIdTmp" />
       </van-dialog>
     </footer>
   </section>
 </template>
 
 <script>
-import { approvesDetail, fileAdd, approvesEdit } from "../../../../api";
+import { approvesDetail, approvesEdit } from "../../../../api";
 import { format } from "../../../../utils/date";
 import Worker from "../../../../components/worker/worker";
 import Update from "../../../../components/update/update";
@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       dialogShow: false,
-      file: {},
+
       addict: {
         name: "personName",
         phone: "personMobile",
@@ -159,7 +159,8 @@ export default {
       // ],
       status: 0,
       id: "",
-      detail: {}
+      detail: {},
+      fileIdTmp: []
     };
   },
   components: {
@@ -195,21 +196,18 @@ export default {
         mask: true,
         message: "审批提交中"
       });
-      const file = await fileAdd(this.file);
-      if (file.ret === "200") {
-        const fileIdTmp2 = file.data;
-        const show = await approvesEdit(this.status, this.id, fileIdTmp2);
-        if (show.ret === "200") {
-          loading.clear();
-          this.$toast.success({
-            message: "已审批",
-            duration: 500,
-            onClose: () => {
-              this.$router.go(-1);
-            }
-          });
-        }
+      const show = await approvesEdit(this.status, this.id, this.fileIdTmp);
+      if (show.ret === "200") {
+        loading.clear();
+        this.$toast.success({
+          message: "已审批",
+          duration: 500,
+          onClose: () => {
+            this.$router.go(-1);
+          }
+        });
       }
+
       // setTimeout(() => {
 
       // }, 2000);
