@@ -75,6 +75,7 @@
               <van-cell
                 v-for="(item, index) in assessList"
                 clickable
+                :border="false"
                 :key="item.id"
                 :title="item.name"
                 :class="`riskLevel-${item.riskLevel}`"
@@ -321,11 +322,11 @@ export default {
   justify-content space-around
 
 .riskLevel-1
-  background #f9ebeb
+  background #f44336
 
 .riskLevel-2
-  background #fdf5e6
+  background #ffeb3b
 
 .riskLevel-3
-  background #f0f9eb
+  background #8bc34a
 </style>

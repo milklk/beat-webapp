@@ -32,7 +32,15 @@
                 <p class="li__p">
                   <!-- eslint-disable-next-line -->
                   <van-tag class="van-tag" type="success">{{item.sex}}</van-tag>
-                  <van-tag class="van-tag" type="danger" v-if="item.status">
+                  <van-tag
+                    class="van-tag"
+                    type="warning"
+                    v-if="item.userStatusName && (item.userStatusName === '社区戒毒' || item.userStatusName === '社区康复')"
+                  >
+                    <!-- eslint-disable-next-line -->
+                    {{ item.userStatusName }}
+                  </van-tag>
+                  <van-tag class="van-tag" type="danger" v-else-if="item.userStatusName">
                     <!-- eslint-disable-next-line -->
                     {{ item.userStatusName }}
                   </van-tag>
