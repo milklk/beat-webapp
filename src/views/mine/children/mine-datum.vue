@@ -36,10 +36,10 @@ export default {
     const mine = await mineDetail();
     if (mine.ret === "200") {
       this.id = mine.data.id;
-      this.realname = mine.data.realname;
-      this.idCard = mine.data.idCard;
-      this.userMobile = mine.data.userMobile;
-      this.address = mine.data.address;
+      this.realname = mine.data.realname ? mine.data.realname : "";
+      this.idCard = mine.data.idCard ? mine.data.idCard : "";
+      this.userMobile = mine.data.userMobile ? mine.data.userMobile : "";
+      this.address = mine.data.address ? mine.data.address : "";
     }
   },
   methods: {

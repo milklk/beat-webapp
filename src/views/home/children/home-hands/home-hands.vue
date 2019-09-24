@@ -193,7 +193,7 @@ export default {
   display flex
   justify-content space-around
   align-items center
-  padding 5px 0
+  padding 8px 0
 
   .item__avatar
     width 40px

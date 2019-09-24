@@ -23,7 +23,7 @@
               <li class="content__li">
                 <p class="li__p">
                   <strong class="p__strong">{{ item.name }}</strong>
-                  <!-- <span class="p__span">（ {{item.sex}} ）</span> -->
+                  <span v-if="item.archivesStatus == 2" class="p__span">（ 已归档 ）</span>
                 </p>
                 <p class="li__p">{{ item.mobile }}</p>
               </li>
@@ -31,7 +31,7 @@
                 <p class="li__p">{{ item.idCard }}</p>
                 <p class="li__p">
                   <!-- eslint-disable-next-line -->
-                  <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
+                  <van-tag class="van-tag" type="success">{{item.sex}}</van-tag>
                   <van-tag class="van-tag" type="danger" v-if="item.status">
                     <!-- eslint-disable-next-line -->
                     {{ item.userStatusName }}
@@ -94,7 +94,11 @@ export default {
   computed: {},
   async created() {
     await this.updateList();
-    if (this.$route.path !== "/contacts") {
+    if (
+      this.$route.path !== "/contacts" &&
+      this.$route.path.indexOf("/contacts") === 0
+    ) {
+      console.log(this.$route.path);
       const code = this.$route.params.id;
       await this.updateDetail(code);
     }
@@ -195,7 +199,7 @@ export default {
   display flex
   justify-content space-around
   align-items center
-  padding 5px 0
+  padding 8px 0
 
   .item__avatar
     width 40px
@@ -203,7 +207,7 @@ export default {
 
   .item__content
     display inline-flex
-    width 260px
+    width 280px
     height 50px
     justify-content space-between
 

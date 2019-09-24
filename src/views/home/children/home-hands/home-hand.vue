@@ -129,6 +129,7 @@ export default {
       const userId = this.result;
       if (!userId.length) {
         this.$toast.fail("未选择接收人员");
+        return false;
       }
       const show = await archivesTransfer(archivesCodes, userId);
       if (show.ret === "200") {

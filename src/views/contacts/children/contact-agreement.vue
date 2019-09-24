@@ -187,7 +187,8 @@ export default {
           this.form.violationRemark,
           this.form.warnRemark,
           this.form.issueDate,
-          this.form.fileIdTmp
+          this.form.fileIdTmp,
+          this.form.warnType
         );
         if (sign.ret === "200") {
           loading.clear();
