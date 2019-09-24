@@ -7,6 +7,7 @@
       :total="total"
       :api="api"
       :children="children"
+      :searchShow="false"
       @update="updateList"
     />
     <NoData v-else-if="$route.path === '/home/notices'" label="暂无公告" />
@@ -53,7 +54,7 @@ export default {
       const notices = await noticesList(this.page++, 15);
       if (notices.ret === "200") {
         notices.data.list.forEach(d => {
-          d.time = format(d.updateTime);
+          d.time = format(d.updateTime, "yyyy-MM-dd HH:mm");
         });
         this.list = notices.data.list;
         this.total = notices.data.total;

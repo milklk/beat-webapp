@@ -28,7 +28,13 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.colleagueUser" label="同行人员" placeholder="请输入同行人员" required />
+        <van-field
+          v-model="form.colleagueUser"
+          label="同行人员"
+          placeholder="请输入同行人员"
+          required
+          error-message="提示：多个人员之间使用逗号(,)隔开"
+        />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.helpTitle" label="帮扶救助摘要" placeholder="请输入帮扶救助摘要" required />
         <van-field
@@ -94,7 +100,12 @@ export default {
         helpTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
         colleagueUser: ""
-      }
+      },
+      error: [
+        { key: "helpTitle", message: "未填写帮扶救助摘要" },
+        { key: "helpContent", message: "未填写帮扶救助内容" },
+        { key: "colleagueUser", message: "未填写同行人员" }
+      ]
     };
   },
   components: {
@@ -144,6 +155,21 @@ export default {
           message: "上传\n帮扶救助情况中"
         });
         this.form.colleagueUser.replace(/，/gi, ",");
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传帮扶救助照片");
+          return false;
+        }
         const sign = await personHelpAdd(
           this.form.archivesCode,
           this.form.helpTitle,

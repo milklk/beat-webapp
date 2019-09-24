@@ -41,11 +41,18 @@
               :key="i"
               :text="action.text"
               :to="action.to"
-              info="99"
             >
               <template #icon>
                 <!-- eslint-disable-next-line -->
-                <van-icon :name="action.icon" :info="info[action.info]" size="40" class="img-icon" />
+                <van-icon
+                  v-if="info[action.info]"
+                  :name="action.icon"
+                  :info="info[action.info]"
+                  size="40"
+                  class="img-icon"
+                />
+                <!-- eslint-disable-next-line -->
+                <van-icon v-else :name="action.icon" size="40" class="img-icon" />
               </template>
             </van-grid-item>
           </van-grid>
@@ -83,7 +90,6 @@
             </van-notice-bar>
           </router-link>
         </li>-->
-
         <!-- 人员总览 -->
         <li class="home__item home__personnel">
           <header class="item__h item__h--actions">
@@ -105,7 +111,8 @@ import {
   personList,
   joinsList,
   approvesList,
-  archives
+  archives,
+  workReceptionList
 } from "../../api";
 import { format } from "../../utils/date";
 export default {
@@ -123,11 +130,6 @@ export default {
           info: "joins"
         },
         {
-          icon: require("../../assets/img/action-2.png"),
-          text: "通讯录",
-          to: "/contacts"
-        },
-        {
           icon: require("../../assets/img/action-3.png"),
           text: "审批",
           to: "/home/approves",
@@ -138,6 +140,12 @@ export default {
           text: "移交",
           to: "/home/hands",
           info: "hands"
+        },
+        {
+          icon: require("../../assets/img/action-2.png"),
+          text: "接收",
+          to: "/home/sends",
+          info: "sends"
         }
       ],
       approves: [],
@@ -146,7 +154,8 @@ export default {
       info: {
         joins: 0,
         approves: 0,
-        hands: 0
+        hands: 0,
+        sends: 0
       }
     };
   },
@@ -233,7 +242,7 @@ export default {
       const notices = await noticesList(1, 2);
       if (notices.ret === "200") {
         notices.data.list.forEach(d => {
-          d.time = format(d.updateTime);
+          d.time = format(d.updateTime, "yyyy-MM-dd HH:mm");
         });
         this.notices = notices.data.list;
       }
@@ -248,9 +257,13 @@ export default {
       if (approves.ret === "200") {
         this.info.approves = approves.data.total;
       }
-      const hands = await archives(1, 15);
+      const hands = await archives(1, 1);
       if (hands.ret === "200") {
         this.info.hands = hands.data.total;
+      }
+      const sends = await workReceptionList(1, 1);
+      if (sends.ret === "200") {
+        this.info.sends = sends.data.total;
       }
     }
   }
@@ -299,7 +312,7 @@ export default {
     height 117px
 
 .home__item--actions
-  height 130px
+  height 138px
 
   .item__h--actions
     padding-bottom 0

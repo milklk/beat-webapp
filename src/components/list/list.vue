@@ -7,6 +7,14 @@
         <van-icon name="ellipsis" color="#666" size="16" class="header__i" @click="operation" />
       </template>
     </van-cell>
+    <van-search
+      v-if="searchShow"
+      placeholder="请输入搜索关键词"
+      v-model="key"
+      shape="round"
+      background="#fff"
+      @search="searchClick"
+    />
     <!-- 弹出层 -->
     <!-- eslint-disable-next-line -->
     <van-action-sheet v-model="sheetShow" :actions="actions" cancel-text="取消" @select="select" />
@@ -15,12 +23,13 @@
       class="list__content"
       :class="{
         'list__content--noHeader': !headerShow,
+        'list__content--search': searchShow,
         'list__content--footer': $route.meta.footer
       }"
       ref="list"
     >
       <!-- eslint-disable-next-line -->
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了">
+      <van-list v-model="loading" :finished="finished" :finished-text="total ? '没有更多了' : '暂无数据'">
         <!-- eslint-disable-next-line -->
         <div v-for="(item, i) in list" :key="i" class="content__item" @click="readed(item)">
           <van-image
@@ -47,8 +56,13 @@ export default {
     list: Array,
     total: Number,
     unread: Number,
+    keyword: String,
     api: Object,
     headerShow: {
+      type: Boolean,
+      default: true
+    },
+    searchShow: {
       type: Boolean,
       default: true
     }
@@ -59,12 +73,21 @@ export default {
       actions: [{ name: "全部已读" }],
       loading: true,
       finished: false,
+      key: "",
       bs: {}
     };
   },
-  components: {},
-  computed: {},
-  created() {},
+  watch: {
+    key() {
+      this.$emit("update:keyword", this.key);
+    },
+    total() {
+      if (this.total <= 15) {
+        this.loading = false;
+        this.finished = true;
+      }
+    }
+  },
   mounted() {
     if (this.total <= 15) {
       this.loading = false;
@@ -139,6 +162,9 @@ export default {
         this.loading = false;
         this.finished = true;
       }
+    },
+    searchClick() {
+      this.$emit("search");
     }
   }
 };
@@ -190,7 +216,7 @@ export default {
       display flex
       flex-direction column
       justify-content center
-      width 210px
+      width 170px
 
       .main__h
         font-size 16px
@@ -203,6 +229,9 @@ export default {
 
 .list__content--noHeader
   height calc( 100vh - 46px + 46px )
+
+  &.list__content--search
+    height calc( 100vh - 101px + 46px )
 
 .list__content--footer
   height calc( 100vh - 130px + 46px )

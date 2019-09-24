@@ -7,9 +7,11 @@
             <strong class="h__name">{{ mine.realname }}</strong>
           </article>
         </h3>
-        <p class="header__p">身份证号：{{ mine.idCard }}</p>
+        <!-- eslint-disable-next-line -->
+        <p class="header__p" v-if="mine.idCard">身份证号：{{ mine.idCard }}</p>
         <p class="header__p">联系方式：{{ mine.userMobile }}</p>
-        <p class="header__p">居住地址：{{ mine.address }}</p>
+        <!-- eslint-disable-next-line -->
+        <p class="header__p" v-if="mine.address">居住地址：{{ mine.address }}</p>
       </header>
       <van-cell-group>
         <van-cell title="修改资料" is-link to="/mine/datum" />

@@ -62,6 +62,7 @@ export const joinsUpdateFalse = (id, remark, refuse = "1") =>
  */
 export const joinsUpdateTrue = (id, joinTime, joinArea, refuse = "0") =>
   axios(`${api}/personJoin/update`, { id, joinTime, joinArea, refuse }, "post");
+
 /**
  * 消息列表
  * @param {Number} pageNumber 列表页码
@@ -99,8 +100,12 @@ export const knowledgeType = () => axios(`${api}/knowledgeType/list`);
  * @param {Number} pageSize 每页列数
  * @param {String} typeId 知识库类型
  */
-export const knowledgeList = (pageNumber, pageSize, typeId) =>
-  axios(`${api}/knowledge/list`, { pageNumber, pageSize, typeId }, "get");
+export const knowledgeList = (pageNumber, pageSize, typeId, keyword) =>
+  axios(
+    `${api}/knowledge/list`,
+    { pageNumber, pageSize, typeId, keyword },
+    "get"
+  );
 
 /**
  * 知识详情
@@ -316,6 +321,9 @@ export const personLeaveRecord = archivesCode =>
  * @param {String} assessTime 评估时间
  * @param {String} colleagueUser 小组人员，用逗号隔开
  * @param {String} fileIdTmp 附件Id
+ * @param {String} riskLevel 评估等级
+ * @param {String} assessId 条款id
+ * @param {String} assessName 条款内容
  */
 export const personAssessAdd = (
   archivesCode,
@@ -323,7 +331,10 @@ export const personAssessAdd = (
   assessRemark,
   assessTime,
   colleagueUser,
-  fileIdTmp
+  fileIdTmp,
+  riskLevel,
+  assessId,
+  assessName
 ) =>
   axios(
     `${api}/personAssess/add`,
@@ -333,11 +344,21 @@ export const personAssessAdd = (
       assessRemark,
       assessTime,
       colleagueUser,
-      fileIdTmp
+      fileIdTmp,
+      riskLevel,
+      assessId,
+      assessName
     },
     "post"
   );
-
+/**
+ *评估列表
+ */
+export const socialappraisalList = () =>
+  axios(`${api}/personAssess/socialappraisalList`, {
+    pageNumber: 1,
+    pageSize: 99
+  });
 /**
  * 评估记录
  * @param {String} archivesCode 人员Id
@@ -534,7 +555,7 @@ export const archives = (pageNumber, pageSize, keyword) =>
     "get"
   );
 /**
- * 接收列表
+ * 接收人列表
  * @param {Number} pageNumber 列表页码
  * @param {Number} pageSize 每页列数
  * @param {String} keyword 查询条件（姓名）
@@ -550,6 +571,32 @@ export const archivesUsers = (pageNumber, pageSize, keyword) =>
 export const archivesTransfer = (archivesCodes, userId) =>
   axios(`${api}/archives/transfer`, { archivesCodes, userId }, "post");
 
+/**
+ * 接收列表
+ * @param {Number} pageNumber 列表页码
+ * @param {Number} pageSize 每页列数
+ * @param {String} keyword 查询条件（姓名）
+ */
+export const workReceptionList = (pageNumber, pageSize, keyword) =>
+  axios(
+    `${api}/archives/workReceptionList`,
+    { pageNumber, pageSize, keyword },
+    "get"
+  );
+/**
+ * 接收人详情
+ * @param {String} id 人员Id
+ */
+export const workReceptionDetail = id =>
+  axios(`${api}/archives/workReceptionList`, { id }, "get");
+/**
+ * 接收
+ * @param {String} ids 接收人Id
+ * @param {String} type 1接收2拒绝
+ * @param {String} remark 拒绝原因
+ */
+export const workReception = (ids, type, remark = "") =>
+  axios(`${api}/archives/receive`, { ids, type, remark }, "post");
 /**
  * 审批列表
  * @param {Number} pageNumber 列表页码

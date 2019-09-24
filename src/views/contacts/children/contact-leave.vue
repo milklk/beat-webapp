@@ -94,7 +94,14 @@ export default {
         startTime: `${format(new Date(), "yyyy-MM-dd")}`,
         endTime: `${format(new Date(), "yyyy-MM-dd")}`,
         activitiyRange: ""
-      }
+      },
+      error: [
+        { key: "reason", message: "未填写请假事由" },
+        { key: "visitOrg", message: "未填写被访对象" },
+        { key: "visitUserMobile", message: "未填写被访对象电话" },
+        { key: "relationship", message: "未填写双方关系" },
+        { key: "activitiyRange", message: "未填写活动范围" }
+      ]
     };
   },
   components: {
@@ -136,6 +143,17 @@ export default {
           mask: true,
           message: "代上传\n请假信息中"
         });
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
         const leave = await personLeaveAdd(
           this.form.archivesCode,
           this.form.reason,

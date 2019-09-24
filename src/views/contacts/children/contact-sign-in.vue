@@ -84,7 +84,11 @@ export default {
         signAddress: "",
         signRemark: "",
         fileIdTmp: []
-      }
+      },
+      error: [
+        { key: "signAddress", message: "未填写签到地址" },
+        { key: "signRemark", message: "未填写代签事由" }
+      ]
     };
   },
   components: {
@@ -126,7 +130,21 @@ export default {
           mask: true,
           message: "代签到中"
         });
-
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传签到照片");
+          return false;
+        }
         const sign = await personSignAdd(
           this.form.archivesCode,
           this.form.signTime,

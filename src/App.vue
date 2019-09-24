@@ -31,10 +31,21 @@ export default {
     // headerBar
   },
   async created() {
-    const authCode = await ddAuthCode();
-    const user = await login(authCode);
-    if (user.ret === "200") {
-      window.sessionStorage.setItem("token", user.data.token);
+    const token = window.sessionStorage.getItem("token");
+    if (!token) {
+      const authCode = await ddAuthCode();
+      const user = await login(authCode);
+      if (user.ret === "200") {
+        window.sessionStorage.setItem("token", user.data.token);
+        const notifies = await notifyList(1, 1);
+        if (notifies.ret === "200") {
+          const unread = notifies.data.list[0].unread
+            ? Number(notifies.data.list[0].unread)
+            : 0;
+          this.$store.commit("messagesU/set_unread", unread);
+        }
+      }
+    } else {
       const notifies = await notifyList(1, 1);
       if (notifies.ret === "200") {
         const unread = notifies.data.list[0].unread
@@ -45,6 +56,9 @@ export default {
     }
   },
   mounted() {},
+  beforeDestroy() {
+    window.sessionStorage.clear();
+  },
   watch: {
     $route() {
       this.mainClass = {

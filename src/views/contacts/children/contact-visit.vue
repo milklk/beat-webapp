@@ -21,7 +21,13 @@
           </template>
         </van-cell>
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.colleagueUser" label="同行人员" placeholder="请输入同行人员" required />
+        <van-field
+          v-model="form.colleagueUser"
+          label="同行人员"
+          placeholder="请输入同行人员"
+          required
+          error-message="提示：多个人员之间使用逗号(,)隔开"
+        />
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.visitTitle" label="拜访摘要" placeholder="请输入拜访摘要" required />
         <van-field
@@ -78,7 +84,6 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
@@ -87,7 +92,12 @@ export default {
         visitTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
         colleagueUser: ""
-      }
+      },
+      error: [
+        { key: "visitTitle", message: "未填写拜访摘要" },
+        { key: "visitContent", message: "未填写拜访内容" },
+        { key: "colleagueUser", message: "未填写同行人员" }
+      ]
     };
   },
   components: {
@@ -137,6 +147,21 @@ export default {
           message: "上传\n拜访情况中"
         });
         this.form.colleagueUser.replace(/，/gi, ",");
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传拜访现场照片");
+          return false;
+        }
         const visit = await personVisitAdd(
           this.form.archivesCode,
           this.form.visitTitle,

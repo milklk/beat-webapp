@@ -1,6 +1,7 @@
 <template>
+  <!-- eslint-disable -->
   <section class="hands">
-    <div v-show="$route.path === '/home/hands' && list.length">
+    <div v-show="$route.path === '/home/hands'">
       <van-search
         placeholder="请输入搜索关键词"
         v-model="keyword"
@@ -10,52 +11,54 @@
       />
       <!-- eslint-disable-next-line -->
       <article class="hands__list" ref="hands">
-        <template v-if="list.length">
-          <van-list
-            v-model="loading"
-            :finished="finished"
-            finished-text="没有更多了"
-            :immediate-check="false"
-          >
-            <van-checkbox-group v-model="result">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          :finished-text="list.length ? '没有更多了': '暂无人员'"
+          :immediate-check="false"
+        >
+          <van-checkbox-group v-model="result">
+            <!-- eslint-disable-next-line -->
+            <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
               <!-- eslint-disable-next-line -->
-              <van-checkbox v-for="(item,i) in list" :key="i" :name="item.code" class="list__item">
-                <!-- eslint-disable-next-line -->
-                <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
-                <ul class="item__content">
-                  <li class="content__li">
-                    <p class="li__p">
-                      <strong class="p__strong">{{ item.name }}</strong>
-                      <!-- <span class="p__span">（临桂区）</span> -->
-                    </p>
-                    <p class="li__p">{{ item.mobile }}</p>
-                  </li>
-                  <li class="content__li">
-                    <p class="li__p">{{ item.idCard }}</p>
-                    <p class="li__p">
+              <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
+              <ul class="item__content">
+                <li class="content__li">
+                  <p class="li__p">
+                    <strong class="p__strong">{{ item.name }}</strong>
+                    <span class="p__span">（{{item.sex}}）</span>
+                  </p>
+                  <p class="li__p">{{ item.mobile }}</p>
+                </li>
+                <li class="content__li">
+                  <p class="li__p">{{ item.idCard }}</p>
+                  <p class="li__p">
+                    <van-tag
+                      class="van-tag"
+                      :type=" item.status == 0 ? 'warning' : item.status == 2 ? 'danger' : 'primary'"
+                    >
                       <!-- eslint-disable-next-line -->
-                      <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
-                      <van-tag class="van-tag" type="danger" v-if="item.status">
-                        <!-- eslint-disable-next-line -->
-                        {{ item.userStatusName }}
-                      </van-tag>
-                    </p>
-                  </li>
-                </ul>
-              </van-checkbox>
-            </van-checkbox-group>
-          </van-list>
-        </template>
+                      {{ item.distributeName }}
+                    </van-tag>
+                    <van-tag class="van-tag" type="danger" v-if="item.status">
+                      <!-- eslint-disable-next-line -->
+                      {{ item.userStatusName }}
+                    </van-tag>
+                  </p>
+                </li>
+              </ul>
+            </van-checkbox>
+          </van-checkbox-group>
+        </van-list>
       </article>
       <footer class="hands__footer">
         <!-- eslint-disable-next-line -->
-        <van-button :to="{name: 'home-hand',params: {id: result} }" class="van-button" type="info">
+        <van-button class="van-button" type="info" @click="submit">
           <!-- eslint-disable-next-line -->
           申请移交
         </van-button>
       </footer>
     </div>
-    <NoData v-if="!list.length" label="暂无可移交人员" />
     <router-view></router-view>
   </section>
 </template>
@@ -63,7 +66,7 @@
 <script>
 import { archives, headPhoto } from "../../../../api";
 import photo from "../../../../assets/img/people-head.png";
-import NoData from "../../../../components/no-data";
+
 export default {
   name: "home-hands",
   props: {},
@@ -79,12 +82,9 @@ export default {
       bs: {}
     };
   },
-  components: {
-    NoData
-  },
+  components: {},
   computed: {},
   watch: {
-    // 如果路由发生变化，再次执行该方法
     $route() {
       this.result = [];
       this.search();
@@ -116,15 +116,30 @@ export default {
     }
   },
   methods: {
+    submit() {
+      if (this.result.length) {
+        this.$router.push({ name: "home-hand", params: { id: this.result } });
+      } else {
+        this.$toast.fail("未选择移交人员");
+      }
+    },
     async search() {
       this.page = 1;
       const hands = await archives(this.page++, 15, this.keyword);
       if (hands.ret === "200") {
+        hands.data.list.forEach(d => {
+          const show = d.status;
+          d.distributeName =
+            show == 0 ? "移交中" : show == 2 ? "已拒收" : "正常";
+        });
         this.list = hands.data.list;
         this.total = hands.data.total;
         if (this.total <= 15) {
           this.loading = false;
           this.finished = true;
+        } else {
+          this.loading = true;
+          this.finished = false;
         }
       }
     },
@@ -143,6 +158,11 @@ export default {
     async updateList() {
       const hands = await archives(this.page++, 15, this.keyword);
       if (hands.ret === "200") {
+        hands.data.list.forEach(d => {
+          const show = d.status;
+          d.distributeName =
+            show == 0 ? "移交中" : show == 2 ? "已拒收" : "正常";
+        });
         this.list = this.list.concat(hands.data.list);
         this.total = hands.data.total;
       }
@@ -165,7 +185,7 @@ export default {
   line-height 40px
 
 .hands__list
-  height calc( 100vh - 46px + 46px - 54px - 50px )
+  height calc( 100vh - 46px + 46px - 54px - 55px )
   overflow hidden
   border-bottom 10px solid #f2f2f2
 
@@ -183,7 +203,8 @@ export default {
     display inline-flex
     width 260px
     height 50px
-    justify-content space-around
+    justify-content space-between
+    padding-left 10px
 
     .content__li
       display flex
@@ -202,7 +223,7 @@ export default {
           line-height 22px
           font-weight 400
           color #152962
-          max-width 85px
+          max-width 75px
           overflow hidden
           text-overflow ellipsis
 

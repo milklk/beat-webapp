@@ -35,7 +35,7 @@
         <!-- eslint-disable-next-line -->
         <van-field v-model="form.doctor" label="主治医师" placeholder="请输入医务人员姓名" required />
         <!-- eslint-disable-next-line -->
-        <van-field v-model="form.doctorMobile" label="联系电话" placeholder="请输入医务人员电话" required />
+        <van-field v-model="form.doctorMobile" label="医师电话" placeholder="请输入医务人员电话" required />
         <Update :fileIdTmp.sync="form.fileIdTmp" label="药物治疗图像" />
 
         <!-- eslint-disable-next-line -->
@@ -71,11 +71,7 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import {
-  personMedicationAdd,
-  fileAdd,
-  personMedicationRecord
-} from "../../../api";
+import { personMedicationAdd, personMedicationRecord } from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-helping",
@@ -85,8 +81,7 @@ export default {
       total: 0,
       show: false,
       time: new Date(),
-      tradeTableFile: {},
-      checkReportFile: {},
+
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
@@ -96,7 +91,13 @@ export default {
         doctor: "",
         doctorMobile: "",
         fileIdTmp: []
-      }
+      },
+      error: [
+        { key: "medicineName", message: "未填写药物名称" },
+        { key: "treatArea", message: "未填写药物治疗地点" },
+        { key: "doctor", message: "未填写主治医师" },
+        { key: "doctorMobile", message: "未填写医师电话" }
+      ]
     };
   },
   components: {
@@ -138,30 +139,40 @@ export default {
           mask: true,
           message: "上传\n药物维持情况中"
         });
-        const tradeTableFile = await fileAdd(this.tradeTableFile);
-        const checkReportFile = await fileAdd(this.checkReportFile);
-        if (tradeTableFile.ret === "200" && checkReportFile.ret === "200") {
-          this.form.tradeTable = tradeTableFile.data;
-          this.form.checkReport = checkReportFile.data;
-          const sign = await personMedicationAdd(
-            this.form.archivesCode,
-            this.form.medicineName,
-            this.form.medicineTime,
-            this.form.treatArea,
-            this.form.doctor,
-            this.form.doctorMobile,
-            this.form.fileIdTmp
-          );
-          if (sign.ret === "200") {
-            loading.clear();
-            this.$toast.success({
-              message: "上传\n药物维持情况成功",
-              duration: 500,
-              onClose: () => {
-                this.$router.go(-1);
+
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
               }
-            });
+            }
           }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传药物治疗图像");
+          return false;
+        }
+        const sign = await personMedicationAdd(
+          this.form.archivesCode,
+          this.form.medicineName,
+          this.form.medicineTime,
+          this.form.treatArea,
+          this.form.doctor,
+          this.form.doctorMobile,
+          this.form.fileIdTmp
+        );
+        if (sign.ret === "200") {
+          loading.clear();
+          this.$toast.success({
+            message: "上传\n药物维持情况成功",
+            duration: 500,
+            onClose: () => {
+              this.$router.go(-1);
+            }
+          });
         }
       } else {
         this.$toast.fail({

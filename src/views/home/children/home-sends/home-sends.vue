@@ -1,6 +1,6 @@
 <template>
   <section class="contacts">
-    <div v-show="$route.path === '/contacts'">
+    <div v-show="$route.path === '/home/sends'">
       <van-search
         placeholder="请输入搜索关键词"
         v-model="keyword"
@@ -12,11 +12,11 @@
         <van-list
           v-model="loading"
           :finished="finished"
-          :finished-text="list.length ? '没有更多了' : '暂无通讯录人员'"
+          :finished-text="list.length ? '没有更多了' : '暂无接收人员'"
           :immediate-check="false"
         >
           <!-- eslint-disable-next-line -->
-          <div v-for="(item, i) in list" :key="i" class="list__item" @click="link(item.code)">
+          <div v-for="(item, i) in list" :key="i" class="list__item" @click="link(item.id)">
             <!-- eslint-disable-next-line -->
             <van-image class="item__avatar" :src="setPhoto(item.headPhoto)" />
             <ul class="item__content">
@@ -28,7 +28,7 @@
                 <p class="li__p">{{ item.mobile }}</p>
               </li>
               <li class="content__li">
-                <p class="li__p">{{ item.idCard }}</p>
+                <p class="li__p">{{ item.personId }}</p>
                 <p class="li__p">
                   <!-- eslint-disable-next-line -->
                   <van-tag class="van-tag" type="success">{{ item.sex }}</van-tag>
@@ -43,38 +43,13 @@
         </van-list>
       </article>
     </div>
-    <header v-show="$route.path !== '/contacts'" class="contact__header">
-      <h3 class="header__h">
-        <article>
-          <strong class="h__name">{{ addict.name }}</strong>
-        </article>
-        <div>
-          <van-tag class="van-tag" type="success">{{ addict.sex }}</van-tag>
-          <van-tag class="van-tag">{{ addict.idCard }}</van-tag>
-        </div>
-      </h3>
-      <p class="header__p">
-        {{ addict.mobile }}
-        <template v-if="addict.userStatusName">
-          <!-- eslint-disable-next-line -->
-          {{ addict.userStatusName }}
-        </template>
-        <!-- eslint-disable-next-line -->
-        <template v-if="addict.startTime && addict.endTime && addict.userStatusName">
-          <!-- eslint-disable-next-line -->
-          {{ addict.startTime }} 至 {{ addict.endTime }}
-        </template>
-      </p>
-      <p class="header__p">{{ addict.address }}</p>
-    </header>
     <router-view></router-view>
   </section>
 </template>
 
 <script>
-import { archivesList, archivesDetail, headPhoto } from "../../api/index.js";
-import photo from "../../assets/img/people-head.png";
-import { format } from "../../utils/date";
+import { workReceptionList, headPhoto } from "../../../../api";
+import photo from "../../../../assets/img/people-head.png";
 export default {
   name: "contacts",
   props: {},
@@ -94,13 +69,24 @@ export default {
   computed: {},
   async created() {
     await this.updateList();
-    if (this.$route.path !== "/contacts") {
-      const code = this.$route.params.id;
-      await this.updateDetail(code);
-    }
     if (this.total <= 15) {
       this.loading = false;
       this.finished = true;
+    }
+  },
+  watch: {
+    async $route(to) {
+      if (to.path === "/home/sends") {
+        this.list = [];
+        await this.updateList();
+        if (this.total <= 15) {
+          this.loading = false;
+          this.finished = true;
+        } else {
+          this.loading = true;
+          this.finished = false;
+        }
+      }
     }
   },
   mounted() {
@@ -124,7 +110,7 @@ export default {
   methods: {
     async search() {
       this.page = 1;
-      const contacts = await archivesList(this.page++, 15, this.keyword);
+      const contacts = await workReceptionList(this.page++, 15, this.keyword);
       if (contacts.ret === "200") {
         this.list = contacts.data.list;
         this.total = contacts.data.total;
@@ -150,27 +136,14 @@ export default {
       return headerImg;
     },
     async updateList() {
-      const contacts = await archivesList(this.page++, 15, this.keyword);
+      const contacts = await workReceptionList(this.page++, 15, this.keyword);
       if (contacts.ret === "200") {
         this.list = this.list.concat(contacts.data.list);
         this.total = contacts.data.total;
       }
     },
     async link(code) {
-      await this.updateDetail(code);
-      this.$router.push({ name: "contact", params: { id: code } });
-    },
-    async updateDetail(code) {
-      const archive = await archivesDetail(code);
-      if (archive.ret === "200") {
-        archive.data.startTime = archive.data.startTime
-          ? format(archive.data.startTime)
-          : false;
-        archive.data.endTime = archive.data.endTime
-          ? format(archive.data.endTime)
-          : false;
-        this.addict = archive.data;
-      }
+      this.$router.push({ name: "home-send", params: { id: code } });
     }
   }
 };
@@ -188,7 +161,7 @@ export default {
   margin auto
 
 .contacts__list
-  height calc( 100vh - 46px + 46px - 54px - 50px )
+  height calc( 100vh - 46px + 46px - 55px )
   overflow hidden
 
 .list__item

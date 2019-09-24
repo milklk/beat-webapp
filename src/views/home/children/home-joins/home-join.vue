@@ -198,6 +198,10 @@ export default {
       switch (refuse) {
         case "1":
           {
+            if (!this.value) {
+              this.$toast.fail("未输入拒绝原因");
+              return false;
+            }
             const loading = this.$toast.loading({
               mask: true,
               message: "拒绝衔接中"
@@ -217,6 +221,10 @@ export default {
           break;
         case "2":
           {
+            if (!this.primary.joinArea) {
+              this.$toast.fail("未输入衔接地点");
+              return false;
+            }
             const loading = this.$toast.loading({
               mask: true,
               message: "确认衔接中"

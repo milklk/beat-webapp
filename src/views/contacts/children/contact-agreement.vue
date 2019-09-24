@@ -105,7 +105,11 @@ export default {
         issueDate: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: [],
         warnType: ""
-      }
+      },
+      error: [
+        { key: "violationRemark", message: "未填写违反协议摘要" },
+        { key: "warnRemark", message: "未填写违反协议内容" }
+      ]
     };
   },
   components: {
@@ -163,7 +167,21 @@ export default {
           mask: true,
           message: "上传\n告诫信息中"
         });
-
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传违反协议照片");
+          return false;
+        }
         const sign = await personViolationAdd(
           this.form.archivesCode,
           this.form.violationRemark,

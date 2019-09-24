@@ -27,6 +27,16 @@
             <van-icon class="van-icon" name="add-o" />
           </template>
         </van-cell>
+        <van-cell
+          class="van-cell--auto"
+          title="风险等级评估"
+          :value="riskLevelName"
+          @click="setRiskLevelShow"
+        >
+          <template #right-icon>
+            <van-icon class="van-icon" name="add-o" />
+          </template>
+        </van-cell>
         <!-- eslint-disable-next-line -->
         <van-field
           v-model="form.colleagueUser"
@@ -47,6 +57,7 @@
           maxlength
           error-message="提示：评估内容输入字数不多于200字"
         />
+
         <Update :fileIdTmp.sync="form.fileIdTmp" label="评估照片" />
         <!-- eslint-disable-next-line -->
         <van-popup v-model="show" round position="bottom" class="van-popup" get-container="main">
@@ -56,6 +67,23 @@
             @confirm="timeConfirm"
             @cancel="timeCancel"
           />
+        </van-popup>
+        <!-- eslint-disable-next-line -->
+        <van-popup v-model="riskShow" position="bottom" class="van-popup" get-container="main">
+          <van-checkbox-group v-model="assessTrueList" @change="setriskLevel">
+            <van-cell-group class="van-cell-group--checkbox">
+              <van-cell
+                v-for="(item, index) in assessList"
+                clickable
+                :key="item.id"
+                :title="item.name"
+                :class="`riskLevel-${item.riskLevel}`"
+                @click="toggle(index)"
+              >
+                <van-checkbox :name="item" ref="checkboxes" slot="right-icon" />
+              </van-cell>
+            </van-cell-group>
+          </van-checkbox-group>
         </van-popup>
       </van-cell-group>
       <van-divider class="van-divider">社工信息</van-divider>
@@ -81,7 +109,11 @@
 <script>
 import Worker from "../../../components/worker/worker";
 import Update from "../../../components/update/update";
-import { personAssessAdd, personAssessRecord } from "../../../api";
+import {
+  personAssessAdd,
+  personAssessRecord,
+  socialappraisalList
+} from "../../../api";
 import { format } from "../../../utils/date.js";
 export default {
   name: "contact-assess",
@@ -90,8 +122,8 @@ export default {
     return {
       total: 0,
       show: false,
+      riskShow: false,
       time: new Date(),
-
       radio: false,
       form: {
         archivesCode: this.$route.params.id,
@@ -99,23 +131,64 @@ export default {
         assessRemark: "",
         assessTime: `${format(new Date(), "yyyy-MM-dd")}`,
         colleagueUser: "",
-        fileIdTmp: []
-      }
+        fileIdTmp: [],
+        riskLevel: "",
+        assessId: [],
+        assessName: ""
+      },
+      assessList: [],
+      assessTrueList: [],
+      error: [
+        { key: "assessTitle", message: "未填写评估摘要" },
+        { key: "assessRemark", message: "未填写评估内容" },
+        { key: "colleagueUser", message: "未填写评估人员" }
+      ]
     };
   },
   components: {
     Worker,
     Update
   },
-  computed: {},
+  computed: {
+    riskLevelName() {
+      const riskLevelName =
+        this.form.riskLevel == "1"
+          ? "高风险"
+          : this.form.riskLevel == "2"
+          ? "中风险"
+          : this.form.riskLevel == "3"
+          ? "低风险"
+          : "未评估";
+      return riskLevelName;
+    }
+  },
   async created() {
     const id = this.$route.params.id;
     const record = await personAssessRecord(id);
     if (record.ret === "200") {
       this.total = record.data.total ? record.data.total : record.data.length;
     }
+    const socialappraisas = await socialappraisalList();
+    if (socialappraisas.ret === "200") {
+      this.assessList = socialappraisas.data.list;
+    }
   },
   methods: {
+    setRiskLevelShow() {
+      this.riskShow = true;
+    },
+    toggle(index) {
+      this.$refs.checkboxes[index].toggle();
+    },
+    setriskLevel() {
+      const riskLevels = Array.from(this.assessTrueList).sort(
+        (a, b) => a.riskLevel - b.riskLevel
+      );
+      this.form.riskLevel = riskLevels[0] ? riskLevels[0].riskLevel : "";
+      this.form.assessId = riskLevels.map(d => d.id);
+      this.form.assessName = riskLevels.map(d => d.name).join("&");
+      console.log(this.form.assessName);
+    },
     setTime() {
       this.time = new Date(this.form.assessTime);
       this.show = true;
@@ -150,13 +223,31 @@ export default {
           message: "上传\n评估情况中"
         });
         this.form.colleagueUser.replace(/，/gi, ",");
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传评估照片");
+          return false;
+        }
         const sign = await personAssessAdd(
           this.form.archivesCode,
           this.form.assessTitle,
           this.form.assessRemark,
           this.form.assessTime,
           this.form.colleagueUser,
-          this.form.fileIdTmp
+          this.form.fileIdTmp,
+          this.form.riskLevel,
+          this.form.assessId,
+          this.form.assessName
         );
         if (sign.ret === "200") {
           loading.clear();
@@ -185,6 +276,9 @@ export default {
 
   &.van-cell-group--mini
     border-bottom 3px solid #f2f2f2
+
+.van-cell-group--checkbox
+  border-bottom 0
 
 .van-divider
   color #999999
@@ -225,4 +319,13 @@ export default {
 .van-radio-group
   display flex
   justify-content space-around
+
+.riskLevel-1
+  background #f9ebeb
+
+.riskLevel-2
+  background #fdf5e6
+
+.riskLevel-3
+  background #f0f9eb
 </style>

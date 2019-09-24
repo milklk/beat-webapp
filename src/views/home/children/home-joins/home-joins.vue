@@ -62,6 +62,7 @@ export default {
   watch: {
     async $route() {
       this.page = 1;
+      this.list = [];
       const jions = await joinsList(this.page++, 15);
       if (jions.ret === "200") {
         jions.data.list.forEach(d => {

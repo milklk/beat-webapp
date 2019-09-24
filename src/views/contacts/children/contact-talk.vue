@@ -91,10 +91,11 @@ export default {
         talkTime: `${format(new Date(), "yyyy-MM-dd")}`,
         fileIdTmp: []
       },
-      worker: {
-        name: "彭晓薇",
-        phone: 13423678765
-      }
+      error: [
+        { key: "talkTitle", message: "未填写谈话摘要" },
+        { key: "talkContent", message: "未填写谈话内容" },
+        { key: "talkMode", message: "未填写谈话渠道" }
+      ]
     };
   },
   components: {
@@ -143,7 +144,21 @@ export default {
           mask: true,
           message: "上传\n谈话情况中"
         });
-
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传谈话截图");
+          return false;
+        }
         const talk = await personTalkAdd(
           this.form.archivesCode,
           this.form.talkTitle,

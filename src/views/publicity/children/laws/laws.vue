@@ -1,11 +1,13 @@
 <template>
   <section class="messages">
     <List
-      v-if="$route.path === '/publicity/laws' && list.length"
+      v-if="$route.path === '/publicity/laws' && show"
       :list="list"
       :total="total"
       :headerShow="false"
       :children="children"
+      :keyword.sync="keyword"
+      @search="searchList"
       @update="updateList"
     />
     <NoData v-else-if="$route.path === '/publicity/laws'" label="暂无数据" />
@@ -29,7 +31,9 @@ export default {
       children: {
         name: "publicity-law",
         idName: "id"
-      }
+      },
+      keyword: "",
+      show: false
     };
   },
   components: {
@@ -37,13 +41,16 @@ export default {
     NoData
   },
   computed: {},
-  created() {
-    this.updateList();
+  async created() {
+    await this.updateList();
+    if (this.total !== 0) {
+      this.show = true;
+    }
   },
   methods: {
     async updateList() {
       const type = this.$route.query.type;
-      const laws = await knowledgeList(this.page++, 15, type);
+      const laws = await knowledgeList(this.page++, 15, type, this.keyword);
       if (laws.ret === "200") {
         laws.data.list.forEach(d => {
           d.time = format(d.updateTime);
@@ -51,6 +58,10 @@ export default {
         this.list = this.list.concat(laws.data.list);
         this.total = laws.data.total;
       }
+    },
+    async searchList() {
+      this.list = [];
+      await this.updateList();
     }
   }
 };

@@ -1,53 +1,50 @@
 <template>
+  <!-- eslint-disable -->
   <section class="hand">
-    <div v-show="list.length">
-      <van-search
-        placeholder="请输入搜索关键词"
-        v-model="keyword"
-        shape="round"
-        background="#fff"
-        @search="search"
-      />
+    <van-search
+      placeholder="请输入搜索关键词"
+      v-model="keyword"
+      shape="round"
+      background="#fff"
+      @search="search"
+    />
+    <!-- eslint-disable-next-line -->
+    <article class="hand__list" ref="hand">
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        :finished-text="list.length? '没有更多了' : '暂无人员'"
+        :immediate-check="false"
+      >
+        <van-radio-group v-model="result">
+          <van-cell
+            v-for="(item, i) in list"
+            :key="i"
+            :value="item.mobile"
+            class="van-cell--checkbox van-cell--auto"
+          >
+            <template #title>
+              <van-radio :name="item.userId">
+                <!-- eslint-disable-next-line -->
+                <div class="van-checkbox__label">{{ item.realname }}</div>
+              </van-radio>
+            </template>
+          </van-cell>
+        </van-radio-group>
+      </van-list>
+    </article>
+    <footer class="hand__footer">
       <!-- eslint-disable-next-line -->
-      <article class="hand__list" ref="hand">
-        <van-list
-          v-model="loading"
-          :finished="finished"
-          finished-text="没有更多了"
-          :immediate-check="false"
-        >
-          <van-radio-group v-model="result">
-            <van-cell
-              v-for="(item, i) in list"
-              :key="i"
-              :value="item.mobile"
-              class="van-cell--checkbox van-cell--auto"
-            >
-              <template #title>
-                <van-radio :name="item.userId">
-                  <!-- eslint-disable-next-line -->
-                  <div class="van-checkbox__label">{{ item.realname }}</div>
-                </van-radio>
-              </template>
-            </van-cell>
-          </van-radio-group>
-        </van-list>
-      </article>
-      <footer class="hand__footer">
+      <van-button @click="transfer" class="van-button" type="info">
         <!-- eslint-disable-next-line -->
-        <van-button @click="transfer" class="van-button" type="info">
-          <!-- eslint-disable-next-line -->
-          确认移交
-        </van-button>
-      </footer>
-    </div>
-    <NoData v-if="!list.length" label="暂无可接收人员" />
+        确认移交
+      </van-button>
+    </footer>
   </section>
 </template>
 
 <script>
 import { archivesUsers, archivesTransfer } from "../../../../api";
-import NoData from "../../../../components/no-data";
 export default {
   name: "",
   props: {},
@@ -64,9 +61,7 @@ export default {
       bs: {}
     };
   },
-  components: {
-    NoData
-  },
+  components: {},
   computed: {},
   async created() {
     const params = this.$route.params;
@@ -108,6 +103,9 @@ export default {
         if (this.total <= 15) {
           this.loading = false;
           this.finished = true;
+        } else {
+          this.loading = true;
+          this.finished = false;
         }
       }
     },
@@ -129,6 +127,9 @@ export default {
     async transfer() {
       const archivesCodes = this.$route.params.id;
       const userId = this.result;
+      if (!userId.length) {
+        this.$toast.fail("未选择接收人员");
+      }
       const show = await archivesTransfer(archivesCodes, userId);
       if (show.ret === "200") {
         this.$toast.success({

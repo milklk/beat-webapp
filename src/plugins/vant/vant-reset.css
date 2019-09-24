@@ -53,6 +53,9 @@
   background: #1989fa;
 }
 .img-icon .van-info {
-  top: 15px;
+  top: 2vw;
   right: 4px;
+}
+.van-grid-item__text {
+  margin-top: 10px;
 }

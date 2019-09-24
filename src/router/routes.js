@@ -12,6 +12,8 @@ import HomeHands from "../views/home/children/home-hands/home-hands.vue";
 import HomeHand from "../views/home/children/home-hands/home-hand.vue";
 import HomeJoins from "../views/home/children/home-joins/home-joins.vue";
 import HomeJoin from "../views/home/children/home-joins/home-join.vue";
+import HomeSends from "../views/home/children/home-sends/home-sends.vue";
+import HomeSend from "../views/home/children/home-sends/home-send.vue";
 import HomeNotices from "../views/home/children/home-notices/home-notices.vue";
 import HomeNotice from "../views/home/children/home-notices/home-notice.vue";
 import Message from "../views/messages/message.vue";
@@ -36,7 +38,6 @@ import ContactParty from "../views/contacts/children/contact-party.vue";
 import ContactDrugs from "../views/contacts/children/contact-drugs.vue";
 import MineAbout from "../views/mine/children/mine-about.vue";
 import MineDatum from "../views/mine/children/mine-datum.vue";
-// import MineReport from "../views/mine/children/mine-report.vue";
 
 //设置router路由
 export default [
@@ -103,6 +104,19 @@ export default [
             name: "home-join",
             component: HomeJoin,
             meta: { header: "衔接人员" }
+          }
+        ]
+      },
+      {
+        path: "/home/sends",
+        component: HomeSends,
+        meta: { header: "接收中心" },
+        children: [
+          {
+            path: "/home/sends/:id",
+            name: "home-send",
+            component: HomeSend,
+            meta: { header: "接收人员" }
           }
         ]
       }

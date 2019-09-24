@@ -166,6 +166,9 @@ export default {
       if (this[status].length < 15) {
         this.loading[status] = false;
         this.finished[status] = true;
+      } else {
+        this.loading[status] = true;
+        this.finished[status] = false;
       }
     },
     pullingUpHandler() {

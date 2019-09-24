@@ -79,7 +79,8 @@
           placeholder="请输入审批备注,字数少于200"
           error-message="提示：输入字数应少于200"
         />-->
-        <Update :fileIdTmp.sync="fileIdTmp" />
+        <Update :fileIdTmp.sync="oneFileIdTmp" v-show="status === 1" />
+        <Update :fileIdTmp.sync="twoFileIdTmp" v-show="status === 2" />
       </van-dialog>
     </footer>
   </section>
@@ -96,8 +97,9 @@ export default {
   props: {},
   data() {
     return {
+      oneFileIdTmp: [],
+      twoFileIdTmp: [],
       dialogShow: false,
-
       addict: {
         name: "personName",
         phone: "personMobile",
@@ -159,8 +161,7 @@ export default {
       // ],
       status: 0,
       id: "",
-      detail: {},
-      fileIdTmp: []
+      detail: {}
     };
   },
   components: {
@@ -196,7 +197,13 @@ export default {
         mask: true,
         message: "审批提交中"
       });
-      const show = await approvesEdit(this.status, this.id, this.fileIdTmp);
+      const fileIdTmp =
+        this.status === 1 ? this.oneFileIdTmp : this.twoFileIdTmp;
+      if (!fileIdTmp.length) {
+        this.$toast.fail("未上传审批附件");
+        return false;
+      }
+      const show = await approvesEdit(this.status, this.id, fileIdTmp);
       if (show.ret === "200") {
         loading.clear();
         this.$toast.success({

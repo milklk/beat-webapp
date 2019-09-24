@@ -51,7 +51,8 @@
         <template v-if="$route.params.header === '拜访记录'">
           <van-step v-for="(item, i) in visit" :key="i">
             <header class="van-step__header">
-              <p class="header__p">同行人员:{{ item.colleagueUser }}</p>
+              <!-- eslint-disable-next-line -->
+              <p class="header__p">同行人员:{{ item.colleagueUser ? item.colleagueUser : '无' }}</p>
               <p class="header__p">{{ item.visitTime }}</p>
             </header>
             <article class="van-step__article">
@@ -79,7 +80,8 @@
         <template v-if="$route.params.header === '评估记录'">
           <van-step v-for="(item, i) in assess" :key="i">
             <header class="van-step__header">
-              <p class="header__p">评估小组成员：{{ item.colleagueUser }}</p>
+              <!-- eslint-disable-next-line -->
+              <p class="header__p">评估小组成员：{{ item.colleagueUser ? item.colleagueUser : '无' }}</p>
               <p class="header__p">{{ item.assessTime }}</p>
             </header>
             <article class="van-step__article">
@@ -116,7 +118,8 @@
         <template v-if="$route.params.header === '查找脱失记录'">
           <van-step v-for="(item, i) in find" :key="i">
             <header class="van-step__header">
-              <p class="header__p">同行人员:{{ item.colleagueUser }}</p>
+              <!-- eslint-disable-next-line -->
+              <p class="header__p">同行人员:{{ item.colleagueUser ? item.colleagueUser : '无' }}</p>
               <p class="header__p">{{ item.findTime }}</p>
             </header>
             <article class="van-step__article">

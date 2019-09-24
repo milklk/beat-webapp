@@ -32,7 +32,7 @@ export default {
       this.title = article.title;
       this.source = article.source;
       this.content = article.content;
-      this.time = format(article.updateTime);
+      this.time = format(article.updateTime, "yyyy-MM-dd HH:mm");
       if (!article.isRead) {
         noticesRead(noticeId);
       }

@@ -3,12 +3,12 @@
     <!-- 标题以及相关信息 -->
     <h2 class="article__h">{{ title }}</h2>
     <aside class="article__aside">
+      <p class="aside__time">日期：{{ time }}</p>
       <p class="aside__source">
         <span>{{ sourceTitle }}</span>
         ：
         <span>{{ source ? source : "无" }}</span>
       </p>
-      <p class="aside__time">日期：{{ time }}</p>
     </aside>
     <!-- 文章内容 -->
     <article class="article__content" v-html="content"></article>
@@ -63,10 +63,13 @@ export default {
 
 .article__aside
   display flex
+  flex-direction column
   justify-content space-between
   color #737397
   line-height 22px
   margin 10px 0
+  padding-bottom 5px
+  border-bottom 1px solid #ccc
 
 .article__content
   font-size 15px

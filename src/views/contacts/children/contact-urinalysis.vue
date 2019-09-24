@@ -86,7 +86,11 @@ export default {
         checkRemark: "",
         archivesCode: this.$route.params.id,
         fileIdTmp: []
-      }
+      },
+      error: [
+        { key: "checkAddress", message: "未填写尿检地点" },
+        { key: "checkRemark", message: "未填写代上传事由" }
+      ]
     };
   },
   components: {
@@ -128,7 +132,21 @@ export default {
           mask: true,
           message: "代上传\n尿检信息中"
         });
-
+        for (const key in this.form) {
+          if (this.form.hasOwnProperty(key)) {
+            const error = this.error.find(d => d.key === key);
+            if (error) {
+              if (!this.form[key]) {
+                this.$toast.fail(error.message);
+                return false;
+              }
+            }
+          }
+        }
+        if (!this.form.fileIdTmp.length) {
+          this.$toast.fail("未上传尿检单");
+          return false;
+        }
         const urinalysis = await urineAdd(
           this.form.checkTime,
           this.form.checkResult,
